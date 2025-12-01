@@ -1,0 +1,66 @@
+cabal-version:       2.2
+
+name:                aoc2025
+version:             0.1.0.0
+homepage:            https://github.com/EthanWelsh/aoc2025#readme
+license:             Unlicense
+license-file:        LICENSE
+author:              Ethan Welsh
+maintainer:          example@example.com
+copyright:           2023 Ethan Welsh
+category:            Web
+build-type:          Simple
+extra-source-files:  README.md
+
+executable aoc2025
+  hs-source-dirs:      src
+  main-is:             Main.hs
+  other-modules:       Utils.Parsers
+                     , Day01
+                     , Day02
+                     , Day03
+                     , Day04
+                     , Day05
+                     , Day06
+                     , Day07
+                     , Day08
+                     , Day09
+                     , Day10
+                     , Day11
+                     , Day12
+                     , Utils.Graph
+                     , Utils.Maze
+                     , Utils.Search
+  default-language:    Haskell2010
+  default-extensions:  TupleSections
+  build-depends:       base >= 4.7 && < 5
+                     , megaparsec >= 9.0 && < 10
+                     , extra
+                     , containers
+                     , vector-algorithms
+                     , vector
+                     , data-interval
+                     , hashmap
+                     , lens
+                     , search-algorithms
+                     , time
+                     , range
+                     , template-haskell
+                     , unordered-containers
+                     , ansi-terminal
+                     , directory
+                     , optparse-applicative
+                     , parser-combinators
+                     , text
+                     , mtl
+                     , vector
+                     , memoize
+  ghc-options:         -Wall
+                       -Wcompat
+                       -Widentities
+                       -Wincomplete-record-updates
+                       -Wincomplete-uni-patterns
+                       -Wmissing-export-lists
+                       -Wmissing-home-modules
+                       -Wpartial-fields
+                       -Wredundant-constraints
