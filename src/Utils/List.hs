@@ -2,8 +2,11 @@ module Utils.List (
   pairs,
   pairsByTwo,
   replace,
-  pruneMatching
+  pruneMatching,
+  count
 ) where
+
+import Data.List (foldl')
 
 -- | Create consecutive pairs from a list: [a,b,c] -> [(a,b),(b,c)]
 -- | Overlapping consecutive pairs: [a,b,c] -> [(a,b),(b,c)]
@@ -27,3 +30,7 @@ pruneMatching fs = filter (not . anyMatch fs)
   where
     anyMatch :: [a -> Bool] -> a -> Bool
     anyMatch ps x = any (\p -> p x) ps
+
+-- | Count elements in a list that satisfy the predicate.
+count :: (a -> Bool) -> [a] -> Int
+count p = foldl' (\n x -> if p x then n + 1 else n) 0
