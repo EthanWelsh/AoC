@@ -5,6 +5,8 @@ module Utils.Search (
 
 import qualified Data.Set as S
 
+-- | Determine whether there exists a path from the start node to any node
+--   satisfying the 'isEnd' predicate using the provided neighbor function.
 hasPath :: Ord a => (a -> [a]) -> (a -> Bool) -> a -> Bool
 hasPath neighbors isEnd = hasPathHelper neighbors isEnd S.empty
 
@@ -16,6 +18,8 @@ hasPathHelper neighbors isEnd visited n
     newVisited = S.insert n visited
     in any (hasPathHelper neighbors isEnd newVisited) (neighbors n)
 
+-- | Enumerate all simple paths (no repeated nodes) from the start node to
+--   nodes satisfying 'isEnd', returning each path as a list of nodes.
 allPaths :: Ord a => (a -> [a]) -> (a -> Bool) -> a -> [[a]]
 allPaths neighbors isEnd = allPathsHelper neighbors isEnd []
 
