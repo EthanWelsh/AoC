@@ -132,19 +132,17 @@ part1 input = let
   vs = reverse $ map (evaluate input) gs
   in bitsToInt vs
 
--- Find a gate that takes two specific inputs (order-independent) and has a specific type
-findGate :: Input -> Wire -> Wire -> GateType -> Maybe Gate
-findGate input w1 w2 gt = 
-  let allGates = M.elems (gates input)
-      matches g = gateType g == gt && 
-                  ((left g == w1 && right g == w2) || (left g == w2 && right g == w1))
-  in case filter matches allGates of
-       [g] -> Just g
-       _   -> Nothing
+-- Find a gate that takes two specific inputs (order-independent) and has a specific type-- findGate :: Input -> Wire -> Wire -> GateType -> Maybe Gate
+-- findGate input w1 w2 gt = 
+--   let allGates = M.elems (gates input)
+--       matches g = gateType g == gt && 
+--                   ((left g == w1 && right g == w2) || (left g == w2 && right g == w1))
+--   in case filter matches allGates of
+--        [g] -> Just g
+--        _   -> Nothing
 
 -- Get the gate that produces a specific wire
-getGate :: Input -> Wire -> Maybe Gate
-getGate input wire = M.lookup wire (gates input)
+
 
 -- Find swapped wires by checking adder structure bit by bit
 findSwappedWires :: Input -> [Wire]
