@@ -1,8 +1,9 @@
 module Day03 (solve, parseInput) where
 
-import Text.Megaparsec (parse, errorBundlePretty, some, optional, sepBy)
+import Text.Megaparsec (parse, errorBundlePretty, some, sepBy)
 import Text.Megaparsec.Char (digitChar, eol)
 import Utils.Parsers (Parser)
+import Data.Function.Memoize (memoize2)
 
 type Bank = [Int]
 type Input = [Bank]
@@ -12,12 +13,13 @@ charsToInts cs = map (\c -> read [c]) cs
 
 parseInput :: Parser Input
 parseInput = do
-  lines <- (some digitChar) `sepBy` eol
-  return $ map charsToInts lines
+  lns <- (some digitChar) `sepBy` eol
+  return $ map charsToInts lns
 
 -- Remove the last element in the list.
 dropLast :: [a] -> [a]
-dropLast [x] = []
+dropLast [] = []
+dropLast [_] = []
 dropLast (x:xs) = x : (dropLast xs)
 
 highestVoltage :: Bank -> Int
@@ -32,10 +34,30 @@ part1 input = do
   let voltages = map highestVoltage input
   print $ sum voltages
 
+toNumber :: [Int] -> Int
+toNumber digits = read (concatMap show digits)
+
+maxBank :: Bank -> Bank -> Bank
+maxBank a [] = a
+maxBank [] b = b
+maxBank a b = if (toNumber a) > (toNumber b) then a else b
+
+highestVoltage2 :: Bank -> Int
+highestVoltage2 bank = toNumber $ helper bank 12
+  where
+    helper = memoize2 $ \b n -> case (b, n :: Int) of
+      ([], _) -> []
+      (_, 0)  -> []
+      ((x:xs), _) -> let
+        ifIncluded = x : helper xs (n - 1)
+        ifExcluded = helper xs n
+        in maxBank ifIncluded ifExcluded
+
 part2 :: Input -> IO ()
 part2 input = do
   putStr "Part 2: "
-  --print $ sum (map length input)
+  let voltages = map highestVoltage2 input
+  print $ sum voltages
 
 solve :: FilePath -> IO ()
 solve filePath = do
