@@ -27,3 +27,5 @@ input.txt
 .idea/
 _templates/
 .vscode
+.vscode/
+.vscode/*
