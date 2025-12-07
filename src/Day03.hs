@@ -40,7 +40,10 @@ toNumber digits = read (concatMap show digits)
 maxBank :: Bank -> Bank -> Bank
 maxBank a [] = a
 maxBank [] b = b
-maxBank a b = if (toNumber a) > (toNumber b) then a else b
+maxBank a b 
+  | length a > length b = a
+  | length b > length a = b
+  | otherwise = max a b
 
 highestVoltage2 :: Bank -> Int
 highestVoltage2 bank = toNumber $ helper bank 12
