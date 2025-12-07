@@ -1,33 +1,45 @@
-module Utils.Maze (
-  Point,
-  Maze,
-  Direction(North, South, East, West),
-  movePoint,
-  mazeFromList,
-  mazeToList,
-  height,
-  width,
-  getPoint,
-  setPoint,
-  setPoints,
-  setPointsMatching,
-  findPoints,
-  testPoint,
-  inBounds,
-  neighbors4,
-  neighbors8,
-  allPoints,
-  allPointsSatisfying,
-  manhattanDistance,
-) where
+module Utils.Maze
+  ( Point,
+    Maze,
+    Direction (North, South, East, West),
+    north,
+    south,
+    east,
+    west,
+    northEast,
+    southEast,
+    southWest,
+    northWest,
+    movePoint,
+    maybeGetPoint,
+    mazeFromList,
+    mazeToList,
+    height,
+    width,
+    getPoint,
+    setPoint,
+    setPoints,
+    setPointsMatching,
+    findPoints,
+    testPoint,
+    inBounds,
+    neighbors4,
+    neighbors8,
+    allPoints,
+    allPointsSatisfying,
+    manhattanDistance,
+  )
+where
 
-import           Control.Lens
+import Control.Lens
 
 type Point = (Int, Int)
+
 newtype Maze a = Maze [[a]] deriving (Eq, Ord)
+
 data Direction = North | South | East | West deriving (Show, Eq, Ord)
 
-instance Show a => Show (Maze a) where
+instance (Show a) => Show (Maze a) where
   show (Maze m) = unlines $ map (concatMap show) m
 
 -- | Construct a 'Maze' from a list-of-rows representation.
@@ -64,9 +76,9 @@ northWest = north . west
 
 movePoint :: Point -> Direction -> Point
 movePoint p North = north p
-movePoint p East  = east p
+movePoint p East = east p
 movePoint p South = south p
-movePoint p West  = west p
+movePoint p West = west p
 
 -- | Get the height (number of rows) of the maze.
 height :: Maze a -> Int
@@ -76,15 +88,20 @@ height (Maze m) = length m
 width :: Maze a -> Int
 width (Maze m) = length $ head m
 
+maybeGetPoint :: Maze a -> Point -> Maybe a
+maybeGetPoint (Maze m) p
+  | inBounds (Maze m) p = Just $ getPoint (Maze m) p
+  | otherwise = Nothing
+
 -- | Read the value at a given point (row, column).
 getPoint :: Maze a -> Point -> a
 getPoint (Maze m) (r, c) = (m !! r) !! c
 
 replacePoint :: [[a]] -> Point -> a -> [[a]]
-replacePoint g (r, c) v = let
-    oldRow = g !! r
-    newRow = (element c .~ v) oldRow
-  in (element r .~ newRow) g
+replacePoint g (r, c) v =
+  let oldRow = g !! r
+      newRow = (element c .~ v) oldRow
+   in (element r .~ newRow) g
 
 -- | Set the value at a single point in the maze, returning a new maze.
 setPoint :: Maze a -> Point -> a -> Maze a
@@ -96,9 +113,9 @@ setPoints m ps v = foldl (\mm p -> setPoint mm p v) m ps
 
 -- | Set a value at every point that matches a predicate.
 setPointsMatching :: Maze a -> (a -> Bool) -> a -> Maze a
-setPointsMatching m f v = let
-  ps = filter (testPoint m f) (allPoints m)
-  in foldl (\mm p -> setPoint mm p v) m ps
+setPointsMatching m f v =
+  let ps = filter (testPoint m f) (allPoints m)
+   in foldl (\mm p -> setPoint mm p v) m ps
 
 -- | Test whether the value at a point satisfies a predicate.
 testPoint :: Maze a -> (a -> Bool) -> Point -> Bool
@@ -115,12 +132,14 @@ inBounds m (r, c) = r >= 0 && r < height m && c >= 0 && c < width m
 -- | List the 4 orthogonal neighbors of a point (that are in-bounds).
 neighbors4 :: Maze a -> Point -> [Point]
 neighbors4 m p = filter (inBounds m) $ map ($ p) dirs
-  where dirs = [north, east, south, west]
+  where
+    dirs = [north, east, south, west]
 
 -- | List the 8 surrounding neighbors of a point (that are in-bounds).
 neighbors8 :: Maze a -> Point -> [Point]
 neighbors8 m p = filter (inBounds m) $ map ($ p) dirs
-  where dirs = [north, northEast, east, southEast, south, southWest, west, northWest]
+  where
+    dirs = [north, northEast, east, southEast, south, southWest, west, northWest]
 
 -- | List every point in the maze in row-major order.
 allPoints :: Maze a -> [Point]
