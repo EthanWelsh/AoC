@@ -1,30 +1,72 @@
 module Day06 (solve) where
 
-import Text.Megaparsec
-import           Utils.Parsers (Parser)
---import Control.Monad (void)
---import Text.Megaparsec.Char (string, char, newline)
+import Data.Char (isSpace)
+import Data.List (transpose)
+import Data.Maybe (mapMaybe)
+import Utils.List (splitOn)
 
-type Input = String
+calculate :: ([Int], Char) -> Int
+calculate (nums, op) = case op of
+  '+' -> sum nums
+  '*' -> product nums
+  _ -> error "Unknown operator"
 
-parseInput :: Parser Input
-parseInput = error "TODO"
+parsePart1 :: String -> [([Int], Char)]
+parsePart1 contents =
+  let allLines = lines contents
+      nonEmptyLines = filter (not . null) allLines
+      
+      operatorLine = last nonEmptyLines
+      numberLines = init nonEmptyLines
+      
+      rows = map (map read . words) numberLines
+      ops = map head (words operatorLine)
+      
+      columns = transpose rows
+  in zip columns ops
 
-part1 :: Input -> IO ()
-part1 input = do
+part1 :: String -> IO ()
+part1 contents = do
   putStr "Part 1: "
-  print input
+  let problems = parsePart1 contents
+  print $ sum $ map calculate problems
 
-part2 :: Input -> IO ()
-part2 input = do
+parseCephalopodMath :: String -> [([Int], Char)]
+parseCephalopodMath contents =
+  let nonEmptyLines = filter (not . null) (lines contents)
+      grid = padAndTranspose nonEmptyLines
+      isSep = all isSpace
+      groups = splitOn isSep grid
+   in map parseGroup groups
+
+padAndTranspose :: [String] -> [String]
+padAndTranspose lines' =
+  let maxLen = maximum (map length lines')
+      pad s = s ++ replicate (maxLen - length s) ' '
+  in transpose (map pad lines')
+
+parseGroup :: [String] -> ([Int], Char)
+parseGroup cols =
+  let op = parseOperator cols
+      nums = mapMaybe parseColumnNumber cols
+   in (nums, op)
+
+parseOperator :: [String] -> Char
+parseOperator cols = head $ filter (not . isSpace) (map last cols)
+
+parseColumnNumber :: String -> Maybe Int
+parseColumnNumber col =
+  let digits = filter (not . isSpace) (init col)
+  in if null digits then Nothing else Just (read digits)
+
+part2 :: String -> IO ()
+part2 contents = do
   putStr "Part 2: "
-  print input
+  let problems = parseCephalopodMath contents
+  print $ sum $ map calculate problems
 
 solve :: FilePath -> IO ()
 solve filePath = do
   contents <- readFile filePath
-  case parse parseInput filePath contents of
-          Left eb -> putStr (errorBundlePretty eb)
-          Right input -> do
-            part1 input
-            part2 input
+  part1 contents
+  part2 contents

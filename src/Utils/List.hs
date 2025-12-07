@@ -1,26 +1,36 @@
-module Utils.List (
-  pairs,
-  pairsByTwo,
-  replace,
-  pruneMatching,
-  count
-) where
+module Utils.List
+  ( pairs,
+    pairsByTwo,
+    replace,
+    pruneMatching,
+    count,
+    splitOn,
+  )
+where
 
 import Data.List (foldl')
+
+-- | Split a list into sublists by a predicate.
+-- | The separator elements are dropped.
+splitOn :: (a -> Bool) -> [a] -> [[a]]
+splitOn p xs = case dropWhile p xs of
+  [] -> []
+  xs' -> let (w, rest) = break p xs'
+         in w : splitOn p rest
 
 -- | Create consecutive pairs from a list: [a,b,c] -> [(a,b),(b,c)]
 -- | Overlapping consecutive pairs: [a,b,c] -> [(a,b),(b,c)]
 pairs :: [a] -> [(a, a)]
-pairs (a:b:xs) = (a, b) : pairs (b : xs)
+pairs (a : b : xs) = (a, b) : pairs (b : xs)
 pairs _ = []
 
 -- | Non-overlapping pairs: [a,b,c,d] -> [(a,b),(c,d)]
 pairsByTwo :: [a] -> [(a, a)]
-pairsByTwo (a:b:xs) = (a, b) : pairsByTwo xs
+pairsByTwo (a : b : xs) = (a, b) : pairsByTwo xs
 pairsByTwo _ = []
 
 -- | Replace all occurrences of an element with another element.
-replace :: Eq a => a -> a -> [a] -> [a]
+replace :: (Eq a) => a -> a -> [a] -> [a]
 replace old new = map (\x -> if x == old then new else x)
 
 -- | Filter out elements that match any predicate in the list.
