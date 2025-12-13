@@ -25,7 +25,7 @@ module Utils.Graph (
 import           Data.List       ((\\))
 import           Data.List.Extra (groupSort)
 import           Data.Map        as M (Map, adjust, insertWith, keys,
-                                       fromList, toList, (!))
+                                       fromList, toList, findWithDefault)
 import           Data.Set        (Set, empty, insert, member,
                                   notMember)
 import Data.Tuple (swap)
@@ -103,7 +103,7 @@ removeBidirectionalEdge g e = let
 
 -- | Return the adjacency list for a given node.
 neighbors :: Ord a => Graph a -> a -> [a]
-neighbors (Graph g) n = g ! n
+neighbors (Graph g) n = M.findWithDefault [] n g
 
 -- | List all nodes present in the graph.
 nodes :: Graph a -> [a]
