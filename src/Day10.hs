@@ -11,8 +11,8 @@ import Control.Lens (element, (%~), (&))
 
 
 data Light = On | Off deriving (Show, Eq, Ord)
-data WiringSchematic = WiringSchematic [Int] deriving (Show, Eq, Ord)
-data JoltageRequirement = JoltageRequirement [Int] deriving (Show, Eq, Ord)
+newtype WiringSchematic = WiringSchematic [Int] deriving (Show, Eq, Ord)
+newtype JoltageRequirement = JoltageRequirement [Int] deriving (Show, Eq, Ord)
 
 data Machine = Machine
   { targetLights :: [Light]
