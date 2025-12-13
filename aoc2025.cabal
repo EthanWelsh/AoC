@@ -16,6 +16,7 @@ executable aoc2025
   hs-source-dirs:      src
   main-is:             Main.hs
   other-modules:       Utils.Parsers
+                     , Utils.List
                      , Day00
                      , Day01
                      , Day02
