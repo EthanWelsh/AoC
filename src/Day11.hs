@@ -37,15 +37,17 @@ part1 input = do
   putStr "Part 1: "
   print $ countPathsBetween input "you" "out"
 
+countPathsBetween4 :: Input -> String -> String -> String -> String -> Int
+countPathsBetween4 g a b c d =
+  countPathsBetween g a b *
+  countPathsBetween g b c *
+  countPathsBetween g c d
+
 part2 :: Input -> IO ()
 part2 input = do
   putStr "Part 2: "
-  let path1 = countPathsBetween input "svr" "dac" * 
-              countPathsBetween input "dac" "fft" * 
-              countPathsBetween input "fft" "out"
-  let path2 = countPathsBetween input "svr" "fft" * 
-              countPathsBetween input "fft" "dac" * 
-              countPathsBetween input "dac" "out"
+  let path1 = countPathsBetween4 input "svr" "dac" "fft" "out"
+  let path2 = countPathsBetween4 input "svr" "fft" "dac" "out"
   print (path1 + path2)
 
 solve :: FilePath -> IO ()
