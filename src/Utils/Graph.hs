@@ -1,6 +1,8 @@
+{-# OPTIONS_GHC -Wno-unused-top-binds #-}
 module Utils.Graph (
   Graph,
   edges,
+  graphFromList,
   graphFromNodes,
   graphFromEdges,
   graphAsMap,
@@ -16,7 +18,8 @@ module Utils.Graph (
   connectedComponents,
   makeBidirectional,
   addBidirectionalEdge,
-  addBidirectionalEdges
+  addBidirectionalEdges,
+  allPaths
 ) where
 
 import           Data.List       ((\\))
@@ -47,6 +50,10 @@ unflatten = groupSort
 -- | Build a 'Graph' from a list of nodes. Nodes will have no edges.
 graphFromNodes :: Ord a => [a] -> Graph a
 graphFromNodes ns = graphFromMap $ M.fromList $ map (, []) ns
+
+-- | Build a 'Graph' from a list of adjacency lists.
+graphFromList :: Ord a => [(a, [a])] -> Graph a
+graphFromList lst = graphFromMap $ M.fromList lst
 
 -- | Build a 'Graph' from a list of directed edges.
 graphFromEdges :: Ord a => [(a, a)] -> Graph a
@@ -122,3 +129,11 @@ connectedComponents g = connectedHelper g (nodes g)
       reachableNodes = reachable gg n
       unvisited = filter (`notMember` reachableNodes) ns
       in reachableNodes:connectedHelper gg unvisited
+
+-- | Find all simple paths from start to end nodes.
+allPaths :: Ord a => Graph a -> a -> a -> [[a]]
+allPaths g start end = case start == end of
+  True -> [[start]]
+  False -> concatMap (\n -> map (start:) (allPaths g n end)) nextNodes
+    where
+      nextNodes = neighbors g start

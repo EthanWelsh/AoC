@@ -1,24 +1,34 @@
 module Day11 (solve) where
 
 import Text.Megaparsec
-import           Utils.Parsers (Parser)
---import Control.Monad (void)
---import Text.Megaparsec.Char (string, char, newline)
+import Utils.Parsers (Parser, skipSpaces)
+import Utils.Graph
+import Control.Monad (void)
+import Text.Megaparsec.Char (string, newline)
 
-type Input = String
+type Input = Graph String
+
+parseLine :: Parser (String, [String])
+parseLine = do
+  node <- some (noneOf " :\n")
+  void $ string ":"
+  skipSpaces
+  ns <- some (noneOf " \n") `sepBy` string " "
+  return (node, ns)
 
 parseInput :: Parser Input
-parseInput = error "TODO"
+parseInput = do
+  ls <- parseLine `sepEndBy` newline
+  return $ graphFromList ls
 
 part1 :: Input -> IO ()
 part1 input = do
   putStr "Part 1: "
-  print input
+  print $ length $ allPaths input "you" "out"
 
 part2 :: Input -> IO ()
-part2 input = do
+part2 _ = do
   putStr "Part 2: "
-  print input
 
 solve :: FilePath -> IO ()
 solve filePath = do
