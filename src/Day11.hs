@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-unused-matches #-}
 module Day11 (solve) where
 
 import Text.Megaparsec
@@ -27,8 +28,11 @@ part1 input = do
   print $ length $ allPaths input "you" "out"
 
 part2 :: Input -> IO ()
-part2 _ = do
+part2 input = do
   putStr "Part 2: "
+  let paths = allPaths input "svr" "out"
+  let validPaths = filter (\p -> "dac" `elem` p && "fft" `elem` p) paths
+  print $ length validPaths
 
 solve :: FilePath -> IO ()
 solve filePath = do
