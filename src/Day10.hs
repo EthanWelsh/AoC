@@ -89,19 +89,17 @@ increaseJoltage (Joltage ls) (WiringSchematic indices) = Joltage $ foldl increas
     increase :: [Int] -> Int -> [Int]
     increase xs i = xs & element i %~ (+ 1)
 
-higherThanTarget :: Joltage -> Joltage -> Bool
-higherThanTarget (Joltage current) (Joltage target) = any (uncurry (>)) (zip current target)
-
 solveJoltage :: Machine -> Int
 solveJoltage m = case shortestPath of
     Just (c, _) -> c
     Nothing -> error "No solution found"
   where
     shortestPath :: Maybe (Int, [Joltage])
-    shortestPath = aStar (neighbors `pruning` check) cost estimatedCostToGoal isGoal initialState
+    shortestPath = aStar (neighbors `pruning` exceedsRequirements) cost estimatedCostToGoal isGoal initialState
 
-    check :: Joltage -> Bool
-    check j = higherThanTarget j (requirements m)
+    exceedsRequirements :: Joltage -> Bool
+    exceedsRequirements (Joltage current) = any (uncurry (>)) (zip current target)
+      where (Joltage target) = requirements m
 
     neighbors :: Joltage -> [Joltage]
     neighbors joltage = map (increaseJoltage joltage) (schematics m)
