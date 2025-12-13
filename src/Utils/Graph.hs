@@ -24,7 +24,7 @@ import           Data.List.Extra (groupSort)
 import           Data.Map        as M (Map, adjust, insertWith, keys,
                                        fromList, toList, (!))
 import           Data.Set        (Set, empty, insert, member,
-                                  notMember, unions)
+                                  notMember)
 import Data.Tuple (swap)
 
 newtype Graph a = Graph (Map a [a]) deriving (Show)
