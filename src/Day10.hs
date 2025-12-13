@@ -59,30 +59,25 @@ toggleLights ls (WiringSchematic indices) = foldl toggle ls indices
     toggle :: [Light] -> Int -> [Light]
     toggle xs i = xs & element i %~ (\l -> if l == On then Off else On)
 
-type State = ([Light], Machine)
-
-possibleStates :: State -> [State]
-possibleStates (lights, m@(Machine _ xs _)) = map (\s -> (toggleLights lights s, m)) xs
-
 solveMachine :: Machine -> Int
 solveMachine m = case shortestPath of
     Just (c, _) -> c
     Nothing -> error "No solution found"
   where
-    shortestPath :: Maybe (Int, [State])
+    shortestPath :: Maybe (Int, [[Light]])
     shortestPath = dijkstra neighbors cost isGoal initialState
 
-    neighbors :: State -> [State]
-    neighbors = possibleStates
+    neighbors :: [Light] -> [[Light]]
+    neighbors lights = map (toggleLights lights) (schematics m)
 
-    cost :: State -> State -> Int
+    cost :: [Light] -> [Light] -> Int
     cost _ _ = 1
 
-    isGoal :: State -> Bool
-    isGoal (lights, m') = lights == targetLights m'
+    isGoal :: [Light] -> Bool
+    isGoal lights = lights == targetLights m
 
-    initialState :: State
-    initialState = (replicate (length (targetLights m)) Off, m)
+    initialState :: [Light]
+    initialState = replicate (length (targetLights m)) Off
 
 part1 :: Input -> IO ()
 part1 input = do
