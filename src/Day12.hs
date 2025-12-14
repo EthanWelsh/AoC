@@ -1,30 +1,58 @@
 module Day12 (solve) where
 
 import Text.Megaparsec
-import           Utils.Parsers (Parser)
---import Control.Monad (void)
---import Text.Megaparsec.Char (string, char, newline)
+import Text.Megaparsec.Char (char, newline, string)
+import qualified Text.Megaparsec.Char.Lexer as L
+import Utils.Maze (Maze, mazeFromDimensions, mazeFromList)
+import Utils.Parsers (Parser, integer)
 
-type Input = String
+type Grid = Maze Char
+
+type Present = Grid
+
+newtype Tree = Tree  (Grid, [Int]) deriving (Show)
+
+type Input = ([Present], [Tree])
+
+presentParser :: Parser Grid
+presentParser = try $ do
+  _ <- integer
+  _ <- string ":\n"
+  chars <- some (choice [char '#', char '.']) `sepEndBy` newline
+  return $ mazeFromList chars
+
+treeParser :: Parser Tree
+treeParser = do
+  w <- L.decimal
+  _ <- char 'x'
+  h <- L.decimal
+  _ <- string ": "
+  nums <- L.decimal `sepBy` char ' '
+  return $ Tree (mazeFromDimensions w h '.', nums)
 
 parseInput :: Parser Input
-parseInput = error "TODO"
+parseInput = do
+  presents <- presentParser `sepEndBy` newline
+  _ <- many newline
+  trees <- treeParser `sepEndBy` newline
+  return (presents, trees)
 
 part1 :: Input -> IO ()
-part1 input = do
+part1 (gifts, trees) = do
   putStr "Part 1: "
-  print input
+  print $ length gifts
+  print $ trees !! 0
+
 
 part2 :: Input -> IO ()
-part2 input = do
+part2 _ = do
   putStr "Part 2: "
-  print input
 
 solve :: FilePath -> IO ()
 solve filePath = do
   contents <- readFile filePath
   case parse parseInput filePath contents of
-          Left eb -> putStr (errorBundlePretty eb)
-          Right input -> do
-            part1 input
-            part2 input
+    Left eb -> putStr (errorBundlePretty eb)
+    Right input -> do
+      part1 input
+      part2 input

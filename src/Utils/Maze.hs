@@ -14,6 +14,7 @@ module Utils.Maze
     maybeGetPoint,
     mazeFromList,
     mazeToList,
+    mazeFromDimensions,
     height,
     width,
     getPoint,
@@ -49,6 +50,9 @@ mazeFromList = Maze
 -- | Convert a 'Maze' back into a list-of-rows representation.
 mazeToList :: Maze a -> [[a]]
 mazeToList (Maze m) = m
+
+mazeFromDimensions :: Int -> Int -> a -> Maze a
+mazeFromDimensions w h x = mazeFromList $ replicate h $ replicate w x
 
 north :: Point -> Point
 north (r, c) = (r - 1, c)
