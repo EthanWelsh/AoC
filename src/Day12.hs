@@ -2,7 +2,7 @@ module Day12 (solve) where
 
 import Text.Megaparsec
 import Text.Megaparsec.Char (char, newline, string)
-import qualified Text.Megaparsec.Char.Lexer as L
+import Text.Megaparsec.Char.Lexer (decimal)
 import Utils.Maze (Maze, mazeFromDimensions, mazeFromList)
 import Utils.Parsers (Parser, integer)
 
@@ -23,11 +23,11 @@ presentParser = try $ do
 
 treeParser :: Parser Tree
 treeParser = do
-  w <- L.decimal
+  w <- decimal
   _ <- char 'x'
-  h <- L.decimal
+  h <- decimal
   _ <- string ": "
-  nums <- L.decimal `sepBy` char ' '
+  nums <- decimal `sepBy` char ' '
   return $ Tree (mazeFromDimensions w h '.', nums)
 
 parseInput :: Parser Input
@@ -41,8 +41,7 @@ part1 :: Input -> IO ()
 part1 (gifts, trees) = do
   putStr "Part 1: "
   print $ length gifts
-  print $ trees !! 0
-
+  print $ trees !! 1
 
 part2 :: Input -> IO ()
 part2 _ = do
