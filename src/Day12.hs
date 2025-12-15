@@ -3,19 +3,19 @@ module Day12 (solve) where
 import Text.Megaparsec
 import Text.Megaparsec.Char (char, newline, string)
 import Text.Megaparsec.Char.Lexer (decimal)
-import Utils.Maze (Maze, mazeFromDimensions, mazeFromList)
+import Utils.Maze (Maze, mazeFromDimensions, mazeFromList, findPoints, width, height)
 import Utils.Parsers (Parser, integer)
 
 type Grid = Maze Char
 
-type Present = Grid
+type Gift = Grid
 
 newtype Tree = Tree  (Grid, [Int]) deriving (Show)
 
-type Input = ([Present], [Tree])
+type Input = ([Gift], [Tree])
 
-presentParser :: Parser Grid
-presentParser = try $ do
+giftParser :: Parser Grid
+giftParser = try $ do
   _ <- integer
   _ <- string ":\n"
   chars <- some (choice [char '#', char '.']) `sepEndBy` newline
@@ -32,20 +32,40 @@ treeParser = do
 
 parseInput :: Parser Input
 parseInput = do
-  presents <- presentParser `sepEndBy` newline
+  gifts <- giftParser `sepEndBy` newline
   _ <- many newline
   trees <- treeParser `sepEndBy` newline
-  return (presents, trees)
+  return (gifts, trees)
+
+giftVolume :: Gift -> Int
+giftVolume g = length $ findPoints g (== '#' )
+
+isFitImpossible :: [Gift] -> Tree -> Bool
+isFitImpossible gifts (Tree (grid, giftCounts)) = let
+  giftVolumes = map giftVolume gifts
+  totalGiftVolume = sum $ zipWith (*) giftVolumes giftCounts
+  totalAvailableVolume = width grid * height grid
+  in totalGiftVolume > totalAvailableVolume
+
+isFitInevitable :: Tree -> Bool
+isFitInevitable (Tree (grid, giftCounts)) = let
+  widthInGifts = width grid `div` 3 :: Int
+  heightInGifts = height grid `div` 3 :: Int
+  totalGiftsThatCanFit = widthInGifts * heightInGifts
+  totalGiftsToPlace = sum giftCounts
+  in totalGiftsToPlace <= totalGiftsThatCanFit
+
+treesWillFit :: [Gift] -> Tree -> Bool
+treesWillFit gifts tree = case (isFitImpossible gifts tree, isFitInevitable tree) of
+  (True, True) -> error "Contradiction"
+  (True, _) -> False
+  (_, True) -> True
+  (False, False) -> error "Input has complicated cases not handled"
 
 part1 :: Input -> IO ()
 part1 (gifts, trees) = do
   putStr "Part 1: "
-  print $ length gifts
-  print $ trees !! 1
-
-part2 :: Input -> IO ()
-part2 _ = do
-  putStr "Part 2: "
+  print $ length $ filter (treesWillFit gifts) trees
 
 solve :: FilePath -> IO ()
 solve filePath = do
@@ -54,4 +74,3 @@ solve filePath = do
     Left eb -> putStr (errorBundlePretty eb)
     Right input -> do
       part1 input
-      part2 input
