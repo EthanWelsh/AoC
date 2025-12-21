@@ -8,6 +8,7 @@ import Utils.Parsers (Parser, sc, lexeme, symbol, integer)
 import Text.Megaparsec.Char (char)
 import Algorithm.Search
 import Control.Lens (element, (%~), (&))
+import Data.Maybe (mapMaybe, fromMaybe)
 
 
 data Light = On | Off deriving (Show, Eq, Ord)
@@ -83,11 +84,11 @@ part1 input = do
   putStr "Part 1: "
   print $ sum $ map solveLights input
 
-increaseJoltage :: Joltage -> WiringSchematic -> Joltage
-increaseJoltage (Joltage ls) (WiringSchematic indices) = Joltage $ foldl increase ls indices
+decreaseJoltage :: Joltage -> WiringSchematic -> Joltage
+decreaseJoltage (Joltage ls) (WiringSchematic indices) = Joltage $ foldl decrease ls indices
   where
-    increase :: [Int] -> Int -> [Int]
-    increase xs i = xs & element i %~ (+ 1)
+    decrease :: [Int] -> Int -> [Int]
+    decrease xs i = xs & element i %~ subtract 1
 
 solveJoltage :: Machine -> Int
 solveJoltage m = case shortestPath of
@@ -95,29 +96,25 @@ solveJoltage m = case shortestPath of
     Nothing -> error "No solution found"
   where
     shortestPath :: Maybe (Int, [Joltage])
-    shortestPath = aStar (neighbors `pruning` exceedsRequirements) cost estimatedCostToGoal isGoal initialState
+    shortestPath = aStar (neighbors `pruning` belowZero) cost estimatedCostToGoal isGoal initialState
 
-    exceedsRequirements :: Joltage -> Bool
-    exceedsRequirements (Joltage current) = any (uncurry (>)) (zip current target)
-      where (Joltage target) = requirements m
+    belowZero :: Joltage -> Bool
+    belowZero (Joltage current) = any (< 0) current
 
     neighbors :: Joltage -> [Joltage]
-    neighbors joltage = map (increaseJoltage joltage) (schematics m)
+    neighbors joltage = map (decreaseJoltage joltage) (schematics m)
 
     cost :: Joltage -> Joltage -> Int
     cost _ _ = 1
 
     estimatedCostToGoal :: Joltage -> Int
-    estimatedCostToGoal (Joltage current) = sum $ zipWith diff current target
-      where
-        (Joltage target) = requirements m
-        diff a b = max 0 (b - a)
+    estimatedCostToGoal (Joltage current) = maximum current
 
     isGoal :: Joltage -> Bool
-    isGoal joltage = joltage == requirements m
+    isGoal (Joltage current) = all (== 0) current
 
     initialState :: Joltage
-    initialState = Joltage $ replicate (length (targetLights m)) 0
+    initialState = requirements m
 
 part2 :: Input -> IO ()
 part2 input = do
