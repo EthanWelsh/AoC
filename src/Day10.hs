@@ -126,12 +126,9 @@ solveJoltage m = fromMaybe (error "No solution found") (minPresses (let (Joltage
     -- Process a candidate subset: apply buttons, check validity, halve joltages, and recurse
     processCandidate :: [Int] -> [[Int]] -> Maybe Int
     processCandidate start subset =
-      case applySubset start subset of
-        reduced
-          | any (< 0) reduced -> Nothing
-          | otherwise ->
-              let nextJoltage = map (`div` 2) reduced
-               in fmap (\v -> length subset + 2 * v) (minPresses nextJoltage)
+      let reduced = applySubset start subset
+          nextJoltage = map (`div` 2) reduced
+      in fmap (\v -> length subset + 2 * v) (minPresses nextJoltage)
 
 part2 :: Input -> IO ()
 part2 input = do
