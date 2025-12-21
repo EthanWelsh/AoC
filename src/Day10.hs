@@ -1,31 +1,34 @@
-{-# OPTIONS_GHC -Wno-unused-top-binds #-}
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 {-# OPTIONS_GHC -Wno-unused-local-binds #-}
+{-# OPTIONS_GHC -Wno-unused-top-binds #-}
+
 module Day10 (solve) where
 
-import Text.Megaparsec (parse, errorBundlePretty, between, sepBy, many, (<|>))
-import Utils.Parsers (Parser, sc, lexeme, symbol, integer)
-import Text.Megaparsec.Char (char)
 import Algorithm.Search
 import Control.Lens (element, (%~), (&))
-import Data.Maybe (mapMaybe, fromMaybe, catMaybes)
-import Data.List (subsequences)
 import Data.Function.Memoize (memoize)
-
+import Data.List (subsequences)
+import Data.Maybe (catMaybes, fromMaybe, mapMaybe)
+import Text.Megaparsec (between, errorBundlePretty, many, parse, sepBy, (<|>))
+import Text.Megaparsec.Char (char)
+import Utils.Parsers (Parser, integer, lexeme, sc, symbol)
 
 data Light = On | Off deriving (Show, Eq, Ord)
+
 newtype WiringSchematic = WiringSchematic [Int] deriving (Show, Eq, Ord)
+
 newtype Joltage = Joltage [Int] deriving (Show, Eq, Ord)
 
 data Machine = Machine
-  { targetLights :: [Light]
-  , schematics :: [WiringSchematic]
-  , requirements :: Joltage
-  } deriving (Show, Eq, Ord)
+  { targetLights :: [Light],
+    schematics :: [WiringSchematic],
+    requirements :: Joltage
+  }
+  deriving (Show, Eq, Ord)
 
 type Input = [Machine]
 
--- The manual describes one machine per line. 
+-- The manual describes one machine per line.
 -- Each line contains:
 --   - a single indicator light diagram in [square brackets]
 --   - one or more button wiring schematics in (parentheses)
@@ -63,8 +66,8 @@ toggleLights ls (WiringSchematic indices) = foldl toggle ls indices
 
 solveLights :: Machine -> Int
 solveLights m = case shortestPath of
-    Just (c, _) -> c
-    Nothing -> error "No solution found"
+  Just (c, _) -> c
+  Nothing -> error "No solution found"
   where
     shortestPath :: Maybe (Int, [[Light]])
     shortestPath = dijkstra neighbors cost isGoal initialState
@@ -86,51 +89,48 @@ part1 input = do
   putStr "Part 1: "
   print $ sum $ map solveLights input
 
-decreaseJoltage :: Joltage -> WiringSchematic -> Joltage
-decreaseJoltage (Joltage ls) (WiringSchematic indices) = Joltage $ foldl decrease ls indices
-  where
-    decrease :: [Int] -> Int -> [Int]
-    decrease xs i = xs & element i %~ subtract 1
-
 solveJoltage :: Machine -> Int
-solveJoltage m = fromMaybe (error "No solution found") (solve (let (Joltage r) = requirements m in r))
+solveJoltage m = fromMaybe (error "No solution found") (minPresses (let (Joltage r) = requirements m in r))
   where
-    buttons = schematics m
+    buttons :: [[Int]]
+    buttons = map (\(WiringSchematic b) -> b) (schematics m)
+
+    allSubsets :: [[[Int]]]
     allSubsets = subsequences buttons
 
-    solve :: [Int] -> Maybe Int
-    solve = memoize solve'
+    minPresses :: [Int] -> Maybe Int
+    minPresses = memoize go
 
-    solve' :: [Int] -> Maybe Int
-    solve' current
+    go :: [Int] -> Maybe Int
+    go current
       | all (== 0) current = Just 0
       | any (< 0) current = Nothing
       | otherwise =
-          let candidates = filter (isEvenAfter current) allSubsets
-              results = map (processCandidate current) candidates
-              validResults = catMaybes results
-          in if null validResults then Nothing else Just (minimum validResults)
+          let -- Find subsets of buttons that leave all joltages even
+              candidates = filter (isEvenAfter current) allSubsets
+              -- Calculate costs for valid candidates
+              results = mapMaybe (processCandidate current) candidates
+           in if null results then Nothing else Just (minimum results)
 
-    isEvenAfter :: [Int] -> [WiringSchematic] -> Bool
-    isEvenAfter start subset =
-        let res = applySubset start subset
-        in all even res
+    -- Apply a subset of buttons (indices) to the current joltage levels
+    applySubset :: [Int] -> [[Int]] -> [Int]
 
-    applySubset :: [Int] -> [WiringSchematic] -> [Int]
-    applySubset start subset =
-        let (Joltage res) = foldl decreaseJoltage (Joltage start) subset
-        in res
+    -- Decrease joltage at specific indices
+    decrease :: [Int] -> [Int] -> [Int]
 
-    processCandidate :: [Int] -> [WiringSchematic] -> Maybe Int
+    isEvenAfter :: [Int] -> [[Int]] -> Bool
+    isEvenAfter start subset = all even (applySubset start subset)
+
+    processCandidate :: [Int] -> [[Int]] -> Maybe Int
     processCandidate start subset =
-        let reduced = applySubset start subset
-        in if any (< 0) reduced
-           then Nothing
-           else
-             let nextJoltage = map (`div` 2) reduced
-             in case solve nextJoltage of
-                  Nothing -> Nothing
-                  Just v -> Just (length subset + 2 * v)
+      let reduced = applySubset start subset
+       in if any (< 0) reduced
+            then Nothing
+            else
+              let nextJoltage = map (`div` 2) reduced
+               in fmap (\v -> length subset + 2 * v) (minPresses nextJoltage)
+    applySubset = foldl decrease
+    decrease = foldl (\acc i -> acc & element i %~ subtract 1)
 
 part2 :: Input -> IO ()
 part2 input = do
@@ -141,7 +141,7 @@ solve :: FilePath -> IO ()
 solve filePath = do
   contents <- readFile filePath
   case parse parseInput filePath contents of
-          Left eb -> putStr (errorBundlePretty eb)
-          Right input -> do
-            part1 input
-            part2 input
+    Left eb -> putStr (errorBundlePretty eb)
+    Right input -> do
+      part1 input
+      part2 input
