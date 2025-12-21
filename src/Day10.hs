@@ -8,7 +8,9 @@ import Utils.Parsers (Parser, sc, lexeme, symbol, integer)
 import Text.Megaparsec.Char (char)
 import Algorithm.Search
 import Control.Lens (element, (%~), (&))
-import Data.Maybe (mapMaybe, fromMaybe)
+import Data.Maybe (mapMaybe, fromMaybe, catMaybes)
+import Data.List (subsequences)
+import Data.Function.Memoize (memoize)
 
 
 data Light = On | Off deriving (Show, Eq, Ord)
@@ -91,30 +93,44 @@ decreaseJoltage (Joltage ls) (WiringSchematic indices) = Joltage $ foldl decreas
     decrease xs i = xs & element i %~ subtract 1
 
 solveJoltage :: Machine -> Int
-solveJoltage m = case shortestPath of
-    Just (c, _) -> c
-    Nothing -> error "No solution found"
+solveJoltage m = fromMaybe (error "No solution found") (solve (let (Joltage r) = requirements m in r))
   where
-    shortestPath :: Maybe (Int, [Joltage])
-    shortestPath = aStar (neighbors `pruning` belowZero) cost estimatedCostToGoal isGoal initialState
+    buttons = schematics m
+    allSubsets = subsequences buttons
 
-    belowZero :: Joltage -> Bool
-    belowZero (Joltage current) = any (< 0) current
+    solve :: [Int] -> Maybe Int
+    solve = memoize solve'
 
-    neighbors :: Joltage -> [Joltage]
-    neighbors joltage = map (decreaseJoltage joltage) (schematics m)
+    solve' :: [Int] -> Maybe Int
+    solve' current
+      | all (== 0) current = Just 0
+      | any (< 0) current = Nothing
+      | otherwise =
+          let candidates = filter (isEvenAfter current) allSubsets
+              results = map (processCandidate current) candidates
+              validResults = catMaybes results
+          in if null validResults then Nothing else Just (minimum validResults)
 
-    cost :: Joltage -> Joltage -> Int
-    cost _ _ = 1
+    isEvenAfter :: [Int] -> [WiringSchematic] -> Bool
+    isEvenAfter start subset =
+        let res = applySubset start subset
+        in all even res
 
-    estimatedCostToGoal :: Joltage -> Int
-    estimatedCostToGoal (Joltage current) = maximum current
+    applySubset :: [Int] -> [WiringSchematic] -> [Int]
+    applySubset start subset =
+        let (Joltage res) = foldl decreaseJoltage (Joltage start) subset
+        in res
 
-    isGoal :: Joltage -> Bool
-    isGoal (Joltage current) = all (== 0) current
-
-    initialState :: Joltage
-    initialState = requirements m
+    processCandidate :: [Int] -> [WiringSchematic] -> Maybe Int
+    processCandidate start subset =
+        let reduced = applySubset start subset
+        in if any (< 0) reduced
+           then Nothing
+           else
+             let nextJoltage = map (`div` 2) reduced
+             in case solve nextJoltage of
+                  Nothing -> Nothing
+                  Just v -> Just (length subset + 2 * v)
 
 part2 :: Input -> IO ()
 part2 input = do
