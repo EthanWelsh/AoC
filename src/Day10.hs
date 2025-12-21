@@ -100,37 +100,38 @@ solveJoltage m = fromMaybe (error "No solution found") (minPresses (let (Joltage
 
     minPresses :: [Int] -> Maybe Int
     minPresses = memoize go
-
-    go :: [Int] -> Maybe Int
-    go current
-      | all (== 0) current = Just 0
-      | any (< 0) current = Nothing
-      | otherwise =
-          let -- Find subsets of buttons that leave all joltages even
-              candidates = filter (isEvenAfter current) allSubsets
-              -- Calculate costs for valid candidates
-              results = mapMaybe (processCandidate current) candidates
-           in if null results then Nothing else Just (minimum results)
+      where
+        go current
+          | all (== 0) current = Just 0
+          | any (< 0) current = Nothing
+          | otherwise =
+              let -- Find subsets of buttons that leave all joltages even
+                  candidates = filter (isEvenAfter current) allSubsets
+                  -- Calculate costs for valid candidates
+                  results = mapMaybe (processCandidate current) candidates
+              in if null results then Nothing else Just (minimum results)
 
     -- Apply a subset of buttons (indices) to the current joltage levels
     applySubset :: [Int] -> [[Int]] -> [Int]
+    applySubset = foldl decrease
 
     -- Decrease joltage at specific indices
     decrease :: [Int] -> [Int] -> [Int]
+    decrease = foldl (\acc i -> acc & element i %~ subtract 1)
 
+    -- Check if applying a subset of buttons leaves all joltages even
     isEvenAfter :: [Int] -> [[Int]] -> Bool
     isEvenAfter start subset = all even (applySubset start subset)
 
+    -- Process a candidate subset: apply buttons, check validity, halve joltages, and recurse
     processCandidate :: [Int] -> [[Int]] -> Maybe Int
     processCandidate start subset =
-      let reduced = applySubset start subset
-       in if any (< 0) reduced
-            then Nothing
-            else
+      case applySubset start subset of
+        reduced
+          | any (< 0) reduced -> Nothing
+          | otherwise ->
               let nextJoltage = map (`div` 2) reduced
                in fmap (\v -> length subset + 2 * v) (minPresses nextJoltage)
-    applySubset = foldl decrease
-    decrease = foldl (\acc i -> acc & element i %~ subtract 1)
 
 part2 :: Input -> IO ()
 part2 input = do
