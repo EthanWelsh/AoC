@@ -44,7 +44,6 @@ executable aoc2025
                      , vector
                      , split
                      , data-interval
-                     , hashmap
                      , lens
                      , search-algorithms
                      , time
