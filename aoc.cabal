@@ -1,0 +1,117 @@
+cabal-version:       2.2
+
+name:                aoc
+version:             0.1.0.0
+
+license:             Unlicense
+license-file:        LICENSE
+author:              Ethan Welsh
+maintainer:          example@example.com
+copyright:           2023 Ethan Welsh
+category:            Web
+build-type:          Simple
+extra-source-files:  README.md
+
+executable aoc
+  hs-source-dirs:      src, utils, years
+  main-is:             Main.hs
+  other-modules:       Parsers
+                     , List
+                     , Graph
+                     , Maze
+                     , Search
+                     , Range
+                     , Year2025.Day00
+                     , Year2025.Day01
+                     , Year2025.Day02
+                     , Year2025.Day03
+                     , Year2025.Day04
+                     , Year2025.Day05
+                     , Year2025.Day06
+                     , Year2025.Day07
+                     , Year2025.Day08
+                     , Year2025.Day09
+                     , Year2025.Day10
+                     , Year2025.Day11
+                     , Year2025.Day12
+                     , Year2023.Day01
+                     , Year2023.Day02
+                     , Year2023.Day03
+                     , Year2023.Day04
+                     , Year2023.Day05
+                     , Year2023.Day06
+                     , Year2023.Day07
+                     , Year2023.Day08
+                     , Year2023.Day09
+                     , Year2023.Day10
+                     , Year2023.Day11
+                     , Year2023.Day12
+                     , Year2023.Day13
+                     , Year2023.Day14
+                     , Year2023.Day15
+                     , Year2023.Day16
+                     , Year2023.Day17
+                     , Year2023.Day18
+                     , Year2023.Day19
+                     , Year2023.Day20
+                     , Year2023.Day21
+                     , Year2023.Day23
+                     , Year2023.Day24
+                     , Year2023.Day25
+  default-language:    Haskell2010
+  default-extensions:  TupleSections
+  build-depends:       base >= 4.7 && < 5
+                     , megaparsec >= 9.0 && < 10
+                     , extra
+                     , containers
+                     , vector-algorithms
+                     , vector
+                     , split
+                     , data-interval
+                     , lens
+                     , search-algorithms
+                     , time
+                     , range
+                     , template-haskell
+                     , unordered-containers
+                     , ansi-terminal
+                     , directory
+                     , optparse-applicative
+                     , parser-combinators
+                     , text
+                     , mtl
+                     , vector
+                     , memoize
+                     , hashmap
+  ghc-options:         -Wall
+                       -Wcompat
+                       -Widentities
+                       -Wincomplete-record-updates
+                       -Wincomplete-uni-patterns
+                       -Wmissing-export-lists
+                       -Wmissing-home-modules
+                       -Wpartial-fields
+                       -Wredundant-constraints
+
+test-suite aoc-test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      years/Year2025/test, src, utils, years
+  main-is:             Spec.hs
+  other-modules:       Day00Spec
+                     , Day01Spec
+                     , GraphSpec
+                     , Graph
+                     , List
+                     , Parsers
+                     , Year2025.Day00
+                     , Year2025.Day01
+  default-extensions:  TupleSections
+  build-depends:       base >= 4.7 && < 5
+                     , hspec >= 2.10 && < 3
+                     , QuickCheck >= 2.14
+                     , containers
+                     , megaparsec
+                     , memoize
+                     , extra
+  default-language:    Haskell2010
+  ghc-options:         -Wall -threaded -rtsopts -with-rtsopts=-N
