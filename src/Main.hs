@@ -21,14 +21,47 @@ import qualified Year2023.Day05
 import qualified Year2023.Day06
 import qualified Year2023.Day07
 import qualified Year2023.Day08
+import qualified Year2023.Day09
 import qualified Year2023.Day10
+import qualified Year2023.Day11
 import qualified Year2023.Day12
+import qualified Year2023.Day13
+import qualified Year2023.Day14
 import qualified Year2023.Day15
+import qualified Year2023.Day16
 import qualified Year2023.Day17
+import qualified Year2023.Day18
+import qualified Year2023.Day19
+import qualified Year2023.Day20
 import qualified Year2023.Day21
 import qualified Year2023.Day23
 import qualified Year2023.Day24
 import qualified Year2023.Day25
+import qualified Year2022.Day01
+import qualified Year2022.Day02
+import qualified Year2022.Day03
+import qualified Year2022.Day04
+import qualified Year2022.Day05
+import qualified Year2022.Day06
+import qualified Year2022.Day07
+import qualified Year2022.Day08
+import qualified Year2022.Day09
+import qualified Year2022.Day10
+import qualified Year2022.Day11
+import qualified Year2022.Day12
+import qualified Year2022.Day13
+import qualified Year2022.Day14
+import qualified Year2022.Day15
+import qualified Year2022.Day16
+import qualified Year2022.Day17
+import qualified Year2022.Day18
+import qualified Year2022.Day19
+import qualified Year2022.Day20
+import qualified Year2022.Day21
+import qualified Year2022.Day22
+import qualified Year2022.Day23
+import qualified Year2022.Day24
+import qualified Year2022.Day25
 
 import           System.Environment (getArgs)
 import           Text.Printf (printf)
@@ -62,29 +95,58 @@ solvers2023 =
     , Year2023.Day06.solve
     , Year2023.Day07.solve
     , Year2023.Day08.solve
-    , (\_ -> putStrLn "Day 9 not implemented")
+    , Year2023.Day09.solve
     , Year2023.Day10.solve
-    , (\_ -> putStrLn "Day 11 not implemented")
+    , Year2023.Day11.solve
     , Year2023.Day12.solve
-    , (\_ -> putStrLn "Day 13 not implemented")
-    , (\_ -> putStrLn "Day 14 not implemented")
+    , Year2023.Day13.solve
+    , Year2023.Day14.solve
     , Year2023.Day15.solve
-    , (\_ -> putStrLn "Day 16 not implemented")
+    , Year2023.Day16.solve
     , Year2023.Day17.solve
-    , (\_ -> putStrLn "Day 18 not implemented")
-    , (\_ -> putStrLn "Day 19 not implemented")
-    , (\_ -> putStrLn "Day 20 not implemented")
+    , Year2023.Day18.solve
+    , Year2023.Day19.solve
+    , Year2023.Day20.solve
     , Year2023.Day21.solve
-    , (\_ -> putStrLn "Day 22 not implemented")
     , Year2023.Day23.solve
     , Year2023.Day24.solve
     , Year2023.Day25.solve
+    ]
+
+solvers2022 :: [FilePath -> IO ()]
+solvers2022 =
+    [ Year2022.Day01.solve
+    , Year2022.Day02.solve
+    , Year2022.Day03.solve
+    , Year2022.Day04.solve
+    , Year2022.Day05.solve
+    , Year2022.Day06.solve
+    , Year2022.Day07.solve
+    , Year2022.Day08.solve
+    , Year2022.Day09.solve
+    , Year2022.Day10.solve
+    , Year2022.Day11.solve
+    , Year2022.Day12.solve
+    , Year2022.Day13.solve
+    , Year2022.Day14.solve
+    , Year2022.Day15.solve
+    , Year2022.Day16.solve
+    , Year2022.Day17.solve
+    , Year2022.Day18.solve
+    , Year2022.Day19.solve
+    , Year2022.Day20.solve
+    , Year2022.Day21.solve
+    , Year2022.Day22.solve
+    , Year2022.Day23.solve
+    , Year2022.Day24.solve
+    , Year2022.Day25.solve
     ]
 
 solvers :: Map String [FilePath -> IO ()]
 solvers = Map.fromList
     [ ("2025", solvers2025)
     , ("2023", solvers2023)
+    , ("2022", solvers2022)
     ]
 
 main :: IO ()
