@@ -21,7 +21,7 @@ executable aoc
                      , Maze
                      , Search
                      , Range
-                     , Year2025.Day00
+                     , Year2024.Day24
                      , Year2025.Day01
                      , Year2025.Day02
                      , Year2025.Day03
@@ -83,6 +83,58 @@ executable aoc
                      , Year2022.Day23
                      , Year2022.Day24
                      , Year2022.Day25
+                     , Year2019.Day01
+                     , Year2019.Day02
+                     , Year2019.Day03
+                     , Year2019.Day04
+                     , Year2019.Day05
+                     , Year2019.Day06
+                     , Year2019.Day07
+                     , Year2019.Day08
+                     , Year2019.Day09
+                     , Year2019.Day10
+                     , Year2019.Day11
+                     , Year2019.Day12
+                     , Year2019.Day13
+                     , Year2019.Day14
+                     , Year2019.Day15
+                     , Year2019.Day16
+                     , Year2019.Day17
+                     , Year2019.Day18
+                     , Year2019.Day19
+                     , Year2019.Day20
+                     , Year2019.Day21
+                     , Year2019.Day22
+                     , Year2019.Day23
+                     , Year2019.Day24
+                     , Year2019.Day25
+                     , Year2021.Day01
+                     , Year2021.Day02
+                     , Year2021.Day03
+                     , Year2021.Day04
+                     , Year2021.Day05
+                     , Year2021.Day06
+                     , Year2021.Day07
+                     , Year2021.Day08
+                     , Year2021.Day09
+                     , Year2021.Day10
+                     , Year2021.Day11
+                     , Year2021.Day12
+                     , Year2021.Day13
+                     , Year2021.Day14
+                     , Year2021.Day15
+                     , Year2021.Day16
+                     , Year2021.Day17
+                     , Year2021.Day18
+                     , Year2021.Day19
+                     , Year2021.Day20
+                     , Year2021.Day21
+                     , Year2021.Day22
+                     , Year2021.Day23
+                     , Year2021.Day24
+                     , Year2021.Day25
+                     , Intcode
+                     , ParserUtils
                      , Matrix
                      , Util
   default-language:    Haskell2010
@@ -101,8 +153,8 @@ executable aoc
                      , range
                      , template-haskell
                      , unordered-containers
-                     , ansi-terminal
                      , directory
+                     , process
                      , optparse-applicative
                      , parser-combinators
                      , text
@@ -125,13 +177,12 @@ test-suite aoc-test
   type:                exitcode-stdio-1.0
   hs-source-dirs:      years/Year2025/test, src, utils, years
   main-is:             Spec.hs
-  other-modules:       Day00Spec
+  other-modules:       Day24Spec
                      , Day01Spec
                      , GraphSpec
                      , Graph
                      , List
                      , Parsers
-                     , Year2025.Day00
                      , Year2025.Day01
   default-extensions:  TupleSections
   build-depends:       base >= 4.7 && < 5
