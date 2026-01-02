@@ -1,8 +1,22 @@
 #!/bin/zsh
 
+INTERACTIVE=false
+
+# Parse flags
+for arg in "$@"; do
+    case "$arg" in
+        -i|--interactive)
+            INTERACTIVE=true
+            shift
+            ;;
+        *)
+            ;;
+    esac
+done
+
 # Check for correct number of arguments
 if [ "$#" -ne 3 ]; then
-    echo "Usage: $0 <year> <day> <sample|real>"
+    echo "Usage: $0 [--interactive|-i] <year> <day> <sample|real>"
     exit 1
 fi
 
@@ -16,8 +30,14 @@ DAY_STR=$(printf "%02d" "${DAY}")
 # Check for Haskell solution first
 echo "Checking for Haskell: years/Year${YEAR}/Day${DAY_STR}.hs"
 if [ -f "years/Year${YEAR}/Day${DAY_STR}.hs" ]; then
-    echo "Running Haskell solution for Day ${DAY_STR}, Year ${YEAR} (${SAMPLE_OR_REAL} input)..."
-    stack run aoc "${YEAR}" "${DAY}" "${SAMPLE_OR_REAL}"
+    if [ "$INTERACTIVE" = true ]; then
+        echo "Running Haskell solution for Day ${DAY_STR}, Year ${YEAR} (${SAMPLE_OR_REAL} input) in interactive mode..."
+        INPUT_FILE="input/${SAMPLE_OR_REAL}/Day${DAY_STR}.txt"
+        ghcid --command="stack ghci --main-is aoc:exe:aoc" --setup ":set args ${YEAR} ${DAY} ${SAMPLE_OR_REAL}" --run="Main.main" --warnings
+    else
+        echo "Running Haskell solution for Day ${DAY_STR}, Year ${YEAR} (${SAMPLE_OR_REAL} input)..."
+        stack run aoc "${YEAR}" "${DAY}" "${SAMPLE_OR_REAL}"
+    fi
 elif [ -f "years/Year${YEAR}/Day${DAY_STR}.rs" ]; then
     echo "Running Rust solution for Day ${DAY_STR}, Year ${YEAR} (${SAMPLE_OR_REAL} input)..."
     
@@ -40,8 +60,13 @@ elif [ -f "years/Year${YEAR}/Day${DAY_STR}.rs" ]; then
         fi
     fi
 
-    # Run Rust solution
-    (cd "years/Year${YEAR}" && cargo run --release --bin "day${DAY_STR}")
+    if [ "$INTERACTIVE" = true ]; then
+        echo "Running Rust solution for Day ${DAY_STR}, Year ${YEAR} (${SAMPLE_OR_REAL} input) in interactive mode..."
+        (cd "years/Year${YEAR}" && cargo watch -x "run --bin day${DAY_STR}")
+    else
+        # Run Rust solution
+        (cd "years/Year${YEAR}" && cargo run --release --bin "day${DAY_STR}")
+    fi
 else
     echo "No solution found for Day ${DAY_STR}, Year ${YEAR}."
     exit 1

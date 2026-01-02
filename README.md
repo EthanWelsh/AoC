@@ -19,8 +19,20 @@ The repository is organized as a mono-repo with the following structure:
 To run a solution for a specific day, use the `run_day.zsh` script:
 
 ```bash
-./run_day.zsh <year> <day> <sample|real>
+./run_day.zsh [--interactive|-i] <year> <day> <sample|real>
 ```
+
+**Interactive Mode:**
+
+To run a solution in interactive mode (e.g., with `ghcid` for Haskell or `cargo watch` for Rust), use the `--interactive` or `-i` flag:
+
+```bash
+./run_day.zsh --interactive 2025 1 real
+```
+
+This will start a live-reloading development environment, automatically re-running your solution whenever you save changes to the code.
+
+**Normal Run:**
 
 For example, to run the solution for Day 1 of 2025 with the real input:
 
