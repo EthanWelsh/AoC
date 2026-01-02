@@ -1,9 +1,12 @@
 module Search (
   hasPath,
   allPaths,
+  bfs
 ) where
 
 import qualified Data.Set as S
+import qualified Data.Sequence as Seq
+import Data.Sequence (Seq((:<|)), (|>))
 
 -- | Determine whether there exists a path from the start node to any node
 --   satisfying the 'isEnd' predicate using the provided neighbor function.
@@ -28,3 +31,16 @@ allPathsHelper neighbors isEnd path n
   | isEnd n = [path]
   | n `elem` path = []
   | otherwise = concatMap (allPathsHelper neighbors isEnd (n:path)) (neighbors n)
+
+-- | Perform a breadth-first search.
+bfs :: Ord a => (a -> [a]) -> (a -> Bool) -> a -> Maybe Int
+bfs getNeighbors isGoal start = bfs' (Seq.singleton (start, 0)) (S.singleton start)
+  where
+    bfs' Seq.Empty _ = Nothing
+    bfs' ((curr, dist) :<| queue) visited
+      | isGoal curr = Just dist
+      | otherwise =
+          let newNeighbors = filter (`S.notMember` visited) (getNeighbors curr)
+              newVisited = foldr S.insert visited newNeighbors
+              newQueue = foldr (\n q -> q |> (n, dist + 1)) queue newNeighbors
+          in bfs' newQueue newVisited

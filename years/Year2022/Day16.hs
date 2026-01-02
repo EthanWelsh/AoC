@@ -1,31 +1,31 @@
+{-# LANGUAGE OverloadedStrings #-}
 module Year2022.Day16 (solve) where
 
-import           Algorithm.Search
-import           Control.Applicative        ((<|>))
-import           Control.Monad              (void)
-import           Data.Function              (on)
-import           Data.List
-import qualified Data.Map.Strict            as Map
-import           Data.Maybe
-import qualified Data.Set                   as Set
-import           Parsers                    (Parser)
-import           Text.Megaparsec hiding (State)
-import           Text.Megaparsec.Char
+{- ORMOLU_DISABLE -}
+import Data.List
+import Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map
+import Data.Maybe
+import Data.Set (Set)
+import qualified Data.Set as Set
+import Data.Vector (Vector)
+import qualified Data.Vector as Vec
+import Control.Monad (void)
+import Control.Applicative ((<|>))
+import Algorithm.Search
+import Data.Functor (($>))
+import Data.Function
+import Data.Void
+import Text.Megaparsec hiding (State)
+import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+{- ORMOLU_ENABLE -}
 
-type Input = Graph
-type Graph = Map.Map String Valve
-type Costs = Map.Map String (Map.Map String Int)
+type Parser = Parsec Void T.Text
 
-data Valve = Valve { valvePressure  :: Int
-                   , valveNeighbors :: Set.Set String } deriving (Eq, Show, Ord)
-
-data State = State { location          :: String
-                   , minute            :: Int
-                   , pressurePerMinute :: Int
-                   , totalPressure     :: Int
-                   , openValves        :: Set.Set String } deriving (Eq, Show, Ord)
-
+------------ PARSER ------------
 valveParser :: Parser String
 valveParser = count 2 letterChar
 
@@ -51,8 +51,30 @@ lineParser = do
 
 inputParser :: Parser Graph
 inputParser = do
-    valves <- lineParser `sepEndBy` eol
+    valves <- lineParser `sepBy` eol
     return $ Map.fromList valves
+
+------------ TYPES ------------
+type Input = Graph
+
+type Graph = Map String Valve
+
+type Costs = Map String (Map String Int)
+
+data Valve = Valve { valvePressure  :: Int
+                   , valveNeighbors :: Set String } deriving (Eq, Show, Ord)
+
+data State = State { location          :: String
+                   , minute            :: Int
+                   , pressurePerMinute :: Int
+                   , totalPressure     :: Int
+                   , openValves        :: Set String } deriving (Eq, Show, Ord)
+
+type OutputA = Int
+
+type OutputB = Int
+
+------------ PART A ------------
 
 startState :: State
 startState = State { location = "AA", minute = 0, pressurePerMinute = 0, totalPressure = 0, openValves = Set.empty }
@@ -63,11 +85,11 @@ helpfulValves graph = Map.keys $ Map.filter ((> 0) . valvePressure) graph
 pathCost :: Graph -> String -> String -> Int
 pathCost graph origin destination = fst . fromJust $ dijkstra neighbors cost isGoal origin
     where
-        neighbors v = Set.toList $ valveNeighbors (graph Map.! v)
+        neighbors v = valveNeighbors (graph Map.! v)
         cost _ _ = 1
         isGoal = (== destination)
 
-mapify :: (Ord a, Ord b) => [(a, b, c)] -> Map.Map a (Map.Map b c)
+mapify :: (Ord a, Ord b) => [(a, b, c)] -> Map a (Map b c)
 mapify = foldl' (\m (o, d, c) -> Map.insertWith Map.union o (Map.singleton d c) m) Map.empty
 
 getCosts :: Graph -> Costs
@@ -106,7 +128,7 @@ totalPressureAtEnd state = let
 visitAll :: Graph -> Costs -> State -> State
 visitAll graph costs state = let
     origin = location state                                                        :: String
-    unopened = filter (`Set.notMember` openValves state) . Map.keys $ costs Map.! origin :: [String]
+    unopened = filter (`notElem` openValves state) . Map.keys $ costs Map.! origin :: [String]
     children = mapMaybe (visitDestination graph costs state) unopened              :: [State]
     bestForEachChild = map (visitAll graph costs) children                         :: [State]
     bestOverall = maximumBy (compare `on` totalPressure) bestForEachChild          :: State
@@ -116,21 +138,24 @@ visitAll graph costs state = let
         then state { minute = 30, totalPressure = pressureIfWaitTillEnd }
         else bestOverall
 
-partA :: Input -> String
+partA :: Input -> IO ()
 partA graph = do
     let costs = getCosts graph
-    show $ totalPressureAtEnd $ visitAll graph costs startState
+    print $ helpfulValves graph
+    print $ visitAll graph costs startState
 
-partB :: Input -> String
-partB graph = show "hello"
+------------ PART B ------------
+partB :: Input -> IO ()
+partB graph = print "hello"
 
+------------ SOLVE ------------
 solve :: FilePath -> IO ()
 solve filePath = do
-  contents <- readFile filePath
+  contents <- TIO.readFile filePath
   case parse inputParser filePath contents of
     Left eb -> putStr (errorBundlePretty eb)
     Right input -> do
       putStr "Part 1: "
-      putStrLn $ partA input
+      partA input
       putStr "Part 2: "
-      putStrLn $ partB input
+      partB input

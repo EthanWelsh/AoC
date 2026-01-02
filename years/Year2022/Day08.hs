@@ -1,16 +1,38 @@
 module Year2022.Day08 (solve) where
 
-import           Data.List
-import           Matrix
-import           Text.Megaparsec
-import           Text.Megaparsec.Char
-import           Parsers (Parser)
+{- ORMOLU_DISABLE -}
+import Data.List
+import Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map
+import Data.Maybe
+import Data.Set (Set)
+import qualified Data.Set as Set
+import Data.Vector (Vector)
+import qualified Data.Vector as Vec
+import Matrix
+import qualified Parsers as P
+import Data.Void (Void)
+import Text.Megaparsec
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+{- ORMOLU_ENABLE -}
 
+type Parser = Parsec Void T.Text
+
+------------ PARSER ------------
+inputParser :: Parser Input
+inputParser = map T.unpack . T.lines <$> takeRest
+
+------------ TYPES ------------
 type Trees = Matrix Char
+
 type Input = Trees
 
-inputParser :: Parser Input
-inputParser = some (noneOf "\n") `sepEndBy` eol
+type OutputA = Int
+
+type OutputB = Int
+
+------------ PART A ------------
 
 range :: Int -> Int -> [Int]
 range start end
@@ -42,10 +64,12 @@ isVisible ts p = let
 countWhere :: (a -> Bool) -> [a] -> Int
 countWhere pred xs = length $ filter pred xs
 
-partA :: Input -> Int
+partA :: Input -> OutputA
 partA trees = let
     allPoints = getAllPoints trees
     in countWhere (isVisible trees) allPoints
+
+------------ PART B ------------
 
 countDecreasingFrom :: Ord a => a -> [a] -> Int
 countDecreasingFrom _ [] = 0
@@ -61,7 +85,7 @@ getScore ts p = let
     linesOfSiteValues = map (map (get ts)) linesOfSitePoints  :: [[Char]]
     in product $ map countDecreasing linesOfSiteValues
 
-partB :: Input -> Int
+partB :: Input -> OutputB
 partB ts = let
     allPoints = getAllPoints ts :: [Point]
     allScores = map (getScore ts) allPoints :: [Int]
@@ -69,7 +93,7 @@ partB ts = let
 
 solve :: FilePath -> IO ()
 solve filePath = do
-  contents <- readFile filePath
+  contents <- TIO.readFile filePath
   case parse inputParser filePath contents of
     Left eb -> putStr (errorBundlePretty eb)
     Right input -> do

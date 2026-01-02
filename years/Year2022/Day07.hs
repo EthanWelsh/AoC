@@ -1,46 +1,72 @@
+{-# LANGUAGE OverloadedStrings #-}
 module Year2022.Day07 (solve) where
 
-import           Control.Applicative        ((<|>))
-import           Control.Monad              (void)
-import           Data.List
-import           Text.Megaparsec
-import           Text.Megaparsec.Char
+{- ORMOLU_DISABLE -}
+import Data.List
+import Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map
+import Data.Maybe
+import Data.Set (Set)
+import qualified Data.Set as Set
+import Data.Vector (Vector)
+import qualified Data.Vector as Vec
+import Control.Monad (void)
+import Control.Applicative ((<|>))
+import Data.Functor (($>))
+import Data.Void (Void)
+import Text.Megaparsec
+import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
-import           Parsers                    (Parser)
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+{- ORMOLU_ENABLE -}
 
-data Command = CD String | LS [Entity] deriving (Eq, Show)
-data Entity = Nil | File { name :: String, size :: Int } | Directory { name :: String, children :: [Entity], parent :: Entity } deriving (Eq, Show)
-type Input = [Command]
+type Parser = Parsec Void T.Text
 
+------------ PARSER ------------
 cdParser :: Parser Command
 cdParser = do
     void $ string "$ cd "
-    name <- some (noneOf "\n")
-    void eol
-    return (CD name)
+    name <- takeWhileP Nothing (/= '\n')
+    void $ eol
+    return (CD (T.unpack name))
 
 lsFileResultParser :: Parser Entity
 lsFileResultParser = do
     size <- L.decimal
     void $ char ' '
-    name <- some (noneOf "\n")
-    return File {name = name, size = size}
+    name <- takeWhileP Nothing (/= '\n')
+    return File {name = T.unpack name, size = size} 
 
 lsDirResultParser :: Parser Entity
 lsDirResultParser = do
     void $ string "dir "
-    name <- some (noneOf "\n")
-    return Directory { name = name, children = [], parent = Nil}
+    name <- takeWhileP Nothing (/= '\n')
+    return Directory { name = T.unpack name, children = [], parent = Nil}
 
 lsParser :: Parser Command
 lsParser = do
     void $ string "$ ls"
-    void eol
+    void $ eol
     results <- (lsFileResultParser <|> lsDirResultParser) `sepEndBy` eol
     return (LS results)
 
 inputParser :: Parser Input
-inputParser = some (cdParser <|> lsParser)
+inputParser = many (cdParser <|> lsParser)
+
+------------ TYPES ------------
+
+data Command = CD String | LS [Entity] deriving (Eq, Show)
+
+data Entity = Nil | File { name :: String, size :: Int } | Directory { name :: String, children :: [Entity], parent :: Entity } deriving (Eq, Show)
+
+type Input = [Command]
+
+type OutputA = Int
+
+type OutputB = Int
+
+------------ PART A ------------
 
 isDir :: Entity -> Bool
 isDir (Directory _ _ _) = True
@@ -48,7 +74,6 @@ isDir _ = False
 
 setResults :: Entity -> [Entity] -> Entity
 setResults (Directory n _ p) results = (Directory n results p)
-setResults f _ = f
 
 setParent :: Entity -> Entity -> Entity
 setParent (Directory n r _) p = Directory n r p
@@ -58,11 +83,9 @@ removeChild :: Entity -> String -> Entity
 removeChild (Directory n rs p) toRemove = let
     newRs = filter ((/= toRemove) . name) rs
     in (Directory n newRs p)
-removeChild f _ = f
 
 addChild :: Entity -> Entity -> Entity
 addChild (Directory n rs p) r = (Directory n (r:rs) p)
-addChild f _ = f
 
 repeatUntil :: (a -> a) -> (a -> Bool) -> a -> a
 repeatUntil f p a = if (p a) then a else repeatUntil f p (f a)
@@ -78,8 +101,8 @@ allTheWayUp :: Entity -> Entity
 allTheWayUp d = repeatUntil up (not . hasParent) d
 
 setParentAndRemoveSelf :: Entity -> Entity -> Entity
-setParentAndRemoveSelf focus parent' = let
-    parentWithoutChild = (removeChild parent' (name focus))
+setParentAndRemoveSelf focus parent = let
+    parentWithoutChild = (removeChild parent (name focus))
     in setParent focus parentWithoutChild
 
 commandToEntity :: Entity -> Command -> Entity
@@ -107,7 +130,7 @@ getAllDescendents :: Entity -> [Entity]
 getAllDescendents (Directory n cs p) = (Directory n cs p) : (concatMap getAllDescendents cs)
 getAllDescendents file = [file]
 
-partA :: Input -> Int
+partA :: Input -> OutputA
 partA input = let
     tree = allTheWayUp $ commandsToEntity (drop 1 input) :: Entity
     allDescendents = getAllDescendents tree
@@ -116,6 +139,7 @@ partA input = let
     smallDirs = filter (<=100000) dirSizes
     in sum smallDirs
 
+------------ PART B ------------
 calculateRequiredSpace :: Int -> Int
 calculateRequiredSpace usedSpace = let
     totalAvailableSpace = 70000000
@@ -124,7 +148,7 @@ calculateRequiredSpace usedSpace = let
     requiredAdditionalSpace = requiredSpace - unusedSpace
     in requiredAdditionalSpace
 
-partB :: Input -> Int
+partB :: Input -> OutputB
 partB input = let
     tree = allTheWayUp $ commandsToEntity (drop 1 input) :: Entity
     usedSpace = getEntitySize tree
@@ -137,7 +161,7 @@ partB input = let
 
 solve :: FilePath -> IO ()
 solve filePath = do
-  contents <- readFile filePath
+  contents <- TIO.readFile filePath
   case parse inputParser filePath contents of
     Left eb -> putStr (errorBundlePretty eb)
     Right input -> do

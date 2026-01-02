@@ -1,9 +1,9 @@
-module Day00Spec (spec) where
+module Day24Spec (spec) where
 
 import           Test.Hspec
 import           Text.Megaparsec (parse)
 import qualified Data.Map.Strict as M
-import           Year2025.Day00
+import           Year2024.Day24
 
 sample1 :: String
 sample1 = unlines [
@@ -20,7 +20,7 @@ sample1 = unlines [
   ]
 
 spec :: Spec
-spec = describe "Day00.parseInput" $ do
+spec = describe "Day24.parseInput" $ do
   it "parses sample wires" $ do
     case parse parseInput "sample1" sample1 of
       Right input -> length (initialWires input) `shouldBe` 6
@@ -35,7 +35,7 @@ spec = describe "Day00.parseInput" $ do
         let zs = M.filter ((== 'z') . head . output) (gates input)
         M.size zs `shouldBe` 3
       Left _ -> expectationFailure "Parse failed"
-  describe "Day00.evaluate" $ do
+  describe "Day24.evaluate" $ do
     it "evaluates z00 to 0" $ do
       case parse parseInput "sample1" sample1 of
         Right input -> evaluate input "z00" `shouldBe` 0
@@ -48,7 +48,7 @@ spec = describe "Day00.parseInput" $ do
       case parse parseInput "sample1" sample1 of
         Right input -> evaluate input "z02" `shouldBe` 1
         Left _ -> expectationFailure "Parse failed"
-  describe "Day00.bits/int conversions" $ do
+  describe "Day24.bits/int conversions" $ do
     it "bitsToInt handles examples" $ do
       bitsToInt [1,0,0] `shouldBe` 4
       bitsToInt [0] `shouldBe` 0

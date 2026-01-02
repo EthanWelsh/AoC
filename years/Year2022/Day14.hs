@@ -1,43 +1,64 @@
-{-# LANGUAGE MultiWayIf #-}
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE PackageImports #-}
 module Year2022.Day14 (solve) where
 
-import           Control.Applicative        ((<|>))
-import           Control.Monad              (void)
-import           Data.Function              (on)
+{- ORMOLU_DISABLE -}
+import Control.Applicative ((<|>))
+import Control.Monad (void)
+import Data.Function
+import Data.Functor (($>))
 import qualified "unordered-containers" Data.HashSet as HashSet
-import           Data.List
-import           Data.Maybe                 (fromJust)
-import           Data.Functor               (($>))
-import           Parsers                    (Parser)
-import           Text.Megaparsec
-import           Text.Megaparsec.Char
+import Data.List
+import Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map
+import Data.Maybe
+import Data.Set (Set)
+import qualified Data.Set as Set
+import Data.Vector (Vector)
+import qualified Data.Vector as Vec
+import Data.Void
+import qualified Util as U
+import Text.Megaparsec
+import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
-import           Util
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+{- ORMOLU_ENABLE -}
 
-type Point = (Int, Int)
-type Arrow = [Point]
-type Blocks = HashSet.HashSet Point
-type Input = [Arrow]
+type Parser = Parsec Void T.Text
 
+------------ PARSER ------------
 pointParser :: Parser Point
 pointParser = do
-    x <- L.decimal
-    void $ char ','
-    y <- L.decimal
-    return (x, y)
+  x <- L.decimal
+  void $ char ','
+  y <- L.decimal
+  return (x, y)
 
 arrowParser :: Parser Arrow
-arrowParser = pointParser `sepBy` (string " -> ")
+arrowParser = pointParser `sepBy` string " -> "
 
 inputParser :: Parser Input
-inputParser = arrowParser `sepEndBy` eol
+inputParser = arrowParser `sepBy` eol
 
-down :: Point -> Point
-down (x, y) =      (x, y + 1)
-downLeft :: Point -> Point
-downLeft (x, y) =  (x - 1, y + 1)
-downRight :: Point -> Point
+------------ TYPES ------------
+type Point = (Int, Int)
+
+type Arrow = [Point]
+
+type Blocks = HashSet.HashSet Point
+
+type Input = [Arrow]
+
+type OutputA = Int
+
+type OutputB = Int
+
+------------ PART A ------------
+down (x, y) = (x, y + 1)
+
+downLeft (x, y) = (x - 1, y + 1)
+
 downRight (x, y) = (x + 1, y + 1)
 
 isHigherThan :: Point -> Point -> Bool
@@ -54,28 +75,29 @@ inAbyss point blocks = all (isHigherThan point) blocks
 
 simulate :: Point -> Blocks -> (Point -> Blocks -> Bool) -> (Blocks, Bool)
 simulate point blocks stopCondition
-    | stopCondition point blocks    = (blocks, True)
-    | notObstructed d blocks  = simulate d  blocks stopCondition
-    | notObstructed dl blocks = simulate dl blocks stopCondition
-    | notObstructed dr blocks = simulate dr blocks stopCondition
-    | otherwise               = (HashSet.insert point blocks, False)
-    where
-        d = down point
-        dl = downLeft point
-        dr = downRight point
+  | stopCondition point blocks = (blocks, True)
+  | notObstructed d blocks = simulate d blocks stopCondition
+  | notObstructed dl blocks = simulate dl blocks stopCondition
+  | notObstructed dr blocks = simulate dr blocks stopCondition
+  | otherwise = (HashSet.insert point blocks, False)
+  where
+    d = down point
+    dl = downLeft point
+    dr = downRight point
 
 dropSand :: Blocks -> (Point -> Blocks -> Bool) -> (Blocks, Bool)
-dropSand blocks stopCondition = simulate (500,0) blocks stopCondition
+dropSand blocks stopCondition = simulate (500, 0) blocks stopCondition
 
 dropSandForever :: Blocks -> (Point -> Blocks -> Bool) -> [(Blocks, Bool)]
 dropSandForever blocks stopCondition = iterate helper (blocks, False)
-  where helper (blocks, _) = dropSand blocks stopCondition
+  where
+    helper (blocks, _) = dropSand blocks stopCondition
 
 arrowToSegment :: Arrow -> [(Point, Point)]
-arrowToSegment arrow = laggedPairs arrow
+arrowToSegment arrow = U.laggedPairs arrow
 
 segmentBlocks :: (Point, Point) -> Blocks
-segmentBlocks ((a, b), (c, d)) = HashSet.fromList $ zip (range a c) (range b d)
+segmentBlocks ((a, b), (c, d)) = HashSet.fromList $ zip (U.range a c) (U.range b d)
 
 unionAll :: [Blocks] -> Blocks
 unionAll blocks = HashSet.unions blocks
@@ -86,35 +108,36 @@ blocksFromArrow arrow = unionAll $ map segmentBlocks (arrowToSegment arrow)
 blocksFromArrows :: [Arrow] -> Blocks
 blocksFromArrows arrows = unionAll $ map blocksFromArrow arrows
 
-partA :: Input -> String
-partA input = show $ (fromJust $ findIndex (snd) (dropSandForever (blocksFromArrows input) inAbyss)) - 1
+partA :: Input -> OutputA
+partA input = (fromJust $ findIndex (snd) (dropSandForever (blocksFromArrows input) inAbyss)) - 1
 
+------------ PART B ------------
 lowestPoint :: Blocks -> Point
-lowestPoint blocks = maximumBy (compare `on` snd) (HashSet.toList blocks)
+lowestPoint blocks = maximumBy (compare `on` snd) blocks
 
 addFloor :: Blocks -> Blocks
-addFloor blocks = let
-    (x, y) = lowestPoint blocks
-    floorY = y + 2
-    floorPoints = zip (range (-1000) 1000) (repeat floorY) -- this is practically infinite
-    in HashSet.union blocks (HashSet.fromList floorPoints)
+addFloor blocks =
+  let (x, y) = lowestPoint blocks
+      floorY = y + 2
+      floorPoints = zip (U.range (-1000) 1000) (repeat floorY) -- this is practically infinite
+   in HashSet.union blocks (HashSet.fromList floorPoints)
 
 startBlocked :: Point -> Blocks -> Bool
 startBlocked _ blocks = HashSet.member (500, 0) blocks
 
-partB :: Input -> String
-partB input = let
-    blocks = blocksFromArrows input
-    blocksWithFloor = addFloor blocks
-    in show $ (fromJust $ findIndex (snd) (dropSandForever blocksWithFloor startBlocked)) - 1
+partB :: Input -> OutputB
+partB input =
+  let blocks = blocksFromArrows input
+      blocksWithFloor = addFloor blocks
+   in (fromJust $ findIndex (snd) (dropSandForever blocksWithFloor startBlocked)) - 1
 
 solve :: FilePath -> IO ()
 solve filePath = do
-  contents <- readFile filePath
+  contents <- TIO.readFile filePath
   case parse inputParser filePath contents of
     Left eb -> putStr (errorBundlePretty eb)
     Right input -> do
       putStr "Part 1: "
-      putStrLn $ partA input
+      print $ partA input
       putStr "Part 2: "
-      putStrLn $ partB input
+      print $ partB input

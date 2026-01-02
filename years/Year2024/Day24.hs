@@ -1,4 +1,4 @@
-module Year2025.Day00
+module Year2024.Day24
   ( solve
   , parseInput
   , Input(..)
@@ -28,7 +28,7 @@ data Gate = Gate { gateType :: GateType
                  , left     :: Wire
                  , right    :: Wire
                  , output   :: Wire
-                 } deriving (Show, Eq)
+                 } deriving (Show)
 
 data Input = Input { initialWires :: Map Wire Int
                    , gates        :: Map Wire Gate
@@ -130,9 +130,9 @@ part1 input = let
   in bitsToInt vs
 
 -- Find a gate that takes two specific inputs (order-independent) and has a specific type-- findGate :: Input -> Wire -> Wire -> GateType -> Maybe Gate
--- findGate input w1 w2 gt = 
+-- findGate input w1 w2 gt =
 --   let allGates = M.elems (gates input)
---       matches g = gateType g == gt && 
+--       matches g = gateType g == gt &&
 --                   ((left g == w1 && right g == w2) || (left g == w2 && right g == w1))
 --   in case filter matches allGates of
 --        [g] -> Just g

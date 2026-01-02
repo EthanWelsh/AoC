@@ -1,83 +1,84 @@
-{-# LANGUAGE PackageImports #-}
 module Year2022.Day12 (solve) where
 
-import           Algorithm.Search
-import           Data.Char
-import qualified "unordered-containers" Data.HashSet as HashSet
-import           Data.List
-import           Data.Maybe
-import           Matrix
-import           Parsers                    (Parser)
-import           Text.Megaparsec
-import           Text.Megaparsec.Char
+{- ORMOLU_DISABLE -}
+import Data.List
+import Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map
+import Data.Maybe
+import Data.Set (Set)
+import qualified Data.Set as Set
+import Data.Vector (Vector)
+import qualified Data.Vector as Vec
+import Matrix
+import Parsers (coordinateParser)
+import Data.Char (ord)
+import Search (bfs)
+import Data.Void
+import Text.Megaparsec
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+{- ORMOLU_ENABLE -}
 
-type Maze = (Matrix Char)
-type Input = Maze
+type Parser = Parsec Void String
+
+------------ PARSER ------------
+mapper :: Char -> Maybe Int
+mapper 'S' = Just 0
+mapper 'E' = Just 27
+mapper c = Just $ (ord c) - 96
 
 inputParser :: Parser Input
-inputParser = some (noneOf "\n") `sepEndBy` eol
+inputParser = coordinateParser mapper (0, 0)
 
-allowedStep :: Maze -> Point -> Point -> Bool
-allowedStep maze currP nextP = let
-    curr = getNormalized maze currP
-    next = getNormalized maze nextP
-    in (nextChar curr) >= next
+------------ TYPES ------------
+type Input = Map Point Int
 
-neighborPoints :: Maze -> Point -> HashSet.HashSet Point
-neighborPoints maze p = HashSet.filter (allowedStep maze p) (cardinalPoints maze p)
+type OutputA = Int
 
-findMatching :: Maze -> (Point -> Bool) -> Point
-findMatching maze p = fromJust $ find p (getAllPoints maze)
+type OutputB = Int
 
-startPosition :: Maze -> Point
-startPosition maze = findMatching maze (\p -> 'S' == (get maze p))
+------------ PART A ------------
 
-endPosition :: Maze -> Point
-endPosition maze = findMatching maze (\p -> 'E' == (get maze p))
+neighbors :: Point -> [Point]
+neighbors (r, c) = [(r+1, c), (r-1, c), (r, c+1), (r, c-1)]
 
-nextChar :: Char -> Char
-nextChar 'z' = 'z'
-nextChar c = chr (ord c + 1)
+getValidNeighbors :: (Point -> Point -> Bool) -> Point -> [Point]
+getValidNeighbors canMove from = filter (canMove from) (neighbors from)
 
-getNormalized :: Maze -> Point -> Char
-getNormalized maze p = case (get maze p) of
-    'S' -> 'a'
-    'E' -> 'z'
-    c -> c
+partA :: Input -> OutputA
+partA input = fromJust $ bfs (getValidNeighbors (canMoveUp input)) (isEnd input) (findStart input)
 
-heuristicDistanceToGoal :: Maze -> Point -> Int
-heuristicDistanceToGoal maze (r, c) = let
-    (r', c') = endPosition maze
-    in abs (r - r') + abs (c - c')
+canMoveUp :: Map Point Int -> Point -> Point -> Bool
+canMoveUp m from to = let
+    fromVal = fromJust $ Map.lookup from m
+    toVal = fromJust $ Map.lookup to m
+    in toVal <= (fromVal + 1)
 
-isGoal :: Maze -> Point -> Bool
-isGoal maze p = p == (endPosition maze)
+isEnd :: Map Point Int -> Point -> Bool
+isEnd m p = (fromJust $ Map.lookup p m) == 27
 
-distanceBetweenNeighbors :: Point -> Point -> Int
-distanceBetweenNeighbors _ _ = 1
+findStart :: Map Point Int -> Point
+findStart m = let
+    Just (p, _) = find (\(_, v) -> v == 0) (Map.toList m)
+    in p
 
-search :: Maze -> Maybe (Int, [Point])
-search maze = aStar (HashSet.toList . neighborPoints maze) distanceBetweenNeighbors (heuristicDistanceToGoal maze) (isGoal maze) (startPosition maze)
+------------ PART B ------------
+partB :: Input -> OutputB
+partB input = fromJust $ bfs (getValidNeighbors (canMoveDown input)) (isStart input) (findEnd input)
 
-partA :: Input -> String
-partA maze = show $ fst $ fromJust $ search maze
+canMoveDown :: Map Point Int -> Point -> Point -> Bool
+canMoveDown m from to = let
+    fromVal = fromJust $ Map.lookup from m
+    toVal = fromJust $ Map.lookup to m
+    in fromVal <= (toVal + 1)
 
-allStartPoints :: Maze -> [Point]
-allStartPoints maze = filter (\p -> 'a' == (getNormalized maze p)) (getAllPoints maze)
+isStart :: Map Point Int -> Point -> Bool
+isStart m p = (fromJust $ Map.lookup p m) == 1
 
-searchFromMultiplePoints :: Maze -> [Point] -> Maybe (Int, [Point])
-searchFromMultiplePoints maze starts = let
-    -- aStar only supports searching from a single start point, but we can easily add
-    -- that capability using a fake start point, and marking all real start points as
-    -- neighbors of that point.
-    fakeStartPoint = (-123, -123)
-    neighborOrStartPoint point = if (point == fakeStartPoint) then starts else (HashSet.toList (neighborPoints maze point))
-    in aStar neighborOrStartPoint distanceBetweenNeighbors (heuristicDistanceToGoal maze) (isGoal maze) fakeStartPoint
-
-partB :: Input -> String
-partB maze = let
-    shortestPath = searchFromMultiplePoints maze (allStartPoints maze)
-    in show $ fst (fromJust $ shortestPath) - 1
+findEnd :: Map Point Int -> Point
+findEnd m = let
+    Just (p, _) = find (\(_, v) -> v == 27) (Map.toList m)
+    in p
 
 solve :: FilePath -> IO ()
 solve filePath = do
@@ -86,6 +87,6 @@ solve filePath = do
     Left eb -> putStr (errorBundlePretty eb)
     Right input -> do
       putStr "Part 1: "
-      putStrLn $ partA input
+      print $ partA input
       putStr "Part 2: "
-      putStrLn $ partB input
+      print $ partB input
