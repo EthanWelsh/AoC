@@ -91,8 +91,8 @@ import qualified Year2021.Day01
 import qualified Year2021.Day02
 import qualified Year2021.Day03
 import qualified Year2021.Day04
-import qualified Year2021.Day05
-import qualified Year2021.Day05
+
+
 import qualified Year2021.Day06
 import qualified Year2021.Day07
 import qualified Year2021.Day08
@@ -118,10 +118,6 @@ import           System.Environment (getArgs)
 import           Text.Printf (printf)
 import           Data.Map (Map)
 import qualified Data.Map as Map
-import           System.Process (createProcess, waitForProcess, shell, cwd)
-import           System.IO (writeFile)
-import           System.Directory (createDirectoryIfMissing)
-import           Control.Monad (forM_)
 
 solvers2025 :: [FilePath -> IO ()]
 solvers2025 =
@@ -167,22 +163,7 @@ solvers2023 =
     , Year2023.Day25.solve
     ]
 
-run2024Solver :: String -> FilePath -> IO ()
-run2024Solver day monorepoInputPath = do
-    inputContents <- readFile monorepoInputPath
-    let rustDataDir = "years/Year2024/data/inputs"
-    createDirectoryIfMissing True rustDataDir
-    let rustInputPath = printf "%s/%s.txt" rustDataDir day
-    writeFile rustInputPath inputContents
 
-    let command = shell $ "cargo run --release -- solve " ++ day
-    let process = command { cwd = Just "years/Year2024" }
-    (_, _, _, pHandle) <- createProcess process
-    waitForProcess pHandle
-    return ()
-
-solvers2024 :: [FilePath -> IO ()]
-solvers2024 = map run2024Solver (map (printf "%02d") ([1..25] :: [Int]))
 
 
 solvers2022 :: [FilePath -> IO ()]
@@ -249,7 +230,7 @@ solvers2021 =
     , Year2021.Day02.solve
     , Year2021.Day03.solve
     , Year2021.Day04.solve
-    , Year2021.Day05.solve
+    
     , Year2021.Day06.solve
     , Year2021.Day07.solve
     , Year2021.Day08.solve
@@ -275,7 +256,6 @@ solvers2021 =
 solvers :: Map String [FilePath -> IO ()]
 solvers = Map.fromList
     [ ("2025", solvers2025)
-    , ("2024", solvers2024)
     , ("2023", solvers2023)
     , ("2022", solvers2022)
     , ("2019", solvers2019)

@@ -6,8 +6,7 @@ use std::{
 
 use crate::template::Day;
 
-const MODULE_TEMPLATE: &str =
-    include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/src/template.txt"));
+const MODULE_TEMPLATE: &str = include_str!("../../template.txt");
 
 fn safe_create_file(path: &str) -> Result<File, std::io::Error> {
     OpenOptions::new().write(true).create_new(true).open(path)

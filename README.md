@@ -16,20 +16,22 @@ The repository is organized as a mono-repo with the following structure:
 
 ## Run Instructions
 
-To run a solution for a specific day, use the following command:
+To run a solution for a specific day, use the `run_day.zsh` script:
 
 ```bash
-stack exec aoc -- <year> <day> <sample|real>
+./run_day.zsh <year> <day> <sample|real>
 ```
 
 For example, to run the solution for Day 1 of 2025 with the real input:
 
 ```bash
-stack exec aoc -- 2025 1 real
+./run_day.zsh 2025 1 real
 ```
 
 To run with the sample input:
 
 ```bash
-stack exec aoc -- 2025 1 sample
+./run_day.zsh 2025 1 sample
 ```
+
+The script will automatically detect if the solution for the given day is written in Haskell or Rust and execute it accordingly. If the input file does not exist, it will attempt to download it using `curl`.

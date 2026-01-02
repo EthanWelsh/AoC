@@ -28,7 +28,7 @@ fn parse_multiply(input: &str) -> IResult<&str, Multiply> {
             separated_pair(complete::u32, tag(","), complete::u32),
             tag(")"),
         ),
-        |((a, b))| Multiply { a, b },
+        |(a, b)| Multiply { a, b },
     )(input)
 }
 

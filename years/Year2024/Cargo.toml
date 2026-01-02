@@ -3,12 +3,84 @@ name = "advent_of_code"
 version = "0.11.0"
 authors = ["Felix Spöttel <1682504+fspoettel@users.noreply.github.com>"]
 edition = "2021"
-default-run = "advent_of_code"
 publish = false
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [lib]
+name = "advent_of_code"
+path = "../../rust_utils/lib.rs"
 doctest = false
+
+[[bin]]
+name = "day01"
+path = "Day01.rs"
+
+[[bin]]
+name = "day02"
+path = "Day02.rs"
+
+[[bin]]
+name = "day03"
+path = "Day03.rs"
+
+[[bin]]
+name = "day04"
+path = "Day04.rs"
+
+[[bin]]
+name = "day05"
+path = "Day05.rs"
+
+[[bin]]
+name = "day06"
+path = "Day06.rs"
+
+[[bin]]
+name = "day07"
+path = "Day07.rs"
+
+[[bin]]
+name = "day08"
+path = "Day08.rs"
+
+[[bin]]
+name = "day09"
+path = "Day09.rs"
+
+[[bin]]
+name = "day10"
+path = "Day10.rs"
+
+[[bin]]
+name = "day11"
+path = "Day11.rs"
+
+[[bin]]
+name = "day12"
+path = "Day12.rs"
+
+[[bin]]
+name = "day15"
+path = "Day15.rs"
+
+[[bin]]
+name = "day16"
+path = "Day16.rs"
+
+[[bin]]
+name = "day17"
+path = "Day17.rs"
+
+[[bin]]
+name = "day18"
+path = "Day18.rs"
+
+[[bin]]
+name = "day19"
+path = "Day19.rs"
+
+[[bin]]
+name = "day20"
+path = "Day20.rs"
 
 [profile.dhat]
 inherits = "release"

@@ -1,7 +1,7 @@
 use itertools::Itertools;
 use nom::bytes::complete::tag;
 use nom::character::complete::alpha1;
-use nom::multi::{count, separated_list1};
+use nom::multi::separated_list1;
 use nom::IResult;
 use std::collections::HashMap;
 

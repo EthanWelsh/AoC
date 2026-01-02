@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use itertools::Itertools;
-use std::iter::once;
+
 use num_traits::ToPrimitive;
 use crate::grid::Direction::{N, E, S, W, NE, SE, NW, SW};
 

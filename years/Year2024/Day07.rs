@@ -1,4 +1,4 @@
-use itertools::Itertools;
+
 use nom::bytes::complete::tag;
 use nom::character::complete;
 use nom::combinator::map;
@@ -15,11 +15,7 @@ struct Puzzle {
     nums: Vec<u64>,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
-enum Operator {
-    Add,
-    Multiply,
-}
+
 
 fn parse_input(s: &str) -> IResult<&str, Vec<Puzzle>> {
     let parse_line = map(

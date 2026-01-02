@@ -124,7 +124,7 @@ fn expand(
 ) -> Vec<Point> {
     let outer_points: HashSet<Point> = outer_points_and_dir
         .iter()
-        .filter(|(p, d)| d == direction)
+        .filter(|(_p, d)| d == direction)
         .map(|(p, _)| *p)
         .collect();
 
@@ -154,7 +154,7 @@ fn get_sides(grid: &Grid<char>, points: &HashSet<Point>) -> u64 {
         .iter()
         .cartesian_product([N, S, E, W])
         .map(|(p, d)| (p.move_direction(&d), d))
-        .filter(|(p, d)| grid.get(p) != Some(current_letter))
+        .filter(|(p, _d)| grid.get(p) != Some(current_letter))
         .collect();
 
     let mut sides: HashMap<Direction, HashSet<Vec<Point>>> = HashMap::new();

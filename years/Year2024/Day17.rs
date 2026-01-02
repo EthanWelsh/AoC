@@ -6,11 +6,13 @@ use nom::IResult;
 
 advent_of_code::solution!(17);
 
+#[allow(dead_code)]
 struct Input {
     registers: (u64, u64, u64),
     program: Vec<u64>,
 }
 
+#[allow(dead_code)]
 fn parse_input(input: &str) -> IResult<&str, Input> {
     let (input, a) = preceded(tag("Register A: "), complete::u64)(input)?;
     let (input, b) = preceded(tag("\nRegister B: "), complete::u64)(input)?;
@@ -19,11 +21,11 @@ fn parse_input(input: &str) -> IResult<&str, Input> {
     Ok((input, Input { registers: (a, b, c), program }))
 }
 
-pub fn part_one(input: &str) -> Option<u32> {
+pub fn part_one(_input: &str) -> Option<u32> {
     None
 }
 
-pub fn part_two(input: &str) -> Option<u32> {
+pub fn part_two(_input: &str) -> Option<u32> {
     None
 }
 

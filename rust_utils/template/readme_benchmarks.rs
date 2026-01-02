@@ -1,16 +1,24 @@
 /// Module that updates the readme me with timing information.
 /// The approach taken is similar to how `aoc-readme-stars` handles this.
-use std::{fs, io};
+use std::{fmt, fs, io};
 
 use crate::template::timings::Timings;
 use crate::template::Day;
 
 static MARKER: &str = "<!--- benchmarking table --->";
 
-#[derive(Debug)]
 pub enum Error {
     Parser(String),
     IO(io::Error),
+}
+
+impl fmt::Debug for Error {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Error::Parser(msg) => write!(f, "Parser error: {msg}"),
+            Error::IO(err) => write!(f, "IO error: {err}"),
+        }
+    }
 }
 
 impl From<std::io::Error> for Error {

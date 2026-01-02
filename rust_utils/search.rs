@@ -1,6 +1,6 @@
 use std::cmp::Reverse;
-use std::collections::VecDeque;
-use std::collections::{BinaryHeap, HashMap, HashSet};
+
+use std::collections::{BinaryHeap, HashMap};
 use std::hash::Hash;
 
 pub fn dijkstra<N, FN, IN, FS>(start: &N, mut successors: FN, mut is_goal: FS) -> Option<(N, u64)>

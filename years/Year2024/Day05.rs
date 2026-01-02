@@ -1,4 +1,4 @@
-use itertools::Itertools;
+
 use nom::bytes::complete::tag;
 use nom::character::complete;
 use nom::combinator::map;
@@ -72,28 +72,7 @@ pub fn part_one(input: &str) -> Option<i64> {
     Some(result)
 }
 
-fn swap(update: &Vec<i64>, a: i64, b: i64) -> Option<Vec<i64>> {
-    let mut a_index = None;
-    let mut b_index = None;
-    for (i, &x) in update.iter().enumerate() {
-        if x == a {
-            a_index = Some(i);
-        }
-        if x == b {
-            b_index = Some(i);
-        }
-        if a_index.is_some() && b_index.is_some() {
-            break;
-        }
-    }
-    if let (Some(a_index), Some(b_index)) = (a_index, b_index) {
-        let mut result = update.clone();
-        result.swap(a_index, b_index);
-        Some(result)
-    } else {
-        None
-    }
-}
+
 
 fn fix_update(update: &Vec<i64>, rules: &HashMap<i64, HashSet<i64>>) -> Vec<i64> {
     let mut result = update.clone();

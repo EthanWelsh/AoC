@@ -3,7 +3,7 @@ use advent_of_code::grid::{Grid, Point};
 use advent_of_code::search::dijkstra;
 use nom::bytes::complete::tag;
 use nom::character::complete;
-use nom::combinator::{complete, map};
+use nom::combinator::map;
 use nom::multi::separated_list1;
 use nom::sequence::separated_pair;
 use nom::IResult;

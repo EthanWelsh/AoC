@@ -1,6 +1,6 @@
 use advent_of_code::grid::Direction::{E, N, NE, NW, S, SE, SW, W};
 use advent_of_code::grid::{Grid, Point};
-use itertools::Itertools;
+use itertools;
 use nom::branch::alt;
 use nom::character::complete::{char, line_ending};
 use nom::combinator::{eof, map};
