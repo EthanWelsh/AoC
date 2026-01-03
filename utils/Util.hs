@@ -1,4 +1,5 @@
 {-# LANGUAGE MultiWayIf #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Util
   ( freq,
@@ -106,7 +107,7 @@ range start end =
           [start]
 
 getInputPath :: Int -> Int -> String -> FilePath
-getInputPath year day sample = do
-  let dayStr = printf "%02d" day
+getInputPath year day sample =
+  let dayStr :: String = printf "%02d" day
       sampleStr = if sample == "sample" then "sample" else "real"
-  printf "years/Year%d/input/%s/Day%s.txt" year sampleStr dayStr
+   in printf "years/Year%d/input/%s/Day%s.txt" year sampleStr dayStr

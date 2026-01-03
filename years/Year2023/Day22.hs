@@ -1,7 +1,7 @@
-module Day22.Day22 (solve) where
+module Year2023.Day22 (solve) where
 
 import Text.Megaparsec
-import Utils.Parsers (Parser)
+import Parsers (Parser)
 
 -- import Control.Monad (void)
 -- import Text.Megaparsec.Char (string, char, newline)

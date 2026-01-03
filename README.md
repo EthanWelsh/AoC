@@ -81,3 +81,9 @@ stack exec -- doctest -isrc -iutils -iyears years/Year2025/DayXX.hs
 ```
 
 Replace `XX` with the day number you want to test.
+
+You can also run all the tests at once by running:
+
+```bash
+stack test
+```

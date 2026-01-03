@@ -7,7 +7,7 @@ import Control.Monad
 
 main :: IO ()
 main = do
-    files <- getDirectoryContentsRecursive "years/Year2025"
+    files <- getDirectoryContentsRecursive "years"
     let hsFiles = filter (\f -> takeExtension f == ".hs") files
     doctest $ "-isrc" : "-iutils" : "-iyears" : hsFiles
 
@@ -21,4 +21,3 @@ getDirectoryContentsRecursive dir = do
             then getDirectoryContentsRecursive path
             else return [path]
     return (concat paths)
-
