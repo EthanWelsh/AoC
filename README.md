@@ -69,3 +69,15 @@ To create a new Rust solution for Day 25 of 2024:
 ```
 
 The script will create the necessary files and update the build configurations.
+
+## Running Tests
+
+This project uses `doctest` to run tests embedded in the source code. To run the tests, you will need to have `stack` installed.
+
+You can run the tests for a specific day by running the following command:
+
+```bash
+stack exec -- doctest -isrc -iutils -iyears years/Year2025/DayXX.hs
+```
+
+Replace `XX` with the day number you want to test.
