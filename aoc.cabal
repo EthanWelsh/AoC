@@ -184,6 +184,7 @@ test-suite aoc-test
                      , List
                      , Parsers
                      , Year2025.Day01
+                     , Year2025.Day13
   default-extensions:  TupleSections
   build-depends:       base >= 4.7 && < 5
                      , hspec >= 2.10 && < 3

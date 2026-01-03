@@ -117,6 +117,7 @@ import qualified Year2025.Day09
 import qualified Year2025.Day10
 import qualified Year2025.Day11
 import qualified Year2025.Day12
+import qualified Year2025.Day13
 
 solvers2025 :: [FilePath -> IO ()]
 solvers2025 =
@@ -132,6 +133,7 @@ solvers2025 =
     Year2025.Day10.solve,
     Year2025.Day11.solve,
     Year2025.Day12.solve
+    , Year2025.Day13.solve
   ]
 
 solvers2024 :: [FilePath -> IO ()]

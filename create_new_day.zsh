@@ -26,21 +26,31 @@ if [ "$LANGUAGE" = "haskell" ]; then
   cat > "$FILE_HS" << EOL
 module Year$YEAR.Day$DAY_PADDED (solve) where
 
---import           Parsers   (Parser)
---import           Text.Megaparsec
---import Control.Monad (void)
---import Text.Megaparsec.Char (string, char, newline)
+import Parsers (Parser)
+import Text.Megaparsec (parse, errorBundlePretty)
+
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year$YEAR/input/sample/Day$DAY_PADDED.txt"
+-- >>> let Right parsedExample = parse parseInput "" example
 
 type Input = String
 
---parseInput :: Parser Input
---parseInput = error "TODO"
+parseInput :: Parser Input
+parseInput = error "TODO"
 
+-- |
+-- >>> part1 parsedExample
+-- Part 1: 0
 part1 :: Input -> IO ()
 part1 input = do
   putStr "Part 1: "
   print input
 
+-- |
+-- >>> part2 parsedExample
+-- Part 2: 0
 part2 :: Input -> IO ()
 part2 input = do
   putStr "Part 2: "
@@ -49,13 +59,11 @@ part2 input = do
 solve :: FilePath -> IO ()
 solve filePath = do
   contents <- readFile filePath
-  part1 contents
-  part2 contents
-  --case parse parseInput filePath contents of
-  --        Left eb -> putStr (errorBundlePretty eb)
-  --        Right input -> do
-  --          part1 input
-  --          part2 input
+  case parse parseInput filePath contents of
+    Left eb -> putStr (errorBundlePretty eb)
+    Right input -> do
+      part1 input
+      part2 input
 EOL
 
   # Add to cabal file
@@ -64,9 +72,7 @@ EOL
   if [ -z "$last_line" ]; then
     last_line=$(grep -n "other-modules" aoc.cabal | head -n 1 | cut -d: -f1)
   fi
-  sed -i '' -e "$(($last_line))a\
-$line_to_add
-" aoc.cabal
+  awk -v line_num="$last_line" -v text_to_add="$line_to_add" 'NR == line_num {print; print text_to_add} NR != line_num {print}' aoc.cabal > aoc.cabal.tmp && mv aoc.cabal.tmp aoc.cabal
 
   # Add to Main.hs
   import_to_add="import qualified Year$YEAR.Day$DAY_PADDED"
@@ -74,9 +80,7 @@ $line_to_add
   if [ -z "$last_import_line" ]; then
     last_import_line=$(grep -n "import qualified" src/Main.hs | tail -n 1 | cut -d: -f1)
   fi
-  sed -i '' -e "$(($last_import_line))a\
-$import_to_add
-" src/Main.hs
+  awk -v line_num="$last_import_line" -v text_to_add="$import_to_add" 'NR == line_num {print; print text_to_add} NR != line_num {print}' src/Main.hs > src/Main.hs.tmp && mv src/Main.hs.tmp src/Main.hs
 
   solver_to_add="    , Year$YEAR.Day$DAY_PADDED.solve"
   last_solver_line=$(grep -n "Year$YEAR.*.solve" src/Main.hs | tail -n 1 | cut -d: -f1)
@@ -84,11 +88,9 @@ $import_to_add
       last_solver_line=$(grep -n "solvers$YEAR" src/Main.hs | head -n 1 | cut -d: -f1)
       # Add an extra comma to the previous line
       prev_line_num=$(($last_solver_line + 1))
-      sed -i '' -e "$prev_line_num s/$/,/" src/Main.hs
+      sed -i '' "$prev_line_num s/$/,/" src/Main.hs
   fi
-  sed -i '' -e "$(($last_solver_line))a\
-$solver_to_add
-" src/Main.hs
+  awk -v line_num="$last_solver_line" -v text_to_add="$solver_to_add" 'NR == line_num {print; print text_to_add} NR != line_num {print}' src/Main.hs > src/Main.hs.tmp && mv src/Main.hs.tmp src/Main.hs
 
 
   echo "Created $FILE_HS"
