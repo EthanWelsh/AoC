@@ -11,11 +11,14 @@ type Input = Grid
 
 parseInput :: Parser Input
 parseInput = do
-  ls <- many (char '.' <|> char '@') `sepBy` eol
+  -- Parse one-or-more non-empty lines of '.' or '@'. Use `sepEndBy1` so a
+  -- trailing newline does not produce an extra empty row.
+  ls <- some (char '.' <|> char '@') `sepEndBy1` eol
   return $ mazeFromList ls
 
 countOpenSpaces :: Grid -> Point -> Int
-countOpenSpaces g p = length $ filter (\pp -> getPoint g pp == '@') (neighbors8 g p)
+countOpenSpaces g p =
+  length $ filter (\pp -> getPoint g pp == '@') (neighbors8 g p)
 
 part1 :: Input -> IO ()
 part1 input = do

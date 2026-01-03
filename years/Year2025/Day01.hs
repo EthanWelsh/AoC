@@ -27,8 +27,9 @@ values ins = scanl update 50 ins
 part1 :: Input -> IO ()
 part1 input = do
   putStr "Part 1: "
-  print $ count (==0) (values input)
-
+  let valList = values input
+  print $ count (== 0) (tail valList)
+  -- print (values input)
 
 explode :: [Instruction] -> [Instruction]
 explode [] = []
@@ -39,7 +40,7 @@ explode (x:xs) = case x of
 part2 :: Input -> IO ()
 part2 input = do
   putStr "Part 2: "
-  print $ count (==0) (values (explode input))
+  print $ count (== 0) (tail (values (explode input)))
 
   --print input
 

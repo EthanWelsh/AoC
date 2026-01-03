@@ -266,9 +266,7 @@ main :: IO ()
 main = do
     [year, day, sample] <- getArgs
     let yearSolvers = solvers Map.! year
-        solver = if year == "2025"
-                    then yearSolvers !! read day
-                    else yearSolvers !! (read day - 1)
+        solver = yearSolvers !! (read day - 1)
         dayStr :: String
         dayStr = printf "%02d" (read day :: Int)
         sampleStr = if sample == "sample" then "sample" else "real"

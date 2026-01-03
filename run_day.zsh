@@ -33,7 +33,7 @@ if [ -f "years/Year${YEAR}/Day${DAY_STR}.hs" ]; then
     if [ "$INTERACTIVE" = true ]; then
         echo "Running Haskell solution for Day ${DAY_STR}, Year ${YEAR} (${SAMPLE_OR_REAL} input) in interactive mode..."
         INPUT_FILE="input/${SAMPLE_OR_REAL}/Day${DAY_STR}.txt"
-        ghcid --command="stack ghci --main-is aoc:exe:aoc" --setup ":set args ${YEAR} ${DAY} ${SAMPLE_OR_REAL}" --run="Main.main" --warnings
+        ghcid --command="stack ghci aoc:exe:aoc" --setup ":set args ${YEAR} ${DAY} ${SAMPLE_OR_REAL}" --run="Main.main" --warnings
     else
         echo "Running Haskell solution for Day ${DAY_STR}, Year ${YEAR} (${SAMPLE_OR_REAL} input)..."
         stack run aoc "${YEAR}" "${DAY}" "${SAMPLE_OR_REAL}"

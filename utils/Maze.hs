@@ -99,7 +99,10 @@ maybeGetPoint (Maze m) p
 
 -- | Read the value at a given point (row, column).
 getPoint :: Maze a -> Point -> a
-getPoint (Maze m) (r, c) = (m !! r) !! c
+getPoint (Maze m) (r, c)
+  | r < 0 || r >= length m = error $ "getPoint: row out of bounds " ++ show (r, c) ++ " height=" ++ show (length m)
+  | c < 0 || c >= length (m !! r) = error $ "getPoint: col out of bounds " ++ show (r, c) ++ " rowLen=" ++ show (length (m !! r)) ++ " headWidth=" ++ show (length (head m))
+  | otherwise = (m !! r) !! c
 
 replacePoint :: [[a]] -> Point -> a -> [[a]]
 replacePoint g (r, c) v =
@@ -123,7 +126,9 @@ setPointsMatching m f v =
 
 -- | Test whether the value at a point satisfies a predicate.
 testPoint :: Maze a -> (a -> Bool) -> Point -> Bool
-testPoint m f p = f (getPoint m p)
+testPoint m f p = case maybeGetPoint m p of
+  Just v -> f v
+  Nothing -> False
 
 -- | Find all points whose values satisfy a predicate.
 findPoints :: Maze a -> (a -> Bool) -> [Point]
