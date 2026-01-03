@@ -136,7 +136,8 @@ findPoints m f = filter (testPoint m f) (allPoints m)
 
 -- | Check whether a point is within the bounds of the maze.
 inBounds :: Maze a -> Point -> Bool
-inBounds m (r, c) = r >= 0 && r < height m && c >= 0 && c < width m
+inBounds m@(Maze rows) (r, c) =
+  r >= 0 && r < length rows && c >= 0 && c < length (rows !! r)
 
 -- | List the 4 orthogonal neighbors of a point (that are in-bounds).
 neighbors4 :: Maze a -> Point -> [Point]
@@ -152,7 +153,7 @@ neighbors8 m p = filter (inBounds m) $ map ($ p) dirs
 
 -- | List every point in the maze in row-major order.
 allPoints :: Maze a -> [Point]
-allPoints m = [(r, c) | r <- [0 .. (height m - 1)], c <- [0 .. (width m - 1)]]
+allPoints (Maze rows) = concatMap (\r -> map (\c -> (r, c)) [0 .. (length (rows !! r) - 1)]) [0 .. length rows - 1]
 
 -- | Filter all points by a predicate on points.
 allPointsSatisfying :: Maze a -> (Point -> Bool) -> [Point]

@@ -14,7 +14,8 @@ type Input = Grid
 
 parseInput :: Parser Input
 parseInput = do
-  ls <- many (char 'S' <|> char '.' <|> char '^') `sepBy` eol
+  let lineP = some (char 'S' <|> char '.' <|> char '^')
+  ls <- lineP `sepEndBy1` eol
   return $ mazeFromList ls
 
 countSplits :: Grid -> Point -> Set Point
