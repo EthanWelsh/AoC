@@ -21,8 +21,8 @@ executable aoc
                      , Maze
                      , Search
                      , Range
-                     , Year2024.Day24
-                     , Year2025.Day01
+                     , Year2024.Day24,
+, Year2024.Day25                     , Year2025.Day01
                      , Year2025.Day02
                      , Year2025.Day03
                      , Year2025.Day04

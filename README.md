@@ -47,3 +47,25 @@ To run with the sample input:
 ```
 
 The script will automatically detect if the solution for the given day is written in Haskell or Rust and execute it accordingly. If the input file does not exist, it will attempt to download it using `curl`.
+
+## Creating a New Day
+
+To create a new day, use the `create_new_day.zsh` script:
+
+```bash
+./create_new_day.zsh <year> <day> <language>
+```
+
+For example, to create a new Haskell solution for Day 25 of 2024:
+
+```bash
+./create_new_day.zsh 2024 25 haskell
+```
+
+To create a new Rust solution for Day 25 of 2024:
+
+```bash
+./create_new_day.zsh 2024 25 rust
+```
+
+The script will create the necessary files and update the build configurations.
