@@ -14,7 +14,8 @@ import qualified Year2025.Day10
 import qualified Year2025.Day11
 import qualified Year2025.Day12
 import qualified Year2024.Day24
-import qualified Year2024.Day25import qualified Year2023.Day01
+import qualified Year2024.Day25
+import qualified Year2023.Day01
 import qualified Year2023.Day02
 import qualified Year2023.Day03
 import qualified Year2023.Day04
@@ -163,7 +164,8 @@ solvers2024 =
     , \_ -> putStrLn "No solution found for Day 22, Year 2024."  -- Day 22 (not implemented)
     , \_ -> putStrLn "No solution found for Day 23, Year 2024."  -- Day 23 (not implemented)
     , Year2024.Day24.solve  -- Day 24 (Haskell)
-, Year2024.Day25.solve    , \_ -> putStrLn "No solution found for Day 25, Year 2024."  -- Day 25 (not implemented)
+    , Year2024.Day25.solve
+    , \_ -> putStrLn "No solution found for Day 25, Year 2024."  -- Day 25 (not implemented)
     ]
 
 solvers2023 :: [FilePath -> IO ()]

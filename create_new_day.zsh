@@ -59,17 +59,37 @@ solve filePath = do
 EOL
 
   # Add to cabal file
-  cmd=$(printf '/, Year%s/a\
-, Year%s.Day%s' "$YEAR" "$YEAR" "$DAY_PADDED")
-  sed -i '' "$cmd" aoc.cabal
+  line_to_add="                     , Year$YEAR.Day$DAY_PADDED"
+  last_line=$(grep -n "Year$YEAR" aoc.cabal | tail -n 1 | cut -d: -f1)
+  if [ -z "$last_line" ]; then
+    last_line=$(grep -n "other-modules" aoc.cabal | head -n 1 | cut -d: -f1)
+  fi
+  sed -i '' -e "$(($last_line))a\
+$line_to_add
+" aoc.cabal
 
   # Add to Main.hs
-  cmd1=$(printf '/import qualified Year%s/a\
-import qualified Year%s.Day%s' "$YEAR" "$YEAR" "$DAY_PADDED")
-  sed -i '' "$cmd1" src/Main.hs
-  cmd2=$(printf '/, Year%s.*.solve/a\
-, Year%s.Day%s.solve' "$YEAR" "$YEAR" "$DAY_PADDED")
-  sed -i '' "$cmd2" src/Main.hs
+  import_to_add="import qualified Year$YEAR.Day$DAY_PADDED"
+  last_import_line=$(grep -n "import qualified Year$YEAR" src/Main.hs | tail -n 1 | cut -d: -f1)
+  if [ -z "$last_import_line" ]; then
+    last_import_line=$(grep -n "import qualified" src/Main.hs | tail -n 1 | cut -d: -f1)
+  fi
+  sed -i '' -e "$(($last_import_line))a\
+$import_to_add
+" src/Main.hs
+
+  solver_to_add="    , Year$YEAR.Day$DAY_PADDED.solve"
+  last_solver_line=$(grep -n "Year$YEAR.*.solve" src/Main.hs | tail -n 1 | cut -d: -f1)
+  if [ -z "$last_solver_line" ]; then
+      last_solver_line=$(grep -n "solvers$YEAR" src/Main.hs | head -n 1 | cut -d: -f1)
+      # Add an extra comma to the previous line
+      prev_line_num=$(($last_solver_line + 1))
+      sed -i '' -e "$prev_line_num s/$/,/" src/Main.hs
+  fi
+  sed -i '' -e "$(($last_solver_line))a\
+$solver_to_add
+" src/Main.hs
+
 
   echo "Created $FILE_HS"
 
