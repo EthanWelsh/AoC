@@ -1,5 +1,17 @@
 {-# LANGUAGE PackageImports #-}
-module Matrix where
+module Matrix (
+  Point,
+  Matrix,
+  CardinalDirection (..),
+  getHeight,
+  getWidth,
+  getAllPoints,
+  get,
+  pointInBounds,
+  cardinalPoints,
+  movePoint,
+  getPath
+) where
 
 import qualified "unordered-containers" Data.HashSet as HashSet
 

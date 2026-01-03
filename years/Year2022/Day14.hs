@@ -3,19 +3,12 @@
 module Year2022.Day14 (solve) where
 
 {- ORMOLU_DISABLE -}
-import Control.Applicative ((<|>))
+
 import Control.Monad (void)
 import Data.Function
-import Data.Functor (($>))
 import qualified "unordered-containers" Data.HashSet as HashSet
-import Data.List
-import Data.Map.Strict (Map)
-import qualified Data.Map.Strict as Map
+import Data.List (findIndex, maximumBy)
 import Data.Maybe
-import Data.Set (Set)
-import qualified Data.Set as Set
-import Data.Vector (Vector)
-import qualified Data.Vector as Vec
 import Data.Void
 import qualified Util as U
 import Text.Megaparsec
@@ -55,14 +48,17 @@ type OutputA = Int
 type OutputB = Int
 
 ------------ PART A ------------
+down :: Point -> Point
 down (x, y) = (x, y + 1)
 
+downLeft :: Point -> Point
 downLeft (x, y) = (x - 1, y + 1)
 
+downRight :: Point -> Point
 downRight (x, y) = (x + 1, y + 1)
 
 isHigherThan :: Point -> Point -> Bool
-isHigherThan (x, y) (x', y') = y' < y
+isHigherThan (_, y) (_x', y') = y' < y
 
 isObstructed :: Point -> Blocks -> Bool
 isObstructed point blocks = HashSet.member point blocks
@@ -89,9 +85,9 @@ dropSand :: Blocks -> (Point -> Blocks -> Bool) -> (Blocks, Bool)
 dropSand blocks stopCondition = simulate (500, 0) blocks stopCondition
 
 dropSandForever :: Blocks -> (Point -> Blocks -> Bool) -> [(Blocks, Bool)]
-dropSandForever blocks stopCondition = iterate helper (blocks, False)
+dropSandForever blks stopCondition = iterate helper (blks, False)
   where
-    helper (blocks, _) = dropSand blocks stopCondition
+    helper (currentBlocks, _) = dropSand currentBlocks stopCondition
 
 arrowToSegment :: Arrow -> [(Point, Point)]
 arrowToSegment arrow = U.laggedPairs arrow
@@ -117,7 +113,7 @@ lowestPoint blocks = maximumBy (compare `on` snd) blocks
 
 addFloor :: Blocks -> Blocks
 addFloor blocks =
-  let (x, y) = lowestPoint blocks
+  let (_, y) = lowestPoint blocks
       floorY = y + 2
       floorPoints = zip (U.range (-1000) 1000) (repeat floorY) -- this is practically infinite
    in HashSet.union blocks (HashSet.fromList floorPoints)

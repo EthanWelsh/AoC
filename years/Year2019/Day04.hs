@@ -4,7 +4,7 @@ import           Control.Monad        (void)
 import           Data.List            (group)
 import           Parsers              (Parser, integer)
 import           Text.Megaparsec
-import           Text.Megaparsec.Char (char, eol)
+import           Text.Megaparsec.Char (char)
 
 type Input = (Int, Int)
 

@@ -2,21 +2,10 @@
 module Year2022.Day09 (solve) where
 
 {- ORMOLU_DISABLE -}
-import Data.List
-import Data.Map.Strict (Map)
-import qualified Data.Map.Strict as Map
-import Data.Maybe
-import Data.Set (Set)
-import qualified Data.Set as Set
-import Data.Vector (Vector)
-import qualified Data.Vector as Vec
-
+import Data.List (replicate, nub, iterate)
 import Control.Monad (void)
 import Control.Applicative ((<|>))
-import Data.Functor (($>))
-
 import Matrix
-
 import Data.Void (Void)
 import Text.Megaparsec
 import Text.Megaparsec.Char
@@ -32,8 +21,8 @@ dirParser :: Char -> CardinalDirection -> Parser [CardinalDirection]
 dirParser c d = do
   void $ char c
   void $ char ' '
-  count <- L.decimal
-  return $ replicate count d
+  c' <- L.decimal
+  return $ replicate c' d
 
 dirsParser :: Parser [CardinalDirection]
 dirsParser = (dirParser 'U' North) <|> (dirParser 'D' South) <|> (dirParser 'L' West) <|> (dirParser 'R' East)

@@ -1,23 +1,20 @@
+{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 module Year2022.Day05 (solve) where
 
 {- ORMOLU_DISABLE -}
-import Data.List
+import Data.List (foldl, filter, concatMap, zip, length)
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as Map
-import Data.Maybe
-import Data.Set (Set)
-import qualified Data.Set as Set
-import Data.Vector (Vector)
-import qualified Data.Vector as Vec
-import qualified Util as U
 import Control.Monad (void)
-
+import Data.Void (Void)
 import Text.Megaparsec
 import Text.Megaparsec.Char
-import Text.Megaparsec.Char.Lexer as L
-import Data.Void (Void)
-import Data.Text (Text, pack) -- Added pack
-import Text.Megaparsec.Error (errorBundlePretty) -- Added for error printing
+import qualified Text.Megaparsec.Char.Lexer as L
+import qualified Data.Text as T
+import Data.Text (Text, pack)
+import Text.Megaparsec.Error (errorBundlePretty)
+
+type Parser = Parsec Void T.Text
 {- ORMOLU_ENABLE -}
 
 solve :: FilePath -> IO ()
@@ -33,21 +30,21 @@ solve filePath = do
 
 ------------ PARSER ------------
 
-pointParser :: Parsec Void Text Point
+pointParser :: Parser Point
 pointParser = do
-    a <- L.decimal
-    void $ char ','
-    b <- L.decimal
-    return (a, b)
+  x <- L.decimal
+  void $ char ','
+  b <- L.decimal
+  return (x, b)
 
-arrowParser :: Parsec Void Text Arrow
+arrowParser :: Parser Arrow
 arrowParser = do
     a <- pointParser
-    void $ string (pack " -> ")
+    void $ string (T.pack " -> ")
     b <- pointParser
     return (Arrow a b)
 
-inputParser :: Parsec Void Text Input
+inputParser :: Parser Input
 inputParser = arrowParser `sepBy` eol
 
 ------------ TYPES ------------
@@ -57,8 +54,9 @@ data Arrow = Arrow Point Point deriving (Eq, Show)
 type Input = [Arrow]
 
 type OutputA = Int
-
 type OutputB = Int
+
+
 
 ------------ PART A ------------
 
@@ -66,7 +64,7 @@ range :: Int -> Int -> [Int]
 range start end
     | start < end  = [start..end]
     | start > end  = [start, start - 1 .. end]
-    | start == end = repeat start
+    | start == end = [start]
 
 getPoints :: Arrow -> [Point]
 getPoints (Arrow (x1, y1) (x2, y2)) = zip (range x1 x2) (range y1 y2)

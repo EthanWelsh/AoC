@@ -1,6 +1,6 @@
 module Year2022.Day03 (solve) where
 
-import           Data.List
+import           Data.List (length, zip, map, sum)
 import qualified Data.Map.Strict            as Map
 import qualified Data.Set                   as Set
 import           Text.Megaparsec
@@ -31,6 +31,7 @@ partA input = sum $ map scoreLine input
 groupsOfThree :: [String] -> [(String, String, String)]
 groupsOfThree [] = []
 groupsOfThree (a:b:c:xs) = (a, b, c) : groupsOfThree xs
+groupsOfThree _ = error "groupsOfThree: input list length not a multiple of 3"
 
 inCommonThree :: (String, String, String) -> Char
 inCommonThree (a, b, c) = head $ inCommon (inCommon (a, b), c)

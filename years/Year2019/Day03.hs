@@ -3,9 +3,8 @@ module Year2019.Day03 (solve) where
 import qualified Data.Map                   as M
 import qualified Data.Set                   as S
 import           Parsers                    (Parser, integer)
-import           Control.Monad        (void)
 import           Text.Megaparsec
-import           Text.Megaparsec.Char (char, eol)
+import           Text.Megaparsec.Char (char)
 import           Maze                       (Direction (..), manhattanDistance, movePoint, Point)
 
 type Step = (Direction, Int)

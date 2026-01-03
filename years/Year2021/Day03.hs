@@ -1,8 +1,8 @@
 module Year2021.Day03 (solve) where
 
-import           Control.Applicative        ((<|>))
-import           Data.List
-import qualified Data.Map.Strict            as Map
+
+import           Data.List (transpose, partition)
+
 import           Parsers                    (Parser)
 import           Text.Megaparsec
 import           Text.Megaparsec.Char       (char, eol)
@@ -14,12 +14,13 @@ type Input = [Byte]
 inputParser :: Parser Input
 inputParser = (some (char '0' <|> char '1')) `sepEndBy` eol
 
-byteToInt :: Byte -> Int
+byteToInt :: Byte -> Integer
 byteToInt bits = let
-    powersOfTwo = [2^x | x <- [0..]]
-    zipped = zip (reverse bits) powersOfTwo :: [(Bit, Int)]
-    onlyOn = filter ((=='1') . fst) zipped  :: [(Bit, Int)]
-    totals = map snd onlyOn                 :: [Int]
+    powersOfTwo :: [Integer]
+    powersOfTwo = [2^x | x <- [0..] :: [Integer]]
+    zipped = zip (reverse bits) powersOfTwo :: [(Bit, Integer)]
+    onlyOn = filter ((=='1') . fst) zipped  :: [(Bit, Integer)]
+    totals = map snd onlyOn                 :: [Integer]
     in sum totals
 
 keepWhereBitInPosEquals :: [Byte] -> Int -> Bit -> [Byte]

@@ -77,41 +77,40 @@ math m x y a f = let
 
 runInstruction :: Machine -> Instruction -> Machine
 runInstruction m Halt = m { isHalted = True }
-runInstruction m i@(Add a b r) =
+runInstruction m _i@(Add a b r) =
   m { getMemory = math (getMemory m) a b r (+)
-    , getIp = getIp m @+ instructionSize i
+    , getIp = getIp m @+ instructionSize _i
     }
-runInstruction m i@(Multiply a b r) =
+runInstruction m _i@(Multiply a b r) =
   m { getMemory = math (getMemory m) a b r (*)
-    , getIp = getIp m @+ instructionSize i
+    , getIp = getIp m @+ instructionSize _i
     }
-runInstruction m i@(Input a) =
+runInstruction m _i@(Input a) =
   m { getMemory = set (getMemory m) a (head $ getInput m)
-    , getIp = getIp m @+ instructionSize i
+    , getIp = getIp m @+ instructionSize _i
     , getInput = tail $ getInput m
     }
-runInstruction m i@(Output a) = let
+runInstruction m _i@(Output a) = let
   v = getValue (getMemory m) a
-  in m { getIp = getIp m @+ instructionSize i
+  in m { getIp = getIp m @+ instructionSize _i
        , getOutput = v:getOutput m }
-runInstruction m i@(JumpIfTrue a b) = let
+runInstruction m _i@(JumpIfTrue a b) = let
   testValue = getValue (getMemory m) a
   ipIfJump = Address $ getValue (getMemory m) b
-  ipIfNotJump = getIp m @+ instructionSize i
+  ipIfNotJump = getIp m @+ instructionSize _i
   in m { getIp = if testValue /= 0 then ipIfJump else ipIfNotJump }
-runInstruction m i@(JumpIfFalse a b) = let
+runInstruction m _i@(JumpIfFalse a b) = let
   testValue = getValue (getMemory m) a
   ipIfJump = Address $ getValue (getMemory m) b
-  ipIfNotJump = getIp m @+ instructionSize i
+  ipIfNotJump = getIp m @+ instructionSize _i
   in m { getIp = if testValue == 0 then ipIfJump else ipIfNotJump }
-runInstruction m i@(LessThan a b r) =
+runInstruction m _i@(LessThan a b r) =
   m { getMemory = math (getMemory m) a b r (\x y -> if x < y then 1 else 0)
-    , getIp = getIp m @+ instructionSize i }
-runInstruction m i@(Equals a b r) =
+    , getIp = getIp m @+ instructionSize _i }
+runInstruction m _i@(Equals a b r) =
   m { getMemory = math (getMemory m) a b r (\x y -> if x == y then 1 else 0)
-    , getIp = getIp m @+ instructionSize i }
-runInstruction m i@(Halt) =
-  m { isHalted = True }
+    , getIp = getIp m @+ instructionSize _i }
+
 
 slice :: Int -> Int -> [a] -> [a]
 slice from to xs = take (to - from + 1) (drop from xs)

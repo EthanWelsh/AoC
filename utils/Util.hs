@@ -1,5 +1,15 @@
 {-# LANGUAGE MultiWayIf #-}
-module Util where
+module Util (
+  freq,
+  mapFromNestedLists,
+  chunksOf,
+  chunksByPredicate,
+  traceShowIdWithContext,
+  (!!?),
+  mapBoundingBox,
+  laggedPairs,
+  range
+) where
 
 {- ORMOLU_DISABLE -}
 import Data.Map.Strict (Map)
@@ -21,7 +31,7 @@ freq = Map.fromListWith (+) . fmap (,1)
 -- For example:
 --     Input: [[a,b,c],[d,e]]
 --     Output: Map.fromList [((0,0),a), ((0,1),b), ((0,2),c), ((1,0),d), ((1,1),e)]
-mapFromNestedLists :: (Ord a) => [[a]] -> Map (Int, Int) a
+mapFromNestedLists :: [[a]] -> Map (Int, Int) a
 mapFromNestedLists = Map.fromList . attachCoords 0 0
   where
     attachCoords _ _ [] = []
@@ -77,11 +87,14 @@ mapBoundingBox m =
 
 laggedPairs :: [a] -> [(a, a)]
 laggedPairs [] = []
-laggedPairs [x] = []
+laggedPairs [_] = []
 laggedPairs (x:y:ys) = (x, y) : laggedPairs (y:ys)
 
 range :: Int -> Int -> [Int]
-range start end
-    | start < end  = [start..end]
-    | start > end  = [start, start - 1 .. end]
-    | start == end = repeat start
+range start end =
+    if start < end then
+        [start..end]
+    else if start > end then
+        [start, start - 1 .. end]
+    else -- start == end
+        [start]

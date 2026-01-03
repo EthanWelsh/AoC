@@ -1,19 +1,11 @@
+{-# OPTIONS_GHC -Wno-partial-fields #-}
 {-# LANGUAGE OverloadedStrings #-}
 module Year2022.Day07 (solve) where
 
 {- ORMOLU_DISABLE -}
-import Data.List
-import Data.Map.Strict (Map)
-import qualified Data.Map.Strict as Map
-import Data.Maybe
-import Data.Set (Set)
-import qualified Data.Set as Set
-import Data.Vector (Vector)
-import qualified Data.Vector as Vec
-import Control.Monad (void)
-import Control.Applicative ((<|>))
-import Data.Functor (($>))
+import Data.List (filter, map, sum, concatMap, sort, drop)
 import Data.Void (Void)
+import Control.Monad (void)
 import Text.Megaparsec
 import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
@@ -27,22 +19,23 @@ type Parser = Parsec Void T.Text
 cdParser :: Parser Command
 cdParser = do
     void $ string "$ cd "
-    name <- takeWhileP Nothing (/= '\n')
+    n <- takeWhileP Nothing (/= '\n')
     void $ eol
-    return (CD (T.unpack name))
+    return (CD (T.unpack n))
 
 lsFileResultParser :: Parser Entity
 lsFileResultParser = do
-    size <- L.decimal
+    s <- L.decimal
     void $ char ' '
-    name <- takeWhileP Nothing (/= '\n')
-    return File {name = T.unpack name, size = size} 
+    n <- takeWhileP Nothing (/= '\n')
+    return File {name = T.unpack n, size = s} 
 
 lsDirResultParser :: Parser Entity
 lsDirResultParser = do
     void $ string "dir "
-    name <- takeWhileP Nothing (/= '\n')
-    return Directory { name = T.unpack name, children = [], parent = Nil}
+    n <- takeWhileP Nothing (/= '\n')
+    return Directory { name = T.unpack n, children = [], parent = Nil}
+
 
 lsParser :: Parser Command
 lsParser = do
@@ -74,18 +67,22 @@ isDir _ = False
 
 setResults :: Entity -> [Entity] -> Entity
 setResults (Directory n _ p) results = (Directory n results p)
+setResults _ _ = error "setResults: not a Directory"
 
 setParent :: Entity -> Entity -> Entity
 setParent (Directory n r _) p = Directory n r p
 setParent (File n s) _ = File n s
+setParent Nil _ = error "setParent: Nil entity"
 
 removeChild :: Entity -> String -> Entity
 removeChild (Directory n rs p) toRemove = let
     newRs = filter ((/= toRemove) . name) rs
     in (Directory n newRs p)
+removeChild _ _ = error "removeChild: not a Directory"
 
 addChild :: Entity -> Entity -> Entity
 addChild (Directory n rs p) r = (Directory n (r:rs) p)
+addChild _ _ = error "addChild: not a Directory"
 
 repeatUntil :: (a -> a) -> (a -> Bool) -> a -> a
 repeatUntil f p a = if (p a) then a else repeatUntil f p (f a)
@@ -101,8 +98,8 @@ allTheWayUp :: Entity -> Entity
 allTheWayUp d = repeatUntil up (not . hasParent) d
 
 setParentAndRemoveSelf :: Entity -> Entity -> Entity
-setParentAndRemoveSelf focus parent = let
-    parentWithoutChild = (removeChild parent (name focus))
+setParentAndRemoveSelf focus p = let
+    parentWithoutChild = (removeChild p (name focus))
     in setParent focus parentWithoutChild
 
 commandToEntity :: Entity -> Command -> Entity
@@ -125,6 +122,7 @@ helper focus (c:cs) = helper (commandToEntity focus c) cs
 getEntitySize :: Entity -> Int
 getEntitySize (File _ s) = s
 getEntitySize (Directory _ cs _) = sum $ map getEntitySize cs
+getEntitySize Nil = 0
 
 getAllDescendents :: Entity -> [Entity]
 getAllDescendents (Directory n cs p) = (Directory n cs p) : (concatMap getAllDescendents cs)

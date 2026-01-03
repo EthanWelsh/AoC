@@ -1,6 +1,6 @@
 module Year2021.Day01 (solve) where
 
-import           Data.List
+
 import           Parsers                    (Parser, integer)
 import           Text.Megaparsec
 import           Text.Megaparsec.Char       (eol)
@@ -12,11 +12,11 @@ inputParser = integer `sepEndBy` eol
 
 pairs :: [Int] -> [(Int, Int)]
 pairs [] = []
-pairs [x] = []
+pairs [_] = []
 pairs (x:y:ys) = (x, y) : pairs (y : ys)
 
 countIncreases :: [(Int, Int)] -> Int
-countIncreases pairs = length $ filter (\(a, b) -> b > a) pairs
+countIncreases ps = length $ filter (\(a, b) -> b > a) ps
 
 partA :: Input -> String
 partA input = show $ countIncreases $ pairs input
@@ -26,8 +26,8 @@ sum' (a, b, c) = a + b + c
 
 triples :: [Int] -> [(Int, Int, Int)]
 triples [] = []
-triples [x] = []
-triples [x, y] = []
+triples [_] = []
+triples [_, _] = []
 triples (x:y:z:zs) = (x, y, z) : triples (y:z:zs)
 
 partB :: Input -> String

@@ -23,11 +23,13 @@ charToFirst :: Char -> FirstColumn
 charToFirst 'A' = A
 charToFirst 'B' = B
 charToFirst 'C' = C
+charToFirst _   = error "Invalid FirstColumn char"
 
 charToSecond :: Char -> SecondColumn
 charToSecond 'X' = X
 charToSecond 'Y' = Y
 charToSecond 'Z' = Z
+charToSecond _   = error "Invalid SecondColumn char"
 
 row :: Parser (FirstColumn, SecondColumn)
 row = do
@@ -105,7 +107,7 @@ toShapeAndGameState :: (FirstColumn, SecondColumn) -> (Shape, GameState)
 toShapeAndGameState (fc, sc) = (firstToShape fc, secondToGameState sc)
 
 toShapes :: (Shape, GameState) -> (Shape, Shape)
-toShapes (shape, gameState) = (shape, pickRightShape shape gameState)
+toShapes (shape, gs) = (shape, pickRightShape shape gs)
 
 partB :: Input -> Int
 partB input = let a = map toShapeAndGameState input

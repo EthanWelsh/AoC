@@ -1,6 +1,6 @@
 module Year2022.Day01 (solve) where
 
-import           Data.List
+import           Data.List (maximum, map, sum, filter)
 import qualified Data.List as L
 import           Text.Megaparsec
 import           Text.Megaparsec.Char

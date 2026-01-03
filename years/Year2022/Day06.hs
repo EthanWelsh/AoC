@@ -1,17 +1,10 @@
 module Year2022.Day06 (solve) where
 
 {- ORMOLU_DISABLE -}
-import Data.List
-import Data.Map.Strict (Map)
-import qualified Data.Map.Strict as Map
+import Data.List (take, drop, length, nub, find, findIndex)
 import Data.Maybe
-import Data.Set (Set)
-import qualified Data.Set as Set
-import Data.Vector (Vector)
-import qualified Data.Vector as Vec
 import Data.Void (Void)
 import Text.Megaparsec
-import Text.Megaparsec.Char
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 {- ORMOLU_ENABLE -}

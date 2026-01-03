@@ -21,12 +21,12 @@ module Parsers (
 import           Control.Monad              (void)
 import           Data.Void                  (Void)
 import           Text.Megaparsec            (Parsec, between, empty, many,
-                                             satisfy, sepBy, choice, anySingle)
+                                             satisfy, choice, anySingle)
 import           Control.Applicative        ((<|>))
-import           Text.Megaparsec.Char       (space1, string, char, newline, eol)
+import           Text.Megaparsec.Char       (space1, string, char, eol)
 import qualified Text.Megaparsec.Char.Lexer as L
 import qualified Data.Map.Strict as Map
-import Data.Map.Strict (Map)
+
 
 -- | Parser type specialized to operate on 'String' input for this project.
 --   This is a thin alias around Megaparsec's 'Parsec' with no custom state.
@@ -96,7 +96,7 @@ negativeInteger = do
 signedInteger :: Parser Int
 signedInteger = negativeInteger <|> integer
 
-coordinateParser :: (Char -> Maybe a) -> (Int, Int) -> Parser (Map (Int, Int) a)
+coordinateParser :: (Char -> Maybe a) -> (Int, Int) -> Parser (Map.Map (Int, Int) a)
 coordinateParser mapper (startX, startY) = coordinateParser' startX startY
   where
     coordinateParser' x y =
@@ -105,6 +105,6 @@ coordinateParser mapper (startX, startY) = coordinateParser' startX startY
           anySingle >>= (\c -> addToMap mapper x y c <$> coordinateParser' (x + 1) y),
           return Map.empty
         ]
-    addToMap mapper x y c = Map.alter (const (mapper c)) (x, y)
+    addToMap f x y c = Map.alter (const (f c)) (x, y)
 
 

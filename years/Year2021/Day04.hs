@@ -1,13 +1,14 @@
+{-# OPTIONS_GHC -Wno-unused-top-binds #-}
 module Year2021.Day04 (solve) where
 
 import           Control.Monad              (void)
 import           Data.Function              (on)
-import           Data.List
+import           Data.List (transpose, take, minimumBy, maximumBy)
 import qualified Data.Set as Set
 import           Data.Set (Set)
 import           Data.Void                  (Void)
-import           Text.Megaparsec            (Parsec, parse, errorBundlePretty, sepBy, sepBy1, count, many, some, (<|>), sepEndBy1, optional)
-import           Text.Megaparsec.Char       (char, hspace, string, eol)
+import           Text.Megaparsec            (Parsec, parse, errorBundlePretty, sepBy1, count, many, some, optional)
+import           Text.Megaparsec.Char       (char, hspace, eol)
 import qualified Text.Megaparsec.Char.Lexer as L
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
@@ -47,10 +48,10 @@ parseBoard = count 5 (parseLine <* eol)
 
 inputParser :: Parser Input
 inputParser = do
-    draws <- parseDraws
-    eol >> eol
-    boards <- many (parseBoard <* optional eol)
-    return $ Bingo draws boards
+    ds <- parseDraws
+    _ <- eol >> eol
+    bs <- many (parseBoard <* optional eol)
+    return $ Bingo ds bs
 
 
 
