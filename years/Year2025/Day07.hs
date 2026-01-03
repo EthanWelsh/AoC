@@ -8,6 +8,11 @@ import Parsers (Parser)
 import Text.Megaparsec
 import Text.Megaparsec.Char (char, eol)
 
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> let example = ".......S.......\n...............\n.......^.......\n...............\n......^.^......\n...............\n.....^.^.^.....\n...............\n....^.^...^....\n...............\n...^.^...^.^...\n...............\n..^...^.....^..\n...............\n.^.^.^.^.^...^."
+-- >>> let Right parsedExample = parse parseInput "" example
+
 type Grid = Maze Char
 
 type Input = Grid
@@ -29,6 +34,9 @@ countSplits g = go
         Just '^' -> Set.unions [Set.singleton p, go (east p), go (west p)]
         _ -> error "Unexpected point"
 
+-- |
+-- >>> part1 parsedExample
+-- Part 1: 21
 part1 :: Input -> IO ()
 part1 input = do
   putStr "Part 1: "
@@ -47,6 +55,9 @@ countPaths g = go
         Just '^' -> 1 + go (east p) + go (west p)
         _ -> error "Unexpected point"
 
+-- |
+-- >>> part2 parsedExample
+-- Part 2: 40
 part2 :: Input -> IO ()
 part2 input = do
   putStr "Part 2: "

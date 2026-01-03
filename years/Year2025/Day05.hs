@@ -7,6 +7,11 @@ import Text.Megaparsec
 import Text.Megaparsec.Char (char, newline)
 import qualified Text.Megaparsec.Char.Lexer as L
 
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> let example = "3-5\n10-14\n16-20\n12-18\n\n1\n5\n8\n11\n17\n32"
+-- >>> let Right parsedExample = parse parseInput "" example
+
 type Food = [Int]
 
 type Input = (Ranges, Food)
@@ -26,11 +31,17 @@ parseInput = do
   eof
   return (rs, nums)
 
+-- |
+-- >>> part1 parsedExample
+-- Part 1: 3
 part1 :: Input -> IO ()
 part1 (rs, ns) = do
   putStr "Part 1: "
   print $ length $ filter (memberOfRanges rs) ns
 
+-- |
+-- >>> part2 parsedExample
+-- Part 2: 14
 part2 :: Input -> IO ()
 part2 (rs, _) = do
   putStr "Part 2: "

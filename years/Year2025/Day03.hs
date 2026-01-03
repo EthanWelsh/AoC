@@ -29,7 +29,16 @@ highestVoltage bank =
       b = maximum $ tail $ dropWhile (/= a) bank
    in (a * 10) + b
 
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> let example = "987654321111111\n811111111111119\n234234234234278\n818181911112111"
+-- >>> let Right parsedExample = parse parseInput "" example
+
+-- |
+-- >>> part1 parsedExample
+-- Part 1: 357
 part1 :: Input -> IO ()
+
 part1 input = do
   putStr "Part 1: "
   let voltages = map highestVoltage input

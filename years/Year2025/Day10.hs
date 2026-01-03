@@ -13,6 +13,11 @@ import Parsers (Parser, integer, lexeme, sc, symbol)
 import Text.Megaparsec (between, errorBundlePretty, many, parse, sepBy, (<|>))
 import Text.Megaparsec.Char (char)
 
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> let example = "[.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}\n[...#.] (0,2,3,4) (2,3) (0,4) (0,1,2) (1,2,3,4) {7,5,12,7,2}\n[.###.#] (0,1,2,3,4) (0,3,4) (0,1,2,4,5) (1,2) {10,11,11,5,10,5}"
+-- >>> let Right parsedExample = parse parseInput "" example
+
 data Light = On | Off deriving (Show, Eq, Ord)
 
 newtype WiringSchematic = WiringSchematic [Int] deriving (Show, Eq, Ord)
@@ -84,6 +89,9 @@ solveLights m = case shortestPath of
     initialState :: [Light]
     initialState = replicate (length (targetLights m)) Off
 
+-- |
+-- >>> part1 parsedExample
+-- Part 1: 7
 part1 :: Input -> IO ()
 part1 input = do
   putStr "Part 1: "
@@ -130,6 +138,9 @@ solveJoltage m = fromMaybe (error "No solution found") (minPresses (let (Joltage
           nextJoltage = map (`div` 2) reduced
        in fmap (\v -> length subset + 2 * v) (minPresses nextJoltage)
 
+-- |
+-- >>> part2 parsedExample
+-- Part 2: 33
 part2 :: Input -> IO ()
 part2 input = do
   putStr "Part 2: "

@@ -1,10 +1,14 @@
 module Year2025.Day06 (solve) where
 
 import Data.Char (isSpace)
-import Data.List (transpose)
+import Data.List (transpose, unlines)
 import Data.Maybe (mapMaybe)
 import List (splitOn)
 
+-- |
+-- >>> let example = unlines ["123 328  51 64 ", " 45 64  387 23 ", "  6 98  215 314", "*   +   *   +  "]
+-- >>> part1 example
+-- Part 1: 4277556
 calculate :: ([Int], Char) -> Int
 calculate (nums, op) = case op of
   '+' -> sum nums
@@ -59,6 +63,10 @@ parseColumnNumber col =
   let digits = filter (not . isSpace) (init col)
    in if null digits then Nothing else Just (read digits)
 
+-- |
+-- >>> let example = unlines ["123 328  51 64 ", " 45 64  387 23 ", "  6 98  215 314", "*   +   *   +  "]
+-- >>> part2 example
+-- Part 2: 3263827
 part2 :: String -> IO ()
 part2 contents = do
   putStr "Part 2: "

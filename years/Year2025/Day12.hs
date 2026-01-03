@@ -1,10 +1,16 @@
 module Year2025.Day12 (solve) where
 
+import GHC.Err (errorWithoutStackTrace)
 import Maze (Maze, findPoints, height, mazeFromDimensions, mazeFromList, width)
 import Parsers (Parser, integer)
 import Text.Megaparsec
 import Text.Megaparsec.Char (char, newline, string)
 import Text.Megaparsec.Char.Lexer (decimal)
+
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> let example = "0:\n###\n##.\n##.\n\n1:\n###\n##.\n.##\n\n2:\n.##\n###\n##.\n\n3:\n##.\n###\n##.\n\n4:\n###\n#..\n###\n\n5:\n###\n.#.\n###\n\n4x4: 0 0 0 0 2 0\n12x5: 1 0 1 0 2 2\n12x5: 1 0 1 0 3 2"
+-- >>> let Right parsedExample = parse parseInput "" example
 
 type Grid = Maze Char
 
@@ -41,14 +47,14 @@ giftVolume :: Gift -> Int
 giftVolume g = length $ findPoints g (== '#')
 
 isFitImpossible :: [Gift] -> Tree -> Bool
-isFitImpossible gifts (Tree (grid, giftCounts)) =
+isFitImpossible gifts (Tree (grid, giftCounts)) = 
   let giftVolumes = map giftVolume gifts
       totalGiftVolume = sum $ zipWith (*) giftVolumes giftCounts
       totalAvailableVolume = width grid * height grid
    in totalGiftVolume > totalAvailableVolume
 
 isFitInevitable :: Tree -> Bool
-isFitInevitable (Tree (grid, giftCounts)) =
+isFitInevitable (Tree (grid, giftCounts)) = 
   let widthInGifts = width grid `div` 3 :: Int
       heightInGifts = height grid `div` 3 :: Int
       totalGiftsThatCanFit = widthInGifts * heightInGifts
@@ -57,11 +63,14 @@ isFitInevitable (Tree (grid, giftCounts)) =
 
 treesWillFit :: [Gift] -> Tree -> Bool
 treesWillFit gifts tree = case (isFitImpossible gifts tree, isFitInevitable tree) of
-  (True, True) -> error "Contradiction"
+  (True, True) -> errorWithoutStackTrace "Contradiction"
   (True, _) -> False
   (_, True) -> True
-  (False, False) -> error "Input has complicated cases not handled"
+  (False, False) -> errorWithoutStackTrace "Input has complicated cases not handled"
 
+-- |
+-- >>> part1 parsedExample
+-- Part 1: *** Exception: Input has complicated cases not handled
 part1 :: Input -> IO ()
 part1 (gifts, trees) = do
   putStr "Part 1: "

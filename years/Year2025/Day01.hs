@@ -5,6 +5,11 @@ import Parsers (Parser, integer)
 import Text.Megaparsec (choice, errorBundlePretty, optional, parse, some)
 import Text.Megaparsec.Char (char, eol)
 
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> let example = "L68\nL30\nR48\nL5\nR60\nL55\nL1\nL99\nR14\nL82"
+-- >>> let Right parsedExample = parse parseInput "" example
+
 data Instruction = L Int | R Int deriving (Show, Eq)
 
 type Input = [Instruction]
@@ -24,6 +29,9 @@ values ins = scanl update 50 ins
     update acc (L n) = (acc - n) `mod` 100
     update acc (R n) = (acc + n) `mod` 100
 
+-- |
+-- >>> part1 parsedExample
+-- Part 1: 3
 part1 :: Input -> IO ()
 part1 input = do
   putStr "Part 1: "
@@ -38,6 +46,9 @@ explode (x : xs) = case x of
   L n -> replicate n (L 1) ++ explode xs
   R n -> replicate n (R 1) ++ explode xs
 
+-- |
+-- >>> part2 parsedExample
+-- Part 2: 6
 part2 :: Input -> IO ()
 part2 input = do
   putStr "Part 2: "

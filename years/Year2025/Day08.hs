@@ -10,6 +10,11 @@ import Text.Megaparsec
 import Text.Megaparsec.Char (char, eol)
 import qualified Text.Megaparsec.Char.Lexer as L
 
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> let example = "162,817,812\n57,618,57\n906,360,560\n592,479,940\n352,342,300\n466,668,158\n542,29,236\n431,825,988\n739,650,466\n52,470,668\n216,146,977\n819,987,18\n117,168,530\n805,96,715\n346,949,466\n970,615,88\n941,993,340\n862,61,35\n984,92,344\n425,690,689"
+-- >>> let Right parsedExample = parse parseInput "" example
+
 type Point3D = (Int, Int, Int)
 
 type Input = [Point3D]
@@ -44,14 +49,20 @@ closestPairs pts =
       sortedPs = sortBy (\(a, b) (c, d) -> compare (distanceSquared a b) (distanceSquared c d)) ps
    in sortedPs
 
-part1 :: Input -> IO ()
-part1 input = do
+-- |
+-- >>> part1' 10 parsedExample
+-- Part 1: 40
+part1' :: Int -> Input -> IO ()
+part1' n input = do
   putStr "Part 1: "
-  let toMerge = take 1000 (closestPairs input)
+  let toMerge = take n (closestPairs input)
   let graph = graphFromPoints input
   let mergedGraph = addBidirectionalEdges graph toMerge
   let components = connectedComponents mergedGraph
   print $ product $ take 3 $ rsort $ map length components
+
+part1 :: Input -> IO ()
+part1 = part1' 1000
 
 -- | Merged edges until all points are connected. Returns the last point to be merged, causing the graph to be fully connected.
 mergeTillConnected :: Graph Point3D -> [(Point3D, Point3D)] -> (Point3D, Point3D)
@@ -61,6 +72,9 @@ mergeTillConnected g (x : xs) =
       components = connectedComponents g'
    in if length components == 1 then x else mergeTillConnected g' xs
 
+-- |
+-- >>> part2 parsedExample
+-- Part 2: 25272
 part2 :: Input -> IO ()
 part2 input = do
   putStr "Part 2: "

@@ -5,6 +5,11 @@ import Parsers (Parser)
 import Text.Megaparsec
 import Text.Megaparsec.Char (char, eol)
 
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> let example = "..@@.@@@@.\n@@@.@.@.@@\n@@@@@.@.@@\n@.@@@@..@.\n@@.@@@@.@@\n.@@@@@@@.@\n.@.@.@.@@@\n@.@@@.@@@@\n.@@@@@@@@.\n@.@.@@@.@."
+-- >>> let Right parsedExample = parse parseInput "" example
+
 type Grid = Maze Char
 
 type Input = Grid
@@ -20,6 +25,9 @@ countOpenSpaces :: Grid -> Point -> Int
 countOpenSpaces g p =
   length $ filter (\pp -> getPoint g pp == '@') (neighbors8 g p)
 
+-- |
+-- >>> part1 parsedExample
+-- Part 1: 13
 part1 :: Input -> IO ()
 part1 input = do
   putStr "Part 1: "
@@ -36,6 +44,9 @@ repeatUntilStable f x =
   let x' = f x
    in if x == x' then x else repeatUntilStable f x'
 
+-- |
+-- >>> part2 parsedExample
+-- Part 2: 43
 part2 :: Input -> IO ()
 part2 input = do
   let countBefore = length $ findPoints input (== '@')
