@@ -7,7 +7,8 @@ import Text.Megaparsec.Char (char, eol)
 
 -- $setup
 -- >>> import Text.Megaparsec (parse)
--- >>> let example = "L68\nL30\nR48\nL5\nR60\nL55\nL1\nL99\nR14\nL82"
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2025/input/sample/Day01.txt"
 -- >>> let Right parsedExample = parse parseInput "" example
 
 data Instruction = L Int | R Int deriving (Show, Eq)

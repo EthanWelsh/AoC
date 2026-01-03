@@ -5,8 +5,11 @@ import Data.List (transpose, unlines)
 import Data.Maybe (mapMaybe)
 import List (splitOn)
 
+-- $setup
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2025/input/sample/Day06.txt"
+
 -- |
--- >>> let example = unlines ["123 328  51 64 ", " 45 64  387 23 ", "  6 98  215 314", "*   +   *   +  "]
 -- >>> part1 example
 -- Part 1: 4277556
 calculate :: ([Int], Char) -> Int
@@ -64,7 +67,6 @@ parseColumnNumber col =
    in if null digits then Nothing else Just (read digits)
 
 -- |
--- >>> let example = unlines ["123 328  51 64 ", " 45 64  387 23 ", "  6 98  215 314", "*   +   *   +  "]
 -- >>> part2 example
 -- Part 2: 3263827
 part2 :: String -> IO ()

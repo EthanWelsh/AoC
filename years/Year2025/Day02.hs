@@ -7,7 +7,8 @@ import Text.Megaparsec.Char (char)
 
 -- $setup
 -- >>> import Text.Megaparsec (parse)
--- >>> let example = "11-22,95-115,998-1012,1188511880-1188511890,222220-222224,1698522-1698528,446443-446449,38593856-38593862,565653-565659,824824821-824824827,2121212118-2121212124"
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2025/input/sample/Day02.txt"
 -- >>> let Right parsedExample = parse parseInput "" example
 
 type Input = [Range]

@@ -7,7 +7,8 @@ import Text.Megaparsec.Char (char, eol)
 
 -- $setup
 -- >>> import Text.Megaparsec (parse)
--- >>> let example = "..@@.@@@@.\n@@@.@.@.@@\n@@@@@.@.@@\n@.@@@@..@.\n@@.@@@@.@@\n.@@@@@@@.@\n.@.@.@.@@@\n@.@@@.@@@@\n.@@@@@@@@.\n@.@.@@@.@."
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2025/input/sample/Day04.txt"
 -- >>> let Right parsedExample = parse parseInput "" example
 
 type Grid = Maze Char

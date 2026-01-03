@@ -12,7 +12,8 @@ import qualified Text.Megaparsec.Char.Lexer as L
 
 -- $setup
 -- >>> import Text.Megaparsec (parse)
--- >>> let example = "162,817,812\n57,618,57\n906,360,560\n592,479,940\n352,342,300\n466,668,158\n542,29,236\n431,825,988\n739,650,466\n52,470,668\n216,146,977\n819,987,18\n117,168,530\n805,96,715\n346,949,466\n970,615,88\n941,993,340\n862,61,35\n984,92,344\n425,690,689"
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2025/input/sample/Day08.txt"
 -- >>> let Right parsedExample = parse parseInput "" example
 
 type Point3D = (Int, Int, Int)

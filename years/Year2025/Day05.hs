@@ -9,7 +9,8 @@ import qualified Text.Megaparsec.Char.Lexer as L
 
 -- $setup
 -- >>> import Text.Megaparsec (parse)
--- >>> let example = "3-5\n10-14\n16-20\n12-18\n\n1\n5\n8\n11\n17\n32"
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2025/input/sample/Day05.txt"
 -- >>> let Right parsedExample = parse parseInput "" example
 
 type Food = [Int]

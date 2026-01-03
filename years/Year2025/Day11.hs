@@ -12,9 +12,10 @@ import Text.Megaparsec.Char (newline, string)
 
 -- $setup
 -- >>> import Text.Megaparsec (parse)
--- >>> let example1 = "aaa: you hhh\nyou: bbb ccc\nbbb: ddd eee\nccc: ddd eee fff\nddd: ggg\neee: out\nfff: out\nggg: out\nhhh: ccc fff iii\niii: out"
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example1 = unsafePerformIO $ readFile "years/Year2025/input/sample/Day11_part1.txt"
 -- >>> let Right parsedExample1 = parse parseInput "" example1
--- >>> let example2 = "svr: aaa bbb\naaa: fft\nfft: ccc\nbbb: tty\ntty: ccc\nccc: ddd eee\nddd: hub\nhub: fff\neee: dac\ndac: fff\nfff: ggg hhh\nggg: out\nhhh: out"
+-- >>> let example2 = unsafePerformIO $ readFile "years/Year2025/input/sample/Day11_part2.txt"
 -- >>> let Right parsedExample2 = parse parseInput "" example2
 
 type Input = Graph String

@@ -15,7 +15,8 @@ import qualified "unordered-containers" Data.HashSet as HashSet
 
 -- $setup
 -- >>> import Text.Megaparsec (parse)
--- >>> let example = "7,1\n11,1\n11,7\n9,7\n9,5\n2,5\n2,3\n7,3"
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2025/input/sample/Day09.txt"
 -- >>> let Right parsedExample = parse parseInput "" example
 
 type Point = (Int, Int)

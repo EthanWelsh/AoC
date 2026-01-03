@@ -31,7 +31,8 @@ highestVoltage bank =
 
 -- $setup
 -- >>> import Text.Megaparsec (parse)
--- >>> let example = "987654321111111\n811111111111119\n234234234234278\n818181911112111"
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2025/input/sample/Day03.txt"
 -- >>> let Right parsedExample = parse parseInput "" example
 
 -- |
@@ -66,6 +67,9 @@ highestVoltage2 bank = toNumber $ helper bank 12
             ifExcluded = helper xs n
          in maxBank ifIncluded ifExcluded
 
+-- |
+-- >>> part2 parsedExample
+-- Part 2: 3121910778619
 part2 :: Input -> IO ()
 part2 input = do
   putStr "Part 2: "
