@@ -1,15 +1,17 @@
 {-# OPTIONS_GHC -Wno-unused-top-binds #-}
+
 module Year2025.Day08 (solve) where
 
-import Text.Megaparsec
-import Parsers (Parser)
-import Text.Megaparsec.Char (char, eol)
-import Graph (Graph, graphFromNodes, connectedComponents, addBidirectionalEdge, addBidirectionalEdges)
-import qualified Text.Megaparsec.Char.Lexer as L
 import Data.List (sortBy, tails)
-import Data.Ord (comparing, Down (Down))
+import Data.Ord (Down (Down), comparing)
+import Graph (Graph, addBidirectionalEdge, addBidirectionalEdges, connectedComponents, graphFromNodes)
+import Parsers (Parser)
+import Text.Megaparsec
+import Text.Megaparsec.Char (char, eol)
+import qualified Text.Megaparsec.Char.Lexer as L
 
 type Point3D = (Int, Int, Int)
+
 type Input = [Point3D]
 
 parsePosition :: Parser Point3D
@@ -23,24 +25,24 @@ graphFromPoints = graphFromNodes
 
 euclideanDistance :: Point3D -> Point3D -> Double
 euclideanDistance (x1, y1, z1) (x2, y2, z2) =
-    sqrt $ fromIntegral $ (x1 - x2)^(2::Int) + (y1 - y2)^(2::Int) + (z1 - z2)^(2::Int)
+  sqrt $ fromIntegral $ (x1 - x2) ^ (2 :: Int) + (y1 - y2) ^ (2 :: Int) + (z1 - z2) ^ (2 :: Int)
 
 distanceSquared :: Point3D -> Point3D -> Int
 distanceSquared = xdistanceSquared
   where
-    xdistanceSquared (x1, y1, z1) (x2, y2, z2) = (x1 - x2)^(2::Int) + (y1 - y2)^(2::Int) + (z1 - z2)^(2::Int)
+    xdistanceSquared (x1, y1, z1) (x2, y2, z2) = (x1 - x2) ^ (2 :: Int) + (y1 - y2) ^ (2 :: Int) + (z1 - z2) ^ (2 :: Int)
 
 allPairs :: [a] -> [(a, a)]
-allPairs xs = [(x, y) | (x:ys) <- tails xs, y <- ys]
+allPairs xs = [(x, y) | (x : ys) <- tails xs, y <- ys]
 
-rsort :: Ord a => [a] -> [a]
+rsort :: (Ord a) => [a] -> [a]
 rsort = sortBy (comparing Down)
 
 closestPairs :: [Point3D] -> [(Point3D, Point3D)]
-closestPairs pts = let
-  ps = allPairs pts
-  sortedPs = sortBy (\(a,b) (c,d) -> compare (distanceSquared a b) (distanceSquared c d)) ps
-  in sortedPs
+closestPairs pts =
+  let ps = allPairs pts
+      sortedPs = sortBy (\(a, b) (c, d) -> compare (distanceSquared a b) (distanceSquared c d)) ps
+   in sortedPs
 
 part1 :: Input -> IO ()
 part1 input = do
@@ -54,10 +56,10 @@ part1 input = do
 -- | Merged edges until all points are connected. Returns the last point to be merged, causing the graph to be fully connected.
 mergeTillConnected :: Graph Point3D -> [(Point3D, Point3D)] -> (Point3D, Point3D)
 mergeTillConnected _ [] = error "No pairs to merge"
-mergeTillConnected g (x:xs) = let 
-  g' = addBidirectionalEdge g x
-  components = connectedComponents g'
-  in if length components == 1 then x else mergeTillConnected g' xs
+mergeTillConnected g (x : xs) =
+  let g' = addBidirectionalEdge g x
+      components = connectedComponents g'
+   in if length components == 1 then x else mergeTillConnected g' xs
 
 part2 :: Input -> IO ()
 part2 input = do
@@ -71,7 +73,7 @@ solve :: FilePath -> IO ()
 solve filePath = do
   contents <- readFile filePath
   case parse parseInput filePath contents of
-          Left eb -> putStr (errorBundlePretty eb)
-          Right input -> do
-            part1 input
-            part2 input
+    Left eb -> putStr (errorBundlePretty eb)
+    Right input -> do
+      part1 input
+      part2 input

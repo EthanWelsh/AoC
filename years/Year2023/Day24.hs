@@ -1,20 +1,22 @@
 module Year2023.Day24 (solve) where
 
-import           Control.Monad        (void)
-import           Parsers
-import           Text.Megaparsec
-import           Text.Megaparsec.Char (char, string)
+import Control.Monad (void)
+import Parsers
+import Text.Megaparsec
+import Text.Megaparsec.Char (char, string)
 
 commaAndSpaces :: Parser ()
 commaAndSpaces = do
-    void $ char ','
-    void $ many (char ' ')
+  void $ char ','
+  void $ many (char ' ')
 
 newtype Position = Position (Int, Int, Int) deriving (Show, Eq, Ord)
-newtype Velocity = Velocity (Int, Int, Int) deriving (Show, Eq, Ord)
-data Hail = Hail Position Velocity deriving (Show, Eq, Ord)
-type Input = [Hail]
 
+newtype Velocity = Velocity (Int, Int, Int) deriving (Show, Eq, Ord)
+
+data Hail = Hail Position Velocity deriving (Show, Eq, Ord)
+
+type Input = [Hail]
 
 parseXyz :: Parser (Int, Int, Int)
 parseXyz = do
@@ -51,7 +53,7 @@ solve :: FilePath -> IO ()
 solve filePath = do
   contents <- readFile filePath
   case parse parseInput filePath contents of
-          Left eb -> putStr (errorBundlePretty eb)
-          Right input -> do
-            part1 input
-            part2 input
+    Left eb -> putStr (errorBundlePretty eb)
+    Right input -> do
+      part1 input
+      part2 input

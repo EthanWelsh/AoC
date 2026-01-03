@@ -1,5 +1,5 @@
-module ParserUtils (
-    Parser,
+module ParserUtils
+  ( Parser,
     sc,
     lexeme,
     integer,
@@ -12,15 +12,21 @@ module ParserUtils (
     parens,
     skipSpaces,
     charInRange,
-    signedInteger
-)
+    signedInteger,
+  )
 where
 
-import           Control.Monad              (void)
-import           Data.Void                  (Void)
-import           Text.Megaparsec            (Parsec, between, empty, many,
-                                             satisfy, (<|>))
-import           Text.Megaparsec.Char       (space1, string, char)
+import Control.Monad (void)
+import Data.Void (Void)
+import Text.Megaparsec
+  ( Parsec,
+    between,
+    empty,
+    many,
+    satisfy,
+    (<|>),
+  )
+import Text.Megaparsec.Char (char, space1, string)
 import qualified Text.Megaparsec.Char.Lexer as L
 
 type Parser = Parsec Void String

@@ -1,70 +1,9 @@
 module Main (main) where
 
-
-import qualified Year2025.Day01
-import qualified Year2025.Day02
-import qualified Year2025.Day03
-import qualified Year2025.Day04
-import qualified Year2025.Day05
-import qualified Year2025.Day06
-import qualified Year2025.Day07
-import qualified Year2025.Day08
-import qualified Year2025.Day09
-import qualified Year2025.Day10
-import qualified Year2025.Day11
-import qualified Year2025.Day12
-import qualified Year2024.Day24
-import qualified Year2024.Day25
-import qualified Year2023.Day01
-import qualified Year2023.Day02
-import qualified Year2023.Day03
-import qualified Year2023.Day04
-import qualified Year2023.Day05
-import qualified Year2023.Day06
-import qualified Year2023.Day07
-import qualified Year2023.Day08
-import qualified Year2023.Day09
-import qualified Year2023.Day10
-import qualified Year2023.Day11
-import qualified Year2023.Day12
-import qualified Year2023.Day13
-import qualified Year2023.Day14
-import qualified Year2023.Day15
-import qualified Year2023.Day16
-import qualified Year2023.Day17
-import qualified Year2023.Day18
-import qualified Year2023.Day19
-import qualified Year2023.Day20
-import qualified Year2023.Day21
-import qualified Year2023.Day22
-import qualified Year2023.Day23
-import qualified Year2023.Day24
-import qualified Year2023.Day25
-import qualified Year2022.Day01
-import qualified Year2022.Day02
-import qualified Year2022.Day03
-import qualified Year2022.Day04
-import qualified Year2022.Day05
-import qualified Year2022.Day06
-import qualified Year2022.Day07
-import qualified Year2022.Day08
-import qualified Year2022.Day09
-import qualified Year2022.Day10
-import qualified Year2022.Day11
-import qualified Year2022.Day12
-import qualified Year2022.Day13
-import qualified Year2022.Day14
-import qualified Year2022.Day15
-import qualified Year2022.Day16
-import qualified Year2022.Day17
-import qualified Year2022.Day18
-import qualified Year2022.Day19
-import qualified Year2022.Day20
-import qualified Year2022.Day21
-import qualified Year2022.Day22
-import qualified Year2022.Day23
-import qualified Year2022.Day24
-import qualified Year2022.Day25
+import Data.Map (Map)
+import qualified Data.Map as Map
+import System.Environment (getArgs)
+import Text.Printf (printf)
 import qualified Year2019.Day01
 import qualified Year2019.Day02
 import qualified Year2019.Day03
@@ -94,8 +33,6 @@ import qualified Year2021.Day01
 import qualified Year2021.Day02
 import qualified Year2021.Day03
 import qualified Year2021.Day04
-
-
 import qualified Year2021.Day06
 import qualified Year2021.Day07
 import qualified Year2021.Day08
@@ -116,196 +53,252 @@ import qualified Year2021.Day22
 import qualified Year2021.Day23
 import qualified Year2021.Day24
 import qualified Year2021.Day25
-
-import           System.Environment (getArgs)
-import           Text.Printf (printf)
-import           Data.Map (Map)
-import qualified Data.Map as Map
+import qualified Year2022.Day01
+import qualified Year2022.Day02
+import qualified Year2022.Day03
+import qualified Year2022.Day04
+import qualified Year2022.Day05
+import qualified Year2022.Day06
+import qualified Year2022.Day07
+import qualified Year2022.Day08
+import qualified Year2022.Day09
+import qualified Year2022.Day10
+import qualified Year2022.Day11
+import qualified Year2022.Day12
+import qualified Year2022.Day13
+import qualified Year2022.Day14
+import qualified Year2022.Day15
+import qualified Year2022.Day16
+import qualified Year2022.Day17
+import qualified Year2022.Day18
+import qualified Year2022.Day19
+import qualified Year2022.Day20
+import qualified Year2022.Day21
+import qualified Year2022.Day22
+import qualified Year2022.Day23
+import qualified Year2022.Day24
+import qualified Year2022.Day25
+import qualified Year2023.Day01
+import qualified Year2023.Day02
+import qualified Year2023.Day03
+import qualified Year2023.Day04
+import qualified Year2023.Day05
+import qualified Year2023.Day06
+import qualified Year2023.Day07
+import qualified Year2023.Day08
+import qualified Year2023.Day09
+import qualified Year2023.Day10
+import qualified Year2023.Day11
+import qualified Year2023.Day12
+import qualified Year2023.Day13
+import qualified Year2023.Day14
+import qualified Year2023.Day15
+import qualified Year2023.Day16
+import qualified Year2023.Day17
+import qualified Year2023.Day18
+import qualified Year2023.Day19
+import qualified Year2023.Day20
+import qualified Year2023.Day21
+import qualified Year2023.Day22
+import qualified Year2023.Day23
+import qualified Year2023.Day24
+import qualified Year2023.Day25
+import qualified Year2024.Day24
+import qualified Year2024.Day25
+import qualified Year2025.Day01
+import qualified Year2025.Day02
+import qualified Year2025.Day03
+import qualified Year2025.Day04
+import qualified Year2025.Day05
+import qualified Year2025.Day06
+import qualified Year2025.Day07
+import qualified Year2025.Day08
+import qualified Year2025.Day09
+import qualified Year2025.Day10
+import qualified Year2025.Day11
+import qualified Year2025.Day12
 
 solvers2025 :: [FilePath -> IO ()]
 solvers2025 =
-    [Year2025.Day01.solve
-    , Year2025.Day02.solve
-    , Year2025.Day03.solve
-    , Year2025.Day04.solve
-    , Year2025.Day05.solve
-    , Year2025.Day06.solve
-    , Year2025.Day07.solve
-    , Year2025.Day08.solve
-    , Year2025.Day09.solve
-    , Year2025.Day10.solve
-    , Year2025.Day11.solve
-    , Year2025.Day12.solve
-    ]
+  [ Year2025.Day01.solve,
+    Year2025.Day02.solve,
+    Year2025.Day03.solve,
+    Year2025.Day04.solve,
+    Year2025.Day05.solve,
+    Year2025.Day06.solve,
+    Year2025.Day07.solve,
+    Year2025.Day08.solve,
+    Year2025.Day09.solve,
+    Year2025.Day10.solve,
+    Year2025.Day11.solve,
+    Year2025.Day12.solve
+  ]
 
 solvers2024 :: [FilePath -> IO ()]
 solvers2024 =
-    [ \_ -> putStrLn "No solution found for Day 01, Year 2024."  -- Day 01 (Rust)
-    , \_ -> putStrLn "No solution found for Day 02, Year 2024."  -- Day 02 (Rust)
-    , \_ -> putStrLn "No solution found for Day 03, Year 2024."  -- Day 03 (Rust)
-    , \_ -> putStrLn "No solution found for Day 04, Year 2024."  -- Day 04 (Rust)
-    , \_ -> putStrLn "No solution found for Day 05, Year 2024."  -- Day 05 (Rust)
-    , \_ -> putStrLn "No solution found for Day 06, Year 2024."  -- Day 06 (Rust)
-    , \_ -> putStrLn "No solution found for Day 07, Year 2024."  -- Day 07 (Rust)
-    , \_ -> putStrLn "No solution found for Day 08, Year 2024."  -- Day 08 (Rust)
-    , \_ -> putStrLn "No solution found for Day 09, Year 2024."  -- Day 09 (Rust)
-    , \_ -> putStrLn "No solution found for Day 10, Year 2024."  -- Day 10 (Rust)
-    , \_ -> putStrLn "No solution found for Day 11, Year 2024."  -- Day 11 (Rust)
-    , \_ -> putStrLn "No solution found for Day 12, Year 2024."  -- Day 12 (Rust)
-    , \_ -> putStrLn "No solution found for Day 13, Year 2024."  -- Day 13 (not implemented)
-    , \_ -> putStrLn "No solution found for Day 14, Year 2024."  -- Day 14 (not implemented)
-    , \_ -> putStrLn "No solution found for Day 15, Year 2024."  -- Day 15 (Rust)
-    , \_ -> putStrLn "No solution found for Day 16, Year 2024."  -- Day 16 (Rust)
-    , \_ -> putStrLn "No solution found for Day 17, Year 2024."  -- Day 17 (Rust)
-    , \_ -> putStrLn "No solution found for Day 18, Year 2024."  -- Day 18 (Rust)
-    , \_ -> putStrLn "No solution found for Day 19, Year 2024."  -- Day 19 (Rust)
-    , \_ -> putStrLn "No solution found for Day 20, Year 2024."  -- Day 20 (Rust)
-    , \_ -> putStrLn "No solution found for Day 21, Year 2024."  -- Day 21 (not implemented)
-    , \_ -> putStrLn "No solution found for Day 22, Year 2024."  -- Day 22 (not implemented)
-    , \_ -> putStrLn "No solution found for Day 23, Year 2024."  -- Day 23 (not implemented)
-    , Year2024.Day24.solve  -- Day 24 (Haskell)
-    , Year2024.Day25.solve
-    , \_ -> putStrLn "No solution found for Day 25, Year 2024."  -- Day 25 (not implemented)
-    ]
+  [ \_ -> putStrLn "No solution found for Day 01, Year 2024.", -- Day 01 (Rust)
+    \_ -> putStrLn "No solution found for Day 02, Year 2024.", -- Day 02 (Rust)
+    \_ -> putStrLn "No solution found for Day 03, Year 2024.", -- Day 03 (Rust)
+    \_ -> putStrLn "No solution found for Day 04, Year 2024.", -- Day 04 (Rust)
+    \_ -> putStrLn "No solution found for Day 05, Year 2024.", -- Day 05 (Rust)
+    \_ -> putStrLn "No solution found for Day 06, Year 2024.", -- Day 06 (Rust)
+    \_ -> putStrLn "No solution found for Day 07, Year 2024.", -- Day 07 (Rust)
+    \_ -> putStrLn "No solution found for Day 08, Year 2024.", -- Day 08 (Rust)
+    \_ -> putStrLn "No solution found for Day 09, Year 2024.", -- Day 09 (Rust)
+    \_ -> putStrLn "No solution found for Day 10, Year 2024.", -- Day 10 (Rust)
+    \_ -> putStrLn "No solution found for Day 11, Year 2024.", -- Day 11 (Rust)
+    \_ -> putStrLn "No solution found for Day 12, Year 2024.", -- Day 12 (Rust)
+    \_ -> putStrLn "No solution found for Day 13, Year 2024.", -- Day 13 (not implemented)
+    \_ -> putStrLn "No solution found for Day 14, Year 2024.", -- Day 14 (not implemented)
+    \_ -> putStrLn "No solution found for Day 15, Year 2024.", -- Day 15 (Rust)
+    \_ -> putStrLn "No solution found for Day 16, Year 2024.", -- Day 16 (Rust)
+    \_ -> putStrLn "No solution found for Day 17, Year 2024.", -- Day 17 (Rust)
+    \_ -> putStrLn "No solution found for Day 18, Year 2024.", -- Day 18 (Rust)
+    \_ -> putStrLn "No solution found for Day 19, Year 2024.", -- Day 19 (Rust)
+    \_ -> putStrLn "No solution found for Day 20, Year 2024.", -- Day 20 (Rust)
+    \_ -> putStrLn "No solution found for Day 21, Year 2024.", -- Day 21 (not implemented)
+    \_ -> putStrLn "No solution found for Day 22, Year 2024.", -- Day 22 (not implemented)
+    \_ -> putStrLn "No solution found for Day 23, Year 2024.", -- Day 23 (not implemented)
+    Year2024.Day24.solve, -- Day 24 (Haskell)
+    Year2024.Day25.solve,
+    \_ -> putStrLn "No solution found for Day 25, Year 2024." -- Day 25 (not implemented)
+  ]
 
 solvers2023 :: [FilePath -> IO ()]
 solvers2023 =
-    [ Year2023.Day01.solve
-    , Year2023.Day02.solve
-    , Year2023.Day03.solve
-    , Year2023.Day04.solve
-    , Year2023.Day05.solve
-    , Year2023.Day06.solve
-    , Year2023.Day07.solve
-    , Year2023.Day08.solve
-    , Year2023.Day09.solve
-    , Year2023.Day10.solve
-    , Year2023.Day11.solve
-    , Year2023.Day12.solve
-    , Year2023.Day13.solve
-    , Year2023.Day14.solve
-    , Year2023.Day15.solve
-    , Year2023.Day16.solve
-    , Year2023.Day17.solve
-    , Year2023.Day18.solve
-    , Year2023.Day19.solve
-    , Year2023.Day20.solve
-    , Year2023.Day21.solve
-    , Year2023.Day22.solve
-    , Year2023.Day23.solve
-    , Year2023.Day24.solve
-    , Year2023.Day25.solve
-    ]
-
-
-
+  [ Year2023.Day01.solve,
+    Year2023.Day02.solve,
+    Year2023.Day03.solve,
+    Year2023.Day04.solve,
+    Year2023.Day05.solve,
+    Year2023.Day06.solve,
+    Year2023.Day07.solve,
+    Year2023.Day08.solve,
+    Year2023.Day09.solve,
+    Year2023.Day10.solve,
+    Year2023.Day11.solve,
+    Year2023.Day12.solve,
+    Year2023.Day13.solve,
+    Year2023.Day14.solve,
+    Year2023.Day15.solve,
+    Year2023.Day16.solve,
+    Year2023.Day17.solve,
+    Year2023.Day18.solve,
+    Year2023.Day19.solve,
+    Year2023.Day20.solve,
+    Year2023.Day21.solve,
+    Year2023.Day22.solve,
+    Year2023.Day23.solve,
+    Year2023.Day24.solve,
+    Year2023.Day25.solve
+  ]
 
 solvers2022 :: [FilePath -> IO ()]
 solvers2022 =
-    [ Year2022.Day01.solve
-    , Year2022.Day02.solve
-    , Year2022.Day03.solve
-    , Year2022.Day04.solve
-    , Year2022.Day05.solve
-    , Year2022.Day06.solve
-    , Year2022.Day07.solve
-    , Year2022.Day08.solve
-    , Year2022.Day09.solve
-    , Year2022.Day10.solve
-    , Year2022.Day11.solve
-    , Year2022.Day12.solve
-    , Year2022.Day13.solve
-    , Year2022.Day14.solve
-    , Year2022.Day15.solve
-    , Year2022.Day16.solve
-    , Year2022.Day17.solve
-    , Year2022.Day18.solve
-    , Year2022.Day19.solve
-    , Year2022.Day20.solve
-    , Year2022.Day21.solve
-    , Year2022.Day22.solve
-    , Year2022.Day23.solve
-    , Year2022.Day24.solve
-    , Year2022.Day25.solve
-    ]
+  [ Year2022.Day01.solve,
+    Year2022.Day02.solve,
+    Year2022.Day03.solve,
+    Year2022.Day04.solve,
+    Year2022.Day05.solve,
+    Year2022.Day06.solve,
+    Year2022.Day07.solve,
+    Year2022.Day08.solve,
+    Year2022.Day09.solve,
+    Year2022.Day10.solve,
+    Year2022.Day11.solve,
+    Year2022.Day12.solve,
+    Year2022.Day13.solve,
+    Year2022.Day14.solve,
+    Year2022.Day15.solve,
+    Year2022.Day16.solve,
+    Year2022.Day17.solve,
+    Year2022.Day18.solve,
+    Year2022.Day19.solve,
+    Year2022.Day20.solve,
+    Year2022.Day21.solve,
+    Year2022.Day22.solve,
+    Year2022.Day23.solve,
+    Year2022.Day24.solve,
+    Year2022.Day25.solve
+  ]
 
 solvers2019 :: [FilePath -> IO ()]
 solvers2019 =
-    [ Year2019.Day01.solve
-    , Year2019.Day02.solve
-    , Year2019.Day03.solve
-    , Year2019.Day04.solve
-    , Year2019.Day05.solve
-    , Year2019.Day06.solve
-    , Year2019.Day07.solve
-    , Year2019.Day08.solve
-    , Year2019.Day09.solve
-    , Year2019.Day10.solve
-    , Year2019.Day11.solve
-    , Year2019.Day12.solve
-    , Year2019.Day13.solve
-    , Year2019.Day14.solve
-    , Year2019.Day15.solve
-    , Year2019.Day16.solve
-    , Year2019.Day17.solve
-    , Year2019.Day18.solve
-    , Year2019.Day19.solve
-    , Year2019.Day20.solve
-    , Year2019.Day21.solve
-    , Year2019.Day22.solve
-    , Year2019.Day23.solve
-    , Year2019.Day24.solve
-    , Year2019.Day25.solve
-    ]
+  [ Year2019.Day01.solve,
+    Year2019.Day02.solve,
+    Year2019.Day03.solve,
+    Year2019.Day04.solve,
+    Year2019.Day05.solve,
+    Year2019.Day06.solve,
+    Year2019.Day07.solve,
+    Year2019.Day08.solve,
+    Year2019.Day09.solve,
+    Year2019.Day10.solve,
+    Year2019.Day11.solve,
+    Year2019.Day12.solve,
+    Year2019.Day13.solve,
+    Year2019.Day14.solve,
+    Year2019.Day15.solve,
+    Year2019.Day16.solve,
+    Year2019.Day17.solve,
+    Year2019.Day18.solve,
+    Year2019.Day19.solve,
+    Year2019.Day20.solve,
+    Year2019.Day21.solve,
+    Year2019.Day22.solve,
+    Year2019.Day23.solve,
+    Year2019.Day24.solve,
+    Year2019.Day25.solve
+  ]
 
 solvers2021 :: [FilePath -> IO ()]
 solvers2021 =
-    [ Year2021.Day01.solve
-    , Year2021.Day02.solve
-    , Year2021.Day03.solve
-    , Year2021.Day04.solve
-    
-    , Year2021.Day06.solve
-    , Year2021.Day07.solve
-    , Year2021.Day08.solve
-    , Year2021.Day09.solve
-    , Year2021.Day10.solve
-    , Year2021.Day11.solve
-    , Year2021.Day12.solve
-    , Year2021.Day13.solve
-    , Year2021.Day14.solve
-    , Year2021.Day15.solve
-    , Year2021.Day16.solve
-    , Year2021.Day17.solve
-    , Year2021.Day18.solve
-    , Year2021.Day19.solve
-    , Year2021.Day20.solve
-    , Year2021.Day21.solve
-    , Year2021.Day22.solve
-    , Year2021.Day23.solve
-    , Year2021.Day24.solve
-    , Year2021.Day25.solve
-    ]
+  [ Year2021.Day01.solve,
+    Year2021.Day02.solve,
+    Year2021.Day03.solve,
+    Year2021.Day04.solve,
+    Year2021.Day06.solve,
+    Year2021.Day07.solve,
+    Year2021.Day08.solve,
+    Year2021.Day09.solve,
+    Year2021.Day10.solve,
+    Year2021.Day11.solve,
+    Year2021.Day12.solve,
+    Year2021.Day13.solve,
+    Year2021.Day14.solve,
+    Year2021.Day15.solve,
+    Year2021.Day16.solve,
+    Year2021.Day17.solve,
+    Year2021.Day18.solve,
+    Year2021.Day19.solve,
+    Year2021.Day20.solve,
+    Year2021.Day21.solve,
+    Year2021.Day22.solve,
+    Year2021.Day23.solve,
+    Year2021.Day24.solve,
+    Year2021.Day25.solve
+  ]
 
 solvers :: Map String [FilePath -> IO ()]
-solvers = Map.fromList
-    [ ("2025", solvers2025)
-    , ("2024", solvers2024)
-    , ("2023", solvers2023)
-    , ("2022", solvers2022)
-    , ("2019", solvers2019)
-    , ("2021", solvers2021)
+solvers =
+  Map.fromList
+    [ ("2025", solvers2025),
+      ("2024", solvers2024),
+      ("2023", solvers2023),
+      ("2022", solvers2022),
+      ("2019", solvers2019),
+      ("2021", solvers2021)
     ]
 
 main :: IO ()
 main = do
-    [year, day, sample] <- getArgs
-    let yearSolvers = solvers Map.! year
-        solver = yearSolvers !! (read day - 1)
-        dayStr :: String
-        dayStr = printf "%02d" (read day :: Int)
-        sampleStr = if sample == "sample" then "sample" else "real"
-        filePath :: String
-        filePath = printf "years/Year%s/input/%s/Day%s.txt" year sampleStr dayStr
-    putStrLn ""
-    solver filePath
+  [year, day, sample] <- getArgs
+  let yearSolvers = solvers Map.! year
+      solver = yearSolvers !! (read day - 1)
+      dayStr :: String
+      dayStr = printf "%02d" (read day :: Int)
+      sampleStr = if sample == "sample" then "sample" else "real"
+      filePath :: String
+      filePath = printf "years/Year%s/input/%s/Day%s.txt" year sampleStr dayStr
+  putStrLn ""
+  solver filePath

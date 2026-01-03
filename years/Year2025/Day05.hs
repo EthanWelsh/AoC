@@ -1,11 +1,11 @@
 module Year2025.Day05 (solve) where
 
 import Control.Monad (void)
+import Parsers (Parser)
+import Range (Range, Ranges, memberOfRanges, mergeRanges, rangeSize)
 import Text.Megaparsec
 import Text.Megaparsec.Char (char, newline)
 import qualified Text.Megaparsec.Char.Lexer as L
-import Parsers (Parser)
-import Range (Ranges, Range, memberOfRanges, mergeRanges, rangeSize)
 
 type Food = [Int]
 

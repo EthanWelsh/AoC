@@ -15,8 +15,9 @@ import Data.List (foldl')
 splitOn :: (a -> Bool) -> [a] -> [[a]]
 splitOn p xs = case dropWhile p xs of
   [] -> []
-  xs' -> let (w, rest) = break p xs'
-         in w : splitOn p rest
+  xs' ->
+    let (w, rest) = break p xs'
+     in w : splitOn p rest
 
 -- | Create consecutive pairs from a list: [a,b,c] -> [(a,b),(b,c)]
 -- | Overlapping consecutive pairs: [a,b,c] -> [(a,b),(b,c)]

@@ -1,9 +1,9 @@
 module GraphSpec (spec) where
 
-import Test.Hspec
-import Graph
 import Data.Map as M
 import Data.Set as S
+import Graph
+import Test.Hspec
 
 spec :: Spec
 spec = do
@@ -31,4 +31,3 @@ spec = do
       reachable g' 1 `shouldBe` S.fromList [1, 2]
       reachable g' 2 `shouldBe` S.fromList [2]
       reachable g' 3 `shouldBe` S.fromList [3]
-

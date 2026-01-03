@@ -1,11 +1,11 @@
 module Year2022.Day03 (solve) where
 
-import           Data.List (length, zip, map, sum)
-import qualified Data.Map.Strict            as Map
-import qualified Data.Set                   as Set
-import           Text.Megaparsec
-import           Text.Megaparsec.Char
-import           Parsers (Parser)
+import Data.List (length, map, sum, zip)
+import qualified Data.Map.Strict as Map
+import qualified Data.Set as Set
+import Parsers (Parser)
+import Text.Megaparsec
+import Text.Megaparsec.Char
 
 type Input = [String]
 
@@ -13,14 +13,15 @@ inputParser :: Parser Input
 inputParser = some (noneOf "\n") `sepEndBy` eol
 
 splitInHalf :: String -> (String, String)
-splitInHalf s = splitAt ((length s) `div`  2) s
+splitInHalf s = splitAt ((length s) `div` 2) s
 
 inCommon :: (String, String) -> String
 inCommon (a, b) = Set.toList $ Set.intersection (Set.fromList a) (Set.fromList b)
 
 score :: Char -> Int
-score c = let charToScore = Map.fromList $ zip (['a'..'z']++['A'..'Z']) [1..52]
-          in charToScore Map.! c
+score c =
+  let charToScore = Map.fromList $ zip (['a' .. 'z'] ++ ['A' .. 'Z']) [1 .. 52]
+   in charToScore Map.! c
 
 scoreLine :: String -> Int
 scoreLine l = sum $ map score $ inCommon $ splitInHalf l
@@ -30,7 +31,7 @@ partA input = sum $ map scoreLine input
 
 groupsOfThree :: [String] -> [(String, String, String)]
 groupsOfThree [] = []
-groupsOfThree (a:b:c:xs) = (a, b, c) : groupsOfThree xs
+groupsOfThree (a : b : c : xs) = (a, b, c) : groupsOfThree xs
 groupsOfThree _ = error "groupsOfThree: input list length not a multiple of 3"
 
 inCommonThree :: (String, String, String) -> Char

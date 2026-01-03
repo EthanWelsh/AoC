@@ -1,8 +1,8 @@
 module Year2023.Day03 (solve) where
 
-import           Data.Char  (isDigit)
-import           Data.List  (nub)
-import           Maze
+import Data.Char (isDigit)
+import Data.List (nub)
+import Maze
 
 type Board = Maze Char
 
@@ -44,7 +44,7 @@ getNumbersAroundPoint board point =
 gearRatio :: Board -> Point -> Int
 gearRatio board point = case getNumbersAroundPoint board point of
   [a, b] -> a * b
-  _      -> 0
+  _ -> 0
 
 solve :: FilePath -> IO ()
 solve filePath = do

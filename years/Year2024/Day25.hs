@@ -1,14 +1,14 @@
 module Year2024.Day25 (solve) where
 
---import           Parsers   (Parser)
---import           Text.Megaparsec
---import Control.Monad (void)
---import Text.Megaparsec.Char (string, char, newline)
+-- import           Parsers   (Parser)
+-- import           Text.Megaparsec
+-- import Control.Monad (void)
+-- import Text.Megaparsec.Char (string, char, newline)
 
 type Input = String
 
---parseInput :: Parser Input
---parseInput = error "TODO"
+-- parseInput :: Parser Input
+-- parseInput = error "TODO"
 
 part1 :: Input -> IO ()
 part1 input = do
@@ -25,8 +25,9 @@ solve filePath = do
   contents <- readFile filePath
   part1 contents
   part2 contents
-  --case parse parseInput filePath contents of
-  --        Left eb -> putStr (errorBundlePretty eb)
-  --        Right input -> do
-  --          part1 input
-  --          part2 input
+
+-- case parse parseInput filePath contents of
+--        Left eb -> putStr (errorBundlePretty eb)
+--        Right input -> do
+--          part1 input
+--          part2 input

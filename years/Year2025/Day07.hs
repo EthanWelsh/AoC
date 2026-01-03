@@ -1,12 +1,12 @@
 module Year2025.Day07 (solve) where
 
 import Data.Function.Memoize (memoize)
-import qualified Data.Set as Set
 import Data.Set (Set)
-import Text.Megaparsec
-import Text.Megaparsec.Char (char, eol)
+import qualified Data.Set as Set
 import Maze
 import Parsers (Parser)
+import Text.Megaparsec
+import Text.Megaparsec.Char (char, eol)
 
 type Grid = Maze Char
 
@@ -23,11 +23,11 @@ countSplits g = go
   where
     go = memoize $ \p ->
       case maybeGetPoint g p of
-          Nothing -> Set.empty
-          Just '.' -> go (south p)
-          Just 'S' -> go (south p)
-          Just '^' -> Set.unions [Set.singleton p, go (east p), go (west p)]
-          _ -> error "Unexpected point"
+        Nothing -> Set.empty
+        Just '.' -> go (south p)
+        Just 'S' -> go (south p)
+        Just '^' -> Set.unions [Set.singleton p, go (east p), go (west p)]
+        _ -> error "Unexpected point"
 
 part1 :: Input -> IO ()
 part1 input = do
@@ -41,11 +41,11 @@ countPaths g = go
   where
     go = memoize $ \p ->
       case maybeGetPoint g p of
-          Nothing -> 0
-          Just '.' -> go (south p)
-          Just 'S' -> go (south p)
-          Just '^' -> 1 + go (east p) + go (west p)
-          _ -> error "Unexpected point" 
+        Nothing -> 0
+        Just '.' -> go (south p)
+        Just 'S' -> go (south p)
+        Just '^' -> 1 + go (east p) + go (west p)
+        _ -> error "Unexpected point"
 
 part2 :: Input -> IO ()
 part2 input = do

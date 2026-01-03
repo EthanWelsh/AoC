@@ -32,11 +32,11 @@ noDupes :: [Char] -> Bool
 noDupes xs = (length xs) == length (nub xs)
 
 findIndexOfFirstUniqueGroup :: Int -> String -> Int
-findIndexOfFirstUniqueGroup groupSize input = let
-    groups = groupsOf groupSize input                        :: [String]
-    uniqueGroup = fromJust $ find noDupes groups             :: String
-    groupIndex = fromJust $ findIndex (==uniqueGroup) groups :: Int
-    in groupIndex + length uniqueGroup
+findIndexOfFirstUniqueGroup groupSize input =
+  let groups = groupsOf groupSize input :: [String]
+      uniqueGroup = fromJust $ find noDupes groups :: String
+      groupIndex = fromJust $ findIndex (== uniqueGroup) groups :: Int
+   in groupIndex + length uniqueGroup
 
 partA :: Input -> OutputA
 partA input = findIndexOfFirstUniqueGroup 4 (T.unpack input)

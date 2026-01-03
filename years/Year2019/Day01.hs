@@ -1,8 +1,8 @@
 module Year2019.Day01 (solve) where
 
-import           Parsers (Parser, integer)
-import           Text.Megaparsec
-import           Text.Megaparsec.Char (eol)
+import Parsers (Parser, integer)
+import Text.Megaparsec
+import Text.Megaparsec.Char (eol)
 
 type Input = [Int]
 
@@ -29,9 +29,9 @@ solve :: FilePath -> IO ()
 solve filePath = do
   contents <- readFile filePath
   case parse parseInput filePath contents of
-          Left eb -> putStr (errorBundlePretty eb)
-          Right input -> do
-            putStr "Part 1: "
-            putStrLn $ part1 input
-            putStr "Part 2: "
-            putStrLn $ part2 input
+    Left eb -> putStr (errorBundlePretty eb)
+    Right input -> do
+      putStr "Part 1: "
+      putStrLn $ part1 input
+      putStr "Part 2: "
+      putStrLn $ part2 input

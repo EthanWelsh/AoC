@@ -1,16 +1,16 @@
 module Year2025.Day12 (solve) where
 
+import Maze (Maze, findPoints, height, mazeFromDimensions, mazeFromList, width)
+import Parsers (Parser, integer)
 import Text.Megaparsec
 import Text.Megaparsec.Char (char, newline, string)
 import Text.Megaparsec.Char.Lexer (decimal)
-import Maze (Maze, mazeFromDimensions, mazeFromList, findPoints, width, height)
-import Parsers (Parser, integer)
 
 type Grid = Maze Char
 
 type Gift = Grid
 
-newtype Tree = Tree  (Grid, [Int]) deriving (Show)
+newtype Tree = Tree (Grid, [Int]) deriving (Show)
 
 type Input = ([Gift], [Tree])
 
@@ -38,22 +38,22 @@ parseInput = do
   return (gifts, trees)
 
 giftVolume :: Gift -> Int
-giftVolume g = length $ findPoints g (== '#' )
+giftVolume g = length $ findPoints g (== '#')
 
 isFitImpossible :: [Gift] -> Tree -> Bool
-isFitImpossible gifts (Tree (grid, giftCounts)) = let
-  giftVolumes = map giftVolume gifts
-  totalGiftVolume = sum $ zipWith (*) giftVolumes giftCounts
-  totalAvailableVolume = width grid * height grid
-  in totalGiftVolume > totalAvailableVolume
+isFitImpossible gifts (Tree (grid, giftCounts)) =
+  let giftVolumes = map giftVolume gifts
+      totalGiftVolume = sum $ zipWith (*) giftVolumes giftCounts
+      totalAvailableVolume = width grid * height grid
+   in totalGiftVolume > totalAvailableVolume
 
 isFitInevitable :: Tree -> Bool
-isFitInevitable (Tree (grid, giftCounts)) = let
-  widthInGifts = width grid `div` 3 :: Int
-  heightInGifts = height grid `div` 3 :: Int
-  totalGiftsThatCanFit = widthInGifts * heightInGifts
-  totalGiftsToPlace = sum giftCounts
-  in totalGiftsToPlace <= totalGiftsThatCanFit
+isFitInevitable (Tree (grid, giftCounts)) =
+  let widthInGifts = width grid `div` 3 :: Int
+      heightInGifts = height grid `div` 3 :: Int
+      totalGiftsThatCanFit = widthInGifts * heightInGifts
+      totalGiftsToPlace = sum giftCounts
+   in totalGiftsToPlace <= totalGiftsThatCanFit
 
 treesWillFit :: [Gift] -> Tree -> Bool
 treesWillFit gifts tree = case (isFitImpossible gifts tree, isFitInevitable tree) of

@@ -1,15 +1,15 @@
 module Year2023.Day25 (solve) where
 
-import           Control.Monad        (void)
-import           Data.Function        (on)
-import           Data.List            (maximumBy)
-import qualified Data.Map             as M
-import           Parsers
-import           Text.Megaparsec
-import           Text.Megaparsec.Char (char, newline, string)
-import           Graph hiding (allPaths)
-import           List           (pairs)
-import           Search
+import Control.Monad (void)
+import Data.Function (on)
+import Data.List (maximumBy)
+import qualified Data.Map as M
+import Graph hiding (allPaths)
+import List (pairs)
+import Parsers
+import Search
+import Text.Megaparsec
+import Text.Megaparsec.Char (char, newline, string)
 
 type Input = M.Map String [String]
 
@@ -30,14 +30,14 @@ parseInput = do
 
 -- pairs moved to Utils.List
 
-mostUsedEdge :: Ord a => Graph a -> a -> a -> (a, a)
-mostUsedEdge g src dst = let
-  edgesInAllPaths = concatMap pairs $ allPaths (neighbors g) (==dst) src
-  m = foldl (\mm pair -> M.insertWith (+) pair 1 mm) M.empty edgesInAllPaths
-  in fst $ maximumBy (compare `on` snd) (M.toList m)
+mostUsedEdge :: (Ord a) => Graph a -> a -> a -> (a, a)
+mostUsedEdge g src dst =
+  let edgesInAllPaths = concatMap pairs $ allPaths (neighbors g) (== dst) src
+      m = foldl (\mm pair -> M.insertWith (+) pair 1 mm) M.empty edgesInAllPaths
+   in fst $ maximumBy (compare `on` snd) (M.toList m)
 
-printGraph :: Show a => Graph a -> IO ()
-printGraph g = putStrLn $ unlines $ map (\(k, v) -> (show k) ++ ": " ++ (show v) ) (M.toList (graphAsMap g))
+printGraph :: (Show a) => Graph a -> IO ()
+printGraph g = putStrLn $ unlines $ map (\(k, v) -> (show k) ++ ": " ++ (show v)) (M.toList (graphAsMap g))
 
 part1 :: Input -> IO ()
 part1 input = do
@@ -62,13 +62,14 @@ part1 input = do
 part2 :: Input -> IO ()
 part2 input = do
   putStr "Part 2: "
-  --print input
+
+-- print input
 
 solve :: FilePath -> IO ()
 solve filePath = do
   contents <- readFile filePath
   case parse parseInput filePath contents of
-          Left eb -> putStr (errorBundlePretty eb)
-          Right input -> do
-            part1 input
-            part2 input
+    Left eb -> putStr (errorBundlePretty eb)
+    Right input -> do
+      part1 input
+      part2 input

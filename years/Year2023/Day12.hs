@@ -1,13 +1,14 @@
 module Year2023.Day12 (solve) where
 
-import           Control.Monad         (void)
-import           Data.Function.Memoize
-import           Data.List             (intercalate)
-import           Parsers        (Parser, integer)
-import           Text.Megaparsec
-import           Text.Megaparsec.Char  (char)
+import Control.Monad (void)
+import Data.Function.Memoize
+import Data.List (intercalate)
+import Parsers (Parser, integer)
+import Text.Megaparsec
+import Text.Megaparsec.Char (char)
 
 data Puzzle = Puzzle String [Int] deriving (Show)
+
 type Input = [Puzzle]
 
 parsePuzzle :: Parser Puzzle
@@ -25,18 +26,18 @@ possible [] [] _ = 1
 possible [] [r] run = if r == run then 1 else 0
 possible [] _ _ = 0
 possible xs [] _ = if '#' `notElem` xs then 1 else 0
-possible ('#':xs) (r:rs) run
-  | (run + 1) > r  = 0
-  | (run + 1) == r = memoPossible xs (r:rs) (run + 1)
-  | (run + 1) < r  = memoPossible xs (r:rs) (run + 1)
-possible ('.':xs) (r:rs) run
-  | run == 0 = memoPossible xs (r:rs) 0
+possible ('#' : xs) (r : rs) run
+  | (run + 1) > r = 0
+  | (run + 1) == r = memoPossible xs (r : rs) (run + 1)
+  | (run + 1) < r = memoPossible xs (r : rs) (run + 1)
+possible ('.' : xs) (r : rs) run
+  | run == 0 = memoPossible xs (r : rs) 0
   | run == r = memoPossible xs rs 0
   | otherwise = 0
-possible ('?':xs) rs run = let
-  asOperational = memoPossible ('.':xs) rs run
-  asHint = memoPossible ('#':xs) rs run
-  in asOperational + asHint
+possible ('?' : xs) rs run =
+  let asOperational = memoPossible ('.' : xs) rs run
+      asHint = memoPossible ('#' : xs) rs run
+   in asOperational + asHint
 possible xs rs run = error $ "possible: " ++ show xs ++ " " ++ show rs ++ " " ++ show run
 
 memoPossible :: String -> [Int] -> Int -> Int
@@ -65,7 +66,7 @@ solve :: FilePath -> IO ()
 solve filePath = do
   contents <- readFile filePath
   case parse parseInput filePath contents of
-          Left eb -> putStr (errorBundlePretty eb)
-          Right input -> do
-            part1 input
-            part2 input
+    Left eb -> putStr (errorBundlePretty eb)
+    Right input -> do
+      part1 input
+      part2 input

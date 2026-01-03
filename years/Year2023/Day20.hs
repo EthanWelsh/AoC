@@ -1,9 +1,10 @@
 module Year2023.Day20 (solve) where
 
-import           Parsers   (Parser)
-import           Text.Megaparsec
---import Control.Monad (void)
---import Text.Megaparsec.Char (string, char, newline)
+import Parsers (Parser)
+import Text.Megaparsec
+
+-- import Control.Monad (void)
+-- import Text.Megaparsec.Char (string, char, newline)
 
 type Input = String
 
@@ -24,7 +25,7 @@ solve :: FilePath -> IO ()
 solve filePath = do
   contents <- readFile filePath
   case parse parseInput filePath contents of
-          Left eb -> putStr (errorBundlePretty eb)
-          Right input -> do
-            part1 input
-            part2 input
+    Left eb -> putStr (errorBundlePretty eb)
+    Right input -> do
+      part1 input
+      part2 input

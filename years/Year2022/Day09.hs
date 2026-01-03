@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+
 module Year2022.Day09 (solve) where
 
 {- ORMOLU_DISABLE -}
@@ -47,22 +48,20 @@ getTailLocs :: [Point] -> [Point]
 getTailLocs = reverse . foldl update []
   where
     update [] v = [v]
-    update pos@((x', y'):_) (x, y)
+    update pos@((x', y') : _) (x, y)
       | areTouching (x', y') (x, y) = pos
-      | otherwise = (x' + signum (x-x'), y' + signum (y-y')):pos
+      | otherwise = (x' + signum (x - x'), y' + signum (y - y')) : pos
 
 partA :: Input -> OutputA
 partA input =
-  let
-    headLocs = getPath (0, 0) input
-  in show $ length . nub . flip (!!) 1 . iterate getTailLocs $ headLocs
+  let headLocs = getPath (0, 0) input
+   in show $ length . nub . flip (!!) 1 . iterate getTailLocs $ headLocs
 
 ------------ PART B ------------
 partB :: Input -> OutputB
 partB input =
-  let
-    headLocs = getPath (0, 0) input
-  in show $ length . nub . flip (!!) 9 . iterate getTailLocs $ headLocs
+  let headLocs = getPath (0, 0) input
+   in show $ length . nub . flip (!!) 9 . iterate getTailLocs $ headLocs
 
 solve :: FilePath -> IO ()
 solve filePath = do

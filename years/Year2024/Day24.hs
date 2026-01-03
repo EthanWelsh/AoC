@@ -1,37 +1,43 @@
 module Year2024.Day24
-  ( solve
-  , parseInput
-  , Input(..)
-  , Gate(..)
-  , GateType(..)
-  , evaluate
-  , part1
-  , bitsToInt
-  , intToBits
-  ) where
+  ( solve,
+    parseInput,
+    Input (..),
+    Gate (..),
+    GateType (..),
+    evaluate,
+    part1,
+    bitsToInt,
+    intToBits,
+  )
+where
 
-import           Data.Map.Strict      (Map)
-import qualified Data.Map.Strict      as M
-import           Data.Bits            ((.&.), (.|.), xor, shiftL, shiftR)
-import           Data.List            (sort, intercalate)
-import qualified Data.Set             as S
-import           Text.Megaparsec
-import           Parsers        (Parser)
-import           Text.Megaparsec.Char (char, space1, string, lowerChar, digitChar, newline)
+import Data.Bits (shiftL, shiftR, xor, (.&.), (.|.))
+import Data.List (intercalate, sort)
+import Data.Map.Strict (Map)
+import qualified Data.Map.Strict as M
+import qualified Data.Set as S
+import Parsers (Parser)
+import Text.Megaparsec
+import Text.Megaparsec.Char (char, digitChar, lowerChar, newline, space1, string)
 
 -- A wire name (e.g. x00, y04, z12, ntg)
 type Wire = String
 
 data GateType = AND | OR | XOR deriving (Show, Eq)
-data Gate = Gate { gateType :: GateType
-                 , left     :: Wire
-                 , right    :: Wire
-                 , output   :: Wire
-                 } deriving (Show)
 
-data Input = Input { initialWires :: Map Wire Int
-                   , gates        :: Map Wire Gate
-                   } deriving (Show)
+data Gate = Gate
+  { gateType :: GateType,
+    left :: Wire,
+    right :: Wire,
+    output :: Wire
+  }
+  deriving (Show)
+
+data Input = Input
+  { initialWires :: Map Wire Int,
+    gates :: Map Wire Gate
+  }
+  deriving (Show)
 
 -- Parse a wire name: one or more lowercase letters or digits.
 wireP :: Parser Wire
@@ -48,9 +54,10 @@ assignmentP = do
   return (w, b)
 
 gateTypeP :: Parser GateType
-gateTypeP =  (AND <$ string "AND")
-         <|> (OR  <$ string "OR")
-         <|> (XOR <$ string "XOR")
+gateTypeP =
+  (AND <$ string "AND")
+    <|> (OR <$ string "OR")
+    <|> (XOR <$ string "XOR")
 
 gateLineP :: Parser Gate
 gateLineP = do
@@ -84,22 +91,23 @@ evaluateHelper :: Input -> Wire -> Int
 evaluateHelper input wire = case M.lookup wire (initialWires input) of
   Just val -> val
   Nothing -> case M.lookup wire (gates input) of
-    Just gate -> let lval = evaluate input (left gate)
-                     rval = evaluate input (right gate)
-                     result = case gateType gate of
-                       AND -> lval .&. rval
-                       OR  -> lval .|. rval
-                       XOR -> lval `xor` rval
-                 in result
-    Nothing -> 0  -- Default to 0 if wire not found
+    Just gate ->
+      let lval = evaluate input (left gate)
+          rval = evaluate input (right gate)
+          result = case gateType gate of
+            AND -> lval .&. rval
+            OR -> lval .|. rval
+            XOR -> lval `xor` rval
+       in result
+    Nothing -> 0 -- Default to 0 if wire not found
 
 evaluate :: Input -> Wire -> Int
 evaluate input wire = evaluateHelper input wire
 
 allWiresMatching :: Input -> (Wire -> Bool) -> [Wire]
-allWiresMatching input predicate = let
-  a = M.keys (gates input)
-  in sort $ filter predicate a
+allWiresMatching input predicate =
+  let a = M.keys (gates input)
+   in sort $ filter predicate a
 
 allOutputGates :: Input -> [Wire]
 allOutputGates input = allWiresMatching input (\w -> not (null w) && head w == 'z')
@@ -112,19 +120,20 @@ bitsToInt = foldl (\acc x -> (acc `shiftL` 1) .|. x) 0
 -- of bits (MSB-first). For example, intToBits 4 == [1,0,0].
 intToBits :: Int -> [Int]
 intToBits n
-  | n < 0     = error "fromOutput: negative input"
-  | n == 0    = [0]
+  | n < 0 = error "fromOutput: negative input"
+  | n == 0 = [0]
   | otherwise = reverse (go n)
   where
     go 0 = []
-    go k = let bit = if (k .&. 1) == 1 then 1 else 0
-            in bit : go (k `shiftR` 1)
+    go k =
+      let bit = if (k .&. 1) == 1 then 1 else 0
+       in bit : go (k `shiftR` 1)
 
 part1 :: Input -> Int
-part1 input = let
-  gs = allOutputGates input
-  vs = reverse $ map (evaluate input) gs
-  in bitsToInt vs
+part1 input =
+  let gs = allOutputGates input
+      vs = reverse $ map (evaluate input) gs
+   in bitsToInt vs
 
 -- Find a gate that takes two specific inputs (order-independent) and has a specific type-- findGate :: Input -> Wire -> Wire -> GateType -> Maybe Gate
 -- findGate input w1 w2 gt =
@@ -137,7 +146,6 @@ part1 input = let
 
 -- Get the gate that produces a specific wire
 
-
 -- Find swapped wires by checking adder structure bit by bit
 findSwappedWires :: Input -> [Wire]
 findSwappedWires input =
@@ -147,49 +155,39 @@ findSwappedWires input =
       maxZ = maximum [read (drop 1 w) :: Int | w <- M.keys (gates input), head w == 'z']
       finalZ = "z" ++ (if maxZ < 10 then "0" else "") ++ show maxZ
 
-      wrongZ = [output g | g <- allGates,
-                head (output g) == 'z',
-                output g /= "z00",
-                output g /= finalZ,
-                gateType g /= XOR]
+      wrongZ =
+        [ output g | g <- allGates, head (output g) == 'z', output g /= "z00", output g /= finalZ, gateType g /= XOR
+        ]
 
       -- Rule 2: If XOR gate doesn't have x,y inputs and doesn't output to z, it's wrong
-      wrongXOR = [output g | g <- allGates,
-                  gateType g == XOR,
-                  head (left g) `notElem` ['x', 'y'],
-                  head (right g) `notElem` ['x', 'y'],
-                  head (output g) /= 'z']
+      wrongXOR =
+        [ output g | g <- allGates, gateType g == XOR, head (left g) `notElem` ['x', 'y'], head (right g) `notElem` ['x', 'y'], head (output g) /= 'z'
+        ]
 
       -- Rule 3: If AND gate has x,y inputs (except x00,y00) and feeds into XOR, it's wrong
-      wrongAND = [output g | g <- allGates,
-                  gateType g == AND,
-                  left g /= "x00" && right g /= "x00",
-                  let out = output g,
-                  any (\g2 -> (left g2 == out || right g2 == out) && gateType g2 == XOR) allGates]
+      wrongAND =
+        [ output g | g <- allGates, gateType g == AND, left g /= "x00" && right g /= "x00", let out = output g, any (\g2 -> (left g2 == out || right g2 == out) && gateType g2 == XOR) allGates
+        ]
 
       -- Rule 4: If XOR gate has x,y inputs (except x00,y00) and doesn't feed into XOR, it's wrong
-      wrongInputXOR = [output g | g <- allGates,
-                       gateType g == XOR,
-                       ((head (left g) == 'x' && head (right g) == 'y') ||
-                        (head (left g) == 'y' && head (right g) == 'x')),
-                       left g /= "x00" && right g /= "x00",
-                       let out = output g,
-                       not (any (\g2 -> (left g2 == out || right g2 == out) && gateType g2 == XOR) allGates)]
-
-  in S.toList $ S.fromList (wrongZ ++ wrongXOR ++ wrongAND ++ wrongInputXOR)
+      wrongInputXOR =
+        [ output g | g <- allGates, gateType g == XOR, ( (head (left g) == 'x' && head (right g) == 'y')
+                                                           || (head (left g) == 'y' && head (right g) == 'x')
+                                                       ), left g /= "x00" && right g /= "x00", let out = output g, not (any (\g2 -> (left g2 == out || right g2 == out) && gateType g2 == XOR) allGates)
+        ]
+   in S.toList $ S.fromList (wrongZ ++ wrongXOR ++ wrongAND ++ wrongInputXOR)
 
 part2 :: Input -> String
 part2 input =
   let swapped = findSwappedWires input
-  in intercalate "," (sort swapped)
-
+   in intercalate "," (sort swapped)
 
 solve :: FilePath -> IO ()
 solve filePath = do
   contents <- readFile filePath
   case parse parseInput filePath contents of
-          Left eb -> putStr (errorBundlePretty eb)
-          Right input -> do
-            putStrLn "Parsed input successfully"
-            putStrLn $ "Part 1: " ++ show (part1 input)
-            putStrLn $ "Part 2: " ++ part2 input
+    Left eb -> putStr (errorBundlePretty eb)
+    Right input -> do
+      putStrLn "Parsed input successfully"
+      putStrLn $ "Part 1: " ++ show (part1 input)
+      putStrLn $ "Part 2: " ++ part2 input

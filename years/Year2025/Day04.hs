@@ -1,9 +1,9 @@
 module Year2025.Day04 (solve) where
 
-import Text.Megaparsec
-import Text.Megaparsec.Char (char, eol)
 import Maze
 import Parsers (Parser)
+import Text.Megaparsec
+import Text.Megaparsec.Char (char, eol)
 
 type Grid = Maze Char
 

@@ -1,5 +1,5 @@
-module Parsers (
-    Parser,
+module Parsers
+  ( Parser,
     sc,
     lexeme,
     integer,
@@ -15,18 +15,25 @@ module Parsers (
     negativeInteger,
     signedInteger,
     charInRange,
-    coordinateParser
-) where
+    coordinateParser,
+  )
+where
 
-import           Control.Monad              (void)
-import           Data.Void                  (Void)
-import           Text.Megaparsec            (Parsec, between, empty, many,
-                                             satisfy, choice, anySingle)
-import           Control.Applicative        ((<|>))
-import           Text.Megaparsec.Char       (space1, string, char, eol)
-import qualified Text.Megaparsec.Char.Lexer as L
+import Control.Applicative ((<|>))
+import Control.Monad (void)
 import qualified Data.Map.Strict as Map
-
+import Data.Void (Void)
+import Text.Megaparsec
+  ( Parsec,
+    anySingle,
+    between,
+    choice,
+    empty,
+    many,
+    satisfy,
+  )
+import Text.Megaparsec.Char (char, eol, space1, string)
+import qualified Text.Megaparsec.Char.Lexer as L
 
 -- | Parser type specialized to operate on 'String' input for this project.
 --   This is a thin alias around Megaparsec's 'Parsec' with no custom state.
@@ -106,5 +113,3 @@ coordinateParser mapper (startX, startY) = coordinateParser' startX startY
           return Map.empty
         ]
     addToMap f x y c = Map.alter (const (f c)) (x, y)
-
-

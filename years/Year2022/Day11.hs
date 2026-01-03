@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+
 module Year2022.Day11 (solve) where
 
 {- ORMOLU_DISABLE -}
@@ -23,49 +24,50 @@ startingItemsParser = string "  Starting items: " *> (L.decimal `sepBy` string "
 
 operationParser :: Parser (Int -> Int)
 operationParser = do
-    _ <- string "  Operation: new = old "
-    op <- (char '*' $> (*)) <|> (char '+' $> (+))
-    _ <- string " "
-    val <- (string "old" $> (-1)) <|> L.decimal
-    eol
-    return (\x -> let v = if val == -1 then x else val in op x v)
+  _ <- string "  Operation: new = old "
+  op <- (char '*' $> (*)) <|> (char '+' $> (+))
+  _ <- string " "
+  val <- (string "old" $> (-1)) <|> L.decimal
+  eol
+  return (\x -> let v = if val == -1 then x else val in op x v)
 
 testParser :: Parser (Int, Int, Int)
 testParser = do
-    string "  Test: divisible by "
-    d <- L.decimal
-    eol
-    string "    If true: throw to monkey "
-    t <- L.decimal
-    eol
-    string "    If false: throw to monkey "
-    f <- L.decimal
-    eol
-    return (d, t, f)
+  string "  Test: divisible by "
+  d <- L.decimal
+  eol
+  string "    If true: throw to monkey "
+  t <- L.decimal
+  eol
+  string "    If false: throw to monkey "
+  f <- L.decimal
+  eol
+  return (d, t, f)
 
 monkeyParser :: Parser Monkey
 monkeyParser = do
-    id <- monkeyIdParser
-    items <- startingItemsParser
-    op <- operationParser
-    (d, t, f) <- testParser
-    return Monkey {
-        monkeyId = id,
+  id <- monkeyIdParser
+  items <- startingItemsParser
+  op <- operationParser
+  (d, t, f) <- testParser
+  return
+    Monkey
+      { monkeyId = id,
         items = items,
         operation = op,
         test = (\x -> if x `mod` d == 0 then t else f)
-    }
+      }
 
 inputParser :: Parser Input
 inputParser = monkeyParser `sepBy` eol
 
 ------------ TYPES ------------
-data Monkey = Monkey {
-    monkeyId :: Int,
+data Monkey = Monkey
+  { monkeyId :: Int,
     items :: [Int],
     operation :: (Int -> Int),
     test :: (Int -> Int)
-}
+  }
 
 type Input = [Monkey]
 

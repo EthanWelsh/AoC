@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+
 module Year2022.Day13 (solve) where
 
 {- ORMOLU_DISABLE -}
@@ -25,9 +26,10 @@ type Parser = Parsec Void T.Text
 
 ------------ PARSER ------------
 packetParser :: Parser Packet
-packetParser = choice 
-    [ Item <$> L.decimal
-    , List <$> between (char '[') (char ']') (packetParser `sepBy` char ',')
+packetParser =
+  choice
+    [ Item <$> L.decimal,
+      List <$> between (char '[') (char ']') (packetParser `sepBy` char ',')
     ]
 
 inputParser :: Parser Input
@@ -41,24 +43,26 @@ instance Show Packet where
   show (List ps) = let packets = map show ps in "[" ++ intercalate "," packets ++ "]"
 
 type Input = [Packet]
+
 type OutputA = String
+
 type OutputB = String
 
 ------------ PART A ------------
 instance Ord Packet where
   compare (Item l) (Item r) = compare l r
   compare (List []) (List []) = EQ
-  compare (List []) (List (_:_)) = LT
-  compare (List (_:_)) (List []) = GT
+  compare (List []) (List (_ : _)) = LT
+  compare (List (_ : _)) (List []) = GT
   compare (List l) r@(Item _) = compare (List l) (List [r])
   compare l@(Item _) (List r) = compare (List [l]) (List r)
-  compare (List (l:ls)) (List (r:rs)) =
+  compare (List (l : ls)) (List (r : rs)) =
     let headValidity = compare l r
-    in if headValidity == EQ then compare (List ls) (List rs) else headValidity
+     in if headValidity == EQ then compare (List ls) (List rs) else headValidity
 
 pairs :: [a] -> [(a, a)]
 pairs [] = []
-pairs (x:y:ys) = (x, y) : pairs ys
+pairs (x : y : ys) = (x, y) : pairs ys
 
 isValid :: (Packet, Packet) -> Bool
 isValid (l, r) = l < r
@@ -66,16 +70,16 @@ isValid (l, r) = l < r
 partA :: Input -> OutputA
 partA input =
   let packetPairs = pairs input
-      pairsWithIndex = zip [1..] packetPairs
+      pairsWithIndex = zip [1 ..] packetPairs
       onlyValid = filter (\(_, pair) -> isValid pair) pairsWithIndex
-  in show $ sum $ map fst onlyValid
+   in show $ sum $ map fst onlyValid
 
 ------------ PART B ------------
 partB :: Input -> OutputB
 partB input =
   let extras = [List [List [Item 2]], List [List [Item 6]]]
       packets = sort $ extras ++ input
-  in show $ product $ map (+1) $ findIndices (`elem` extras) packets
+   in show $ product $ map (+ 1) $ findIndices (`elem` extras) packets
 
 ------------ SOLVE ------------
 solve :: FilePath -> IO ()

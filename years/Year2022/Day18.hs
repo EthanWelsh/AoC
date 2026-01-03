@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+
 module Year2022.Day18 (solve) where
 
 {- ORMOLU_DISABLE -}
@@ -71,7 +72,7 @@ openFaces points = concatMap (openFacesFromPoint points) points
 startMap :: [Point] -> Map Point [Point]
 startMap ps = Map.fromList $ map (\p -> (p, [p])) ps
 
-deleteAllFromMap :: Ord k => [k] -> Map k v -> Map k v
+deleteAllFromMap :: (Ord k) => [k] -> Map k v -> Map k v
 deleteAllFromMap ks m = foldl (\mm k -> Map.delete k mm) m ks
 
 partA :: Input -> OutputA

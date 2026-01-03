@@ -1,5 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE PackageImports #-}
+
 module Year2022.Day14 (solve) where
 
 {- ORMOLU_DISABLE -}

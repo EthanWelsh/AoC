@@ -1,17 +1,17 @@
 module Year2022.Day02 (solve) where
 
-import           Control.Applicative        ((<|>))
-import           Control.Monad              (void)
-import           Text.Megaparsec
-import           Text.Megaparsec.Char
-import           Parsers (Parser)
+import Control.Applicative ((<|>))
+import Control.Monad (void)
+import Parsers (Parser)
+import Text.Megaparsec
+import Text.Megaparsec.Char
 
 data Shape = Rock | Paper | Scissor
   deriving (Eq, Show)
 
 data GameState = Win | Lose | Draw
 
-data FirstColumn  = A | B | C
+data FirstColumn = A | B | C
   deriving (Eq, Show)
 
 data SecondColumn = X | Y | Z
@@ -23,20 +23,20 @@ charToFirst :: Char -> FirstColumn
 charToFirst 'A' = A
 charToFirst 'B' = B
 charToFirst 'C' = C
-charToFirst _   = error "Invalid FirstColumn char"
+charToFirst _ = error "Invalid FirstColumn char"
 
 charToSecond :: Char -> SecondColumn
 charToSecond 'X' = X
 charToSecond 'Y' = Y
 charToSecond 'Z' = Z
-charToSecond _   = error "Invalid SecondColumn char"
+charToSecond _ = error "Invalid SecondColumn char"
 
 row :: Parser (FirstColumn, SecondColumn)
 row = do
-    first <- char 'A' <|> char 'B' <|> char 'C'
-    void $ char ' '
-    second <- char 'X' <|> char 'Y' <|> char 'Z'
-    return (charToFirst first, charToSecond second)
+  first <- char 'A' <|> char 'B' <|> char 'C'
+  void $ char ' '
+  second <- char 'X' <|> char 'Y' <|> char 'Z'
+  return (charToFirst first, charToSecond second)
 
 inputParser :: Parser Input
 inputParser = row `sepEndBy` eol
@@ -58,15 +58,15 @@ playGames :: [(FirstColumn, SecondColumn)] -> (FirstColumn -> Shape) -> (SecondC
 playGames games fcToShape scToShape = map (playGame fcToShape scToShape) games
 
 gameState :: (Shape, Shape) -> GameState
-gameState (Rock,    Rock)    = Draw
-gameState (Paper,   Paper)   = Draw
+gameState (Rock, Rock) = Draw
+gameState (Paper, Paper) = Draw
 gameState (Scissor, Scissor) = Draw
-gameState (Rock,    Paper)   = Win
-gameState (Paper,   Scissor) = Win
-gameState (Scissor, Rock)    = Win
-gameState (Rock,    Scissor) = Lose
-gameState (Paper,   Rock)    = Lose
-gameState (Scissor, Paper)   = Lose
+gameState (Rock, Paper) = Win
+gameState (Paper, Scissor) = Win
+gameState (Scissor, Rock) = Win
+gameState (Rock, Scissor) = Lose
+gameState (Paper, Rock) = Lose
+gameState (Scissor, Paper) = Lose
 
 shapeScore :: Shape -> Int
 shapeScore Rock = 1
@@ -88,15 +88,15 @@ partA :: Input -> Int
 partA input = scoreGames $ playGames input firstToShape secondToShape
 
 pickRightShape :: Shape -> GameState -> Shape
-pickRightShape Rock    Lose = Scissor
-pickRightShape Rock    Draw = Rock
-pickRightShape Rock    Win  = Paper
-pickRightShape Paper   Lose = Rock
-pickRightShape Paper   Draw = Paper
-pickRightShape Paper   Win  = Scissor
+pickRightShape Rock Lose = Scissor
+pickRightShape Rock Draw = Rock
+pickRightShape Rock Win = Paper
+pickRightShape Paper Lose = Rock
+pickRightShape Paper Draw = Paper
+pickRightShape Paper Win = Scissor
 pickRightShape Scissor Lose = Paper
 pickRightShape Scissor Draw = Scissor
-pickRightShape Scissor Win  = Rock
+pickRightShape Scissor Win = Rock
 
 secondToGameState :: SecondColumn -> GameState
 secondToGameState X = Lose
@@ -110,9 +110,10 @@ toShapes :: (Shape, GameState) -> (Shape, Shape)
 toShapes (shape, gs) = (shape, pickRightShape shape gs)
 
 partB :: Input -> Int
-partB input = let a = map toShapeAndGameState input
-                  b = map toShapes a
-                  in scoreGames b
+partB input =
+  let a = map toShapeAndGameState input
+      b = map toShapes a
+   in scoreGames b
 
 solve :: FilePath -> IO ()
 solve filePath = do

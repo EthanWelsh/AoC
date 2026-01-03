@@ -15,15 +15,15 @@ parsePart1 :: String -> [([Int], Char)]
 parsePart1 contents =
   let allLines = lines contents
       nonEmptyLines = filter (not . null) allLines
-      
+
       operatorLine = last nonEmptyLines
       numberLines = init nonEmptyLines
-      
+
       rows = map (map read . words) numberLines
       ops = map head (words operatorLine)
-      
+
       columns = transpose rows
-  in zip columns ops
+   in zip columns ops
 
 part1 :: String -> IO ()
 part1 contents = do
@@ -43,7 +43,7 @@ padAndTranspose :: [String] -> [String]
 padAndTranspose lines' =
   let maxLen = maximum (map length lines')
       pad s = s ++ replicate (maxLen - length s) ' '
-  in transpose (map pad lines')
+   in transpose (map pad lines')
 
 parseGroup :: [String] -> ([Int], Char)
 parseGroup cols =
@@ -57,7 +57,7 @@ parseOperator cols = head $ filter (not . isSpace) (map last cols)
 parseColumnNumber :: String -> Maybe Int
 parseColumnNumber col =
   let digits = filter (not . isSpace) (init col)
-  in if null digits then Nothing else Just (read digits)
+   in if null digits then Nothing else Just (read digits)
 
 part2 :: String -> IO ()
 part2 contents = do

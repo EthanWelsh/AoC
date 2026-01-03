@@ -1,25 +1,29 @@
 module Year2023.Day05 (solve) where
 
-import           Control.Monad        (void)
-import           Data.Function        (on)
-import           Data.Interval
-import qualified Data.IntervalSet     as IntervalSet
-import           Data.List            (find)
-import           Data.Maybe
-import qualified Data.Set             as Set
-import           Parsers        (Parser, integer)
-import           List           (pairsByTwo)
-import           Text.Megaparsec
-import           Text.Megaparsec.Char (string)
+import Control.Monad (void)
+import Data.Function (on)
+import Data.Interval
+import qualified Data.IntervalSet as IntervalSet
+import Data.List (find)
+import Data.Maybe
+import qualified Data.Set as Set
+import List (pairsByTwo)
+import Parsers (Parser, integer)
+import Text.Megaparsec
+import Text.Megaparsec.Char (string)
 
-data Range = Range { destination :: Int
-                   , source      :: Int
-                   , len         :: Int
-                   } deriving (Show, Eq)
+data Range = Range
+  { destination :: Int,
+    source :: Int,
+    len :: Int
+  }
+  deriving (Show, Eq)
+
 instance Ord Range where
   compare = compare `on` source
 
 type ResourceMap = Set.Set Range
+
 data Almanac = Almanac [Int] [ResourceMap] deriving (Show)
 
 parseRange :: Parser Range
@@ -52,16 +56,27 @@ parseInput = do
   tempHumidity <- parseResourceMap
   void $ string "humidity-to-location map:\n"
   humidityLocation <- parseResourceMap
-  return (Almanac seeds [seedSoil, soilFertilizer, fertilizerWater, waterLight,
-                         lightTemp, tempHumidity, humidityLocation])
+  return
+    ( Almanac
+        seeds
+        [ seedSoil,
+          soilFertilizer,
+          fertilizerWater,
+          waterLight,
+          lightTemp,
+          tempHumidity,
+          humidityLocation
+        ]
+    )
 
 inRange :: Range -> Int -> Bool
 inRange (Range _ s l) t = t >= s && t < (s + l)
 
 mapFromRange :: Range -> Int -> Maybe Int
-mapFromRange r@(Range d s _) t = if inRange r t
-  then Just (d + (t - s))
-  else Nothing
+mapFromRange r@(Range d s _) t =
+  if inRange r t
+    then Just (d + (t - s))
+    else Nothing
 
 mapFromResourceMap :: ResourceMap -> Int -> Int
 mapFromResourceMap rs t = fromMaybe t mpd
@@ -83,19 +98,19 @@ createInterval (s, l) = start <=..< end
     end = Finite (s + l)
 
 seedsAsRanges :: [Int] -> IntervalSet.IntervalSet Int
-seedsAsRanges seeds = let
-  ps = pairsByTwo seeds :: [(Int, Int)]
-  intervals = map createInterval ps :: [Interval Int]
-  in IntervalSet.fromList intervals
+seedsAsRanges seeds =
+  let ps = pairsByTwo seeds :: [(Int, Int)]
+      intervals = map createInterval ps :: [Interval Int]
+   in IntervalSet.fromList intervals
 
 reverseRange :: Range -> Range
 reverseRange (Range d s l) = Range s d l
 
 reverseResourceMap :: ResourceMap -> ResourceMap
-reverseResourceMap ranges = let
-  l = Set.toList ranges :: [Range]
-  r = map reverseRange l
-  in Set.fromList r
+reverseResourceMap ranges =
+  let l = Set.toList ranges :: [Range]
+      r = map reverseRange l
+   in Set.fromList r
 
 reverseResourceMaps :: [ResourceMap] -> [ResourceMap]
 reverseResourceMaps maps = reverse $ map reverseResourceMap maps
@@ -104,13 +119,13 @@ part1 :: Almanac -> IO ()
 part1 (Almanac seeds maps) = do
   let seedLocations = map (mapFromResourceMaps maps) seeds
   let minLocation = minimum seedLocations
-  putStrLn ( "Part 1: " ++ show minLocation)
+  putStrLn ("Part 1: " ++ show minLocation)
 
 part2 :: Almanac -> IO ()
 part2 (Almanac seeds maps) = do
   let revd = reverseResourceMaps maps
   let seedRanges = seedsAsRanges seeds
-  let ascending = [0..] :: [Int]
+  let ascending = [0 ..] :: [Int]
   let locationToSeeds = zip ascending $ map (mapFromResourceMaps revd) ascending
   let lowest = find (\(_, s) -> IntervalSet.member s seedRanges) locationToSeeds
   putStrLn $ "Part 2: " ++ show ((fst . fromJust) lowest)
@@ -119,7 +134,7 @@ solve :: FilePath -> IO ()
 solve filePath = do
   contents <- readFile filePath
   case parse parseInput filePath contents of
-          Left eb -> putStr (errorBundlePretty eb)
-          Right almanac -> do
-            part1 almanac
-            part2 almanac
+    Left eb -> putStr (errorBundlePretty eb)
+    Right almanac -> do
+      part1 almanac
+      part2 almanac

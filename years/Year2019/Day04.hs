@@ -1,16 +1,16 @@
 module Year2019.Day04 (solve) where
 
-import           Control.Monad        (void)
-import           Data.List            (group)
-import           Parsers              (Parser, integer)
-import           Text.Megaparsec
-import           Text.Megaparsec.Char (char)
+import Control.Monad (void)
+import Data.List (group)
+import Parsers (Parser, integer)
+import Text.Megaparsec
+import Text.Megaparsec.Char (char)
 
 type Input = (Int, Int)
 
 pairs :: [a] -> [(a, a)]
-pairs []           = []
-pairs [_]          = []
+pairs [] = []
+pairs [_] = []
 pairs (x : y : ys) = (x, y) : pairs (y : ys)
 
 isSixDigits :: Int -> Bool

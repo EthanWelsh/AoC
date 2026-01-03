@@ -40,7 +40,7 @@ type OutputB = Int
 ------------ PART A ------------
 
 neighbors :: Point -> [Point]
-neighbors (r, c) = [(r+1, c), (r-1, c), (r, c+1), (r, c-1)]
+neighbors (r, c) = [(r + 1, c), (r - 1, c), (r, c + 1), (r, c - 1)]
 
 getValidNeighbors :: (Point -> Point -> Bool) -> Point -> [Point]
 getValidNeighbors canMove from = filter (canMove from) (neighbors from)
@@ -49,36 +49,36 @@ partA :: Input -> OutputA
 partA input = fromJust $ bfs (getValidNeighbors (canMoveUp input)) (isEnd input) (findStart input)
 
 canMoveUp :: Map Point Int -> Point -> Point -> Bool
-canMoveUp m from to = let
-    fromVal = fromJust $ Map.lookup from m
-    toVal = fromJust $ Map.lookup to m
-    in toVal <= (fromVal + 1)
+canMoveUp m from to =
+  let fromVal = fromJust $ Map.lookup from m
+      toVal = fromJust $ Map.lookup to m
+   in toVal <= (fromVal + 1)
 
 isEnd :: Map Point Int -> Point -> Bool
 isEnd m p = (fromJust $ Map.lookup p m) == 27
 
 findStart :: Map Point Int -> Point
-findStart m = let
-    Just (p, _) = find (\(_, v) -> v == 0) (Map.toList m)
-    in p
+findStart m =
+  let Just (p, _) = find (\(_, v) -> v == 0) (Map.toList m)
+   in p
 
 ------------ PART B ------------
 partB :: Input -> OutputB
 partB input = fromJust $ bfs (getValidNeighbors (canMoveDown input)) (isStart input) (findEnd input)
 
 canMoveDown :: Map Point Int -> Point -> Point -> Bool
-canMoveDown m from to = let
-    fromVal = fromJust $ Map.lookup from m
-    toVal = fromJust $ Map.lookup to m
-    in fromVal <= (toVal + 1)
+canMoveDown m from to =
+  let fromVal = fromJust $ Map.lookup from m
+      toVal = fromJust $ Map.lookup to m
+   in fromVal <= (toVal + 1)
 
 isStart :: Map Point Int -> Point -> Bool
 isStart m p = (fromJust $ Map.lookup p m) == 1
 
 findEnd :: Map Point Int -> Point
-findEnd m = let
-    Just (p, _) = find (\(_, v) -> v == 27) (Map.toList m)
-    in p
+findEnd m =
+  let Just (p, _) = find (\(_, v) -> v == 27) (Map.toList m)
+   in p
 
 solve :: FilePath -> IO ()
 solve filePath = do

@@ -13,5 +13,5 @@ instance (Semigroup a) => Semigroup (Pair a) where
 instance (Monoid a) => Monoid (Pair a) where
   mempty = Pair (mempty, mempty)
 
-(<+>) :: Num a => Pair a -> Pair a -> Pair a
+(<+>) :: (Num a) => Pair a -> Pair a -> Pair a
 x <+> y = (+) <$> x <*> y

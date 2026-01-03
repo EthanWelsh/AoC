@@ -1,15 +1,17 @@
 {-# LANGUAGE MultiWayIf #-}
-module Util (
-  freq,
-  mapFromNestedLists,
-  chunksOf,
-  chunksByPredicate,
-  traceShowIdWithContext,
-  (!!?),
-  mapBoundingBox,
-  laggedPairs,
-  range
-) where
+
+module Util
+  ( freq,
+    mapFromNestedLists,
+    chunksOf,
+    chunksByPredicate,
+    traceShowIdWithContext,
+    (!!?),
+    mapBoundingBox,
+    laggedPairs,
+    range,
+  )
+where
 
 {- ORMOLU_DISABLE -}
 import Data.Map.Strict (Map)
@@ -17,7 +19,7 @@ import qualified Data.Map.Strict as Map
 import Debug.Trace (trace)
 {- ORMOLU_ENABLE -}
 
-{- 
+{-
 This module contains a series of miscellaneous utility functions that I have found helpful in the past.
 -}
 
@@ -56,10 +58,10 @@ chunksByPredicate :: (a -> Bool) -> [a] -> [[a]]
 chunksByPredicate p ls
   | null ls = []
   | otherwise =
-    let (prefix, rest) = span p ls
-     in if null prefix
-          then (chunksByPredicate p $ dropWhile (not . p) rest)
-          else prefix : (chunksByPredicate p $ dropWhile (not . p) rest)
+      let (prefix, rest) = span p ls
+       in if null prefix
+            then (chunksByPredicate p $ dropWhile (not . p) rest)
+            else prefix : (chunksByPredicate p $ dropWhile (not . p) rest)
 
 -- Allows the user to log out some context and then the result of some expression
 -- For example, supposing a is 2, and b is 5:
@@ -72,9 +74,9 @@ traceShowIdWithContext context result = trace (show context ++ "\t" ++ show resu
 (!!?) :: [a] -> Int -> Maybe a
 list !!? index =
   if
-      | index < 0 -> Nothing
-      | index >= (length list) -> Nothing
-      | otherwise -> Just $ list !! index
+    | index < 0 -> Nothing
+    | index >= (length list) -> Nothing
+    | otherwise -> Just $ list !! index
 
 -- Given a map where the keys are co-ordinates, returns the minimum x, maximum x, minimum y, and maximum y; in that order.
 mapBoundingBox :: Map (Int, Int) a -> (Int, Int, Int, Int)
@@ -88,13 +90,14 @@ mapBoundingBox m =
 laggedPairs :: [a] -> [(a, a)]
 laggedPairs [] = []
 laggedPairs [_] = []
-laggedPairs (x:y:ys) = (x, y) : laggedPairs (y:ys)
+laggedPairs (x : y : ys) = (x, y) : laggedPairs (y : ys)
 
 range :: Int -> Int -> [Int]
 range start end =
-    if start < end then
-        [start..end]
-    else if start > end then
-        [start, start - 1 .. end]
-    else -- start == end
-        [start]
+  if start < end
+    then [start .. end]
+    else
+      if start > end
+        then [start, start - 1 .. end]
+        else -- start == end
+          [start]

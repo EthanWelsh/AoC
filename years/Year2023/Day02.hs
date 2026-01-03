@@ -1,8 +1,8 @@
 module Year2023.Day02 (solve) where
 
-import           Parsers        (Parser, integer)
-import           Text.Megaparsec
-import           Text.Megaparsec.Char (newline, string)
+import Parsers (Parser, integer)
+import Text.Megaparsec
+import Text.Megaparsec.Char (newline, string)
 
 -- Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
 
@@ -20,10 +20,10 @@ rgbParser = do
   n <- number
   color <- string "red" <|> string "green" <|> string "blue"
   case color of
-    "red"   -> return (n, 0, 0)
+    "red" -> return (n, 0, 0)
     "green" -> return (0, n, 0)
-    "blue"  -> return (0, 0, n)
-    _       -> error "unexpected color"
+    "blue" -> return (0, 0, n)
+    _ -> error "unexpected color"
 
 roundParser :: Parser RGB
 roundParser = do
@@ -86,7 +86,7 @@ solve :: FilePath -> IO ()
 solve filePath = do
   contents <- readFile filePath
   case parse inputParser filePath contents of
-          Left eb -> putStr (errorBundlePretty eb)
-          Right records -> do
-              part1 records
-              part2 records
+    Left eb -> putStr (errorBundlePretty eb)
+    Right records -> do
+      part1 records
+      part2 records

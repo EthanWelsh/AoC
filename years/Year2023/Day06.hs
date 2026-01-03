@@ -1,17 +1,23 @@
 module Year2023.Day06 (solve) where
 
-import           Control.Monad        (void)
-import           Parsers        (Parser, integer, skipSpaces)
-import           Text.Megaparsec
-import           Text.Megaparsec.Char (string)
+import Control.Monad (void)
+import Parsers (Parser, integer, skipSpaces)
+import Text.Megaparsec
+import Text.Megaparsec.Char (string)
 
 type Input = [Race]
-data Race = Race { time     :: Int
-                 , distance :: Int
-                 } deriving (Show, Eq)
 
-data Action = Action { holdTime      :: Int
-                     , remainingTime :: Int } deriving (Show)
+data Race = Race
+  { time :: Int,
+    distance :: Int
+  }
+  deriving (Show, Eq)
+
+data Action = Action
+  { holdTime :: Int,
+    remainingTime :: Int
+  }
+  deriving (Show)
 
 parseInput :: Parser Input
 parseInput = do
@@ -30,14 +36,14 @@ possibleActions :: Race -> [Action]
 possibleActions race = map (\ht -> Action ht (rt - ht)) holdTimes
   where
     rt = time race
-    holdTimes = [1..rt]
+    holdTimes = [1 .. rt]
 
 waysToBeat :: Race -> Int
-waysToBeat race = let
-  actions = possibleActions race
-  scores = map calculateScore actions
-  highScore = distance race
-  in length $ filter (>highScore) scores
+waysToBeat race =
+  let actions = possibleActions race
+      scores = map calculateScore actions
+      highScore = distance race
+   in length $ filter (> highScore) scores
 
 part1 :: Input -> IO ()
 part1 input = do
@@ -48,10 +54,10 @@ combineDigits :: [Int] -> Int
 combineDigits xs = read $ concatMap show xs
 
 oneRace :: [Race] -> Race
-oneRace rs = let
-  ts = map time rs
-  ds = map distance rs
-  in Race (combineDigits ts) (combineDigits ds)
+oneRace rs =
+  let ts = map time rs
+      ds = map distance rs
+   in Race (combineDigits ts) (combineDigits ds)
 
 part2 :: Input -> IO ()
 part2 input = do
@@ -63,7 +69,7 @@ solve :: FilePath -> IO ()
 solve filePath = do
   contents <- readFile filePath
   case parse parseInput filePath contents of
-          Left eb -> putStr (errorBundlePretty eb)
-          Right input -> do
-            part1 input
-            part2 input
+    Left eb -> putStr (errorBundlePretty eb)
+    Right input -> do
+      part1 input
+      part2 input

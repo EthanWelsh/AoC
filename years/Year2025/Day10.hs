@@ -9,9 +9,9 @@ import Control.Lens (element, (%~), (&))
 import Data.Function.Memoize (memoize)
 import Data.List (subsequences)
 import Data.Maybe (catMaybes, fromMaybe, mapMaybe)
+import Parsers (Parser, integer, lexeme, sc, symbol)
 import Text.Megaparsec (between, errorBundlePretty, many, parse, sepBy, (<|>))
 import Text.Megaparsec.Char (char)
-import Parsers (Parser, integer, lexeme, sc, symbol)
 
 data Light = On | Off deriving (Show, Eq, Ord)
 
@@ -109,7 +109,7 @@ solveJoltage m = fromMaybe (error "No solution found") (minPresses (let (Joltage
                   candidates = filter (isEvenAfter current) allSubsets
                   -- Calculate costs for valid candidates
                   results = mapMaybe (processCandidate current) candidates
-              in if null results then Nothing else Just (minimum results)
+               in if null results then Nothing else Just (minimum results)
 
     -- Apply a subset of buttons (indices) to the current joltage levels
     applySubset :: [Int] -> [[Int]] -> [Int]
@@ -128,7 +128,7 @@ solveJoltage m = fromMaybe (error "No solution found") (minPresses (let (Joltage
     processCandidate start subset =
       let reduced = applySubset start subset
           nextJoltage = map (`div` 2) reduced
-      in fmap (\v -> length subset + 2 * v) (minPresses nextJoltage)
+       in fmap (\v -> length subset + 2 * v) (minPresses nextJoltage)
 
 part2 :: Input -> IO ()
 part2 input = do

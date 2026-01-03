@@ -1,7 +1,7 @@
 module Day01Spec (spec) where
 
-import           Test.Hspec
-import           Text.Megaparsec (parse)
+import Test.Hspec
+import Text.Megaparsec (parse)
 import qualified Year2025.Day01 as D
 
 spec :: Spec

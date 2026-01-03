@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+
 module Year2022.Day10 (solve) where
 
 {- ORMOLU_DISABLE -}
@@ -21,8 +22,8 @@ noopParser = string "noop" $> Noop
 
 addxParser :: Parser Op
 addxParser = do
-    _ <- string "addx "
-    Addx <$> L.signed (pure ()) L.decimal
+  _ <- string "addx "
+  Addx <$> L.signed (pure ()) L.decimal
 
 inputParser :: Parser Input
 inputParser = (noopParser <|> addxParser) `sepBy` eol
@@ -42,29 +43,29 @@ opToCycles Noop = [0]
 opToCycles (Addx n) = [0, n]
 
 getHistory :: [Op] -> [Int]
-getHistory ops = let
-    cycles = concatMap opToCycles ops
-    in scanl (+) 1 cycles
+getHistory ops =
+  let cycles = concatMap opToCycles ops
+   in scanl (+) 1 cycles
 
 partA :: Input -> OutputA
-partA input = let
-    history = getHistory input
-    points = [20, 60, 100, 140, 180, 220]
-    strengths = map (\p -> (history !! (p-1)) * p) points
-    in sum strengths
+partA input =
+  let history = getHistory input
+      points = [20, 60, 100, 140, 180, 220]
+      strengths = map (\p -> (history !! (p - 1)) * p) points
+   in sum strengths
 
 ------------ PART B ------------
 partB :: Input -> OutputB
-partB input = let
-    history = getHistory input
-    screen = map (\(p, s) -> if abs(p-s) <= 1 then '#' else '.') (zip (cycle [0..39]) history)
-    in unlines $ chunks 40 screen
+partB input =
+  let history = getHistory input
+      screen = map (\(p, s) -> if abs (p - s) <= 1 then '#' else '.') (zip (cycle [0 .. 39]) history)
+   in unlines $ chunks 40 screen
 
 chunks :: Int -> [a] -> [[a]]
 chunks _ [] = []
 chunks n xs =
-    let (ys, zs) = splitAt n xs
-    in  ys : chunks n zs
+  let (ys, zs) = splitAt n xs
+   in ys : chunks n zs
 
 solve :: FilePath -> IO ()
 solve filePath = do

@@ -5,13 +5,13 @@
 
 module Year2025.Day09 (solve) where
 
-import "unordered-containers" Data.HashSet (HashSet)
-import qualified "unordered-containers" Data.HashSet as HashSet
 import Data.List (sortBy, tails)
+import Parsers (Parser)
 import Text.Megaparsec
 import Text.Megaparsec.Char (char, eol)
 import qualified Text.Megaparsec.Char.Lexer as L
-import Parsers (Parser)
+import "unordered-containers" Data.HashSet (HashSet)
+import qualified "unordered-containers" Data.HashSet as HashSet
 
 type Point = (Int, Int)
 
@@ -95,11 +95,11 @@ isRectangeInPolygon polygon rect@((x1, y1), (x2, y2)) =
   where
     corners = [(x1, y1), (x1, y2), (x2, y1), (x2, y2)]
     cornersInside = all (`isPointInPolygon` polygon) corners
-    
+
     centerX = fromIntegral (x1 + x2) / 2.0
     centerY = fromIntegral (y1 + y2) / 2.0
     centerInside = isPointInPolygonDouble (centerX, centerY) polygon
-    
+
     noEdgeCrossing = not $ any (edgeCrossesRect rect) (zip (vertices polygon) (tail (cycle (vertices polygon))))
 
 part2 :: Input -> IO ()

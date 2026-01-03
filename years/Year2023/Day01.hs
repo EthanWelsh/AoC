@@ -1,6 +1,6 @@
 module Year2023.Day01 (solve) where
 
-import           Data.List (findIndex, isPrefixOf)
+import Data.List (findIndex, isPrefixOf)
 
 calibrationValue :: [String] -> (String -> Int) -> String -> Int
 calibrationValue ns toNum s =
@@ -16,21 +16,21 @@ getLast s ns = reverse $ getFirst (reverse s) (map reverse ns)
 
 firstPrefix :: String -> [String] -> String
 firstPrefix s@(_ : xs) ps = case findIndex (`isPrefixOf` s) ps of
-  Nothing  -> firstPrefix xs ps
+  Nothing -> firstPrefix xs ps
   (Just i) -> ps !! i
 firstPrefix [] _ = error "unexpected"
 
 toNumber :: String -> Int
-toNumber "one"   = 1
-toNumber "two"   = 2
+toNumber "one" = 1
+toNumber "two" = 2
 toNumber "three" = 3
-toNumber "four"  = 4
-toNumber "five"  = 5
-toNumber "six"   = 6
+toNumber "four" = 4
+toNumber "five" = 5
+toNumber "six" = 6
 toNumber "seven" = 7
 toNumber "eight" = 8
-toNumber "nine"  = 9
-toNumber d       = read d
+toNumber "nine" = 9
+toNumber d = read d
 
 digits :: [String]
 digits = map show ([1 .. 9] :: [Int])
