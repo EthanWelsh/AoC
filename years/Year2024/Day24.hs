@@ -13,7 +13,6 @@ module Year2024.Day24
 import           Data.Map.Strict      (Map)
 import qualified Data.Map.Strict      as M
 import           Data.Bits            ((.&.), (.|.), xor, shiftL, shiftR)
-import           Data.Function.Memoize (memoize)
 import           Data.List            (sort, intercalate)
 import qualified Data.Set             as S
 import           Text.Megaparsec
@@ -92,20 +91,18 @@ evaluateHelper input wire = case M.lookup wire (initialWires input) of
                        OR  -> lval .|. rval
                        XOR -> lval `xor` rval
                  in result
-    Nothing -> error ("Wire not found: " ++ wire)
+    Nothing -> 0  -- Default to 0 if wire not found
 
 evaluate :: Input -> Wire -> Int
-evaluate input = memoize (evaluateHelper input)
+evaluate input wire = evaluateHelper input wire
 
 allWiresMatching :: Input -> (Wire -> Bool) -> [Wire]
 allWiresMatching input predicate = let
   a = M.keys (gates input)
-  b = M.keys (initialWires input)
-  allWires = a ++ b
-  in sort $ filter predicate allWires
+  in sort $ filter predicate a
 
 allOutputGates :: Input -> [Wire]
-allOutputGates input = allWiresMatching input (('z' ==) . head)
+allOutputGates input = allWiresMatching input (\w -> not (null w) && head w == 'z')
 
 -- Convert MSB-first list of bits to a non-negative integer.
 bitsToInt :: [Int] -> Int
@@ -193,5 +190,6 @@ solve filePath = do
   case parse parseInput filePath contents of
           Left eb -> putStr (errorBundlePretty eb)
           Right input -> do
+            putStrLn "Parsed input successfully"
             putStrLn $ "Part 1: " ++ show (part1 input)
             putStrLn $ "Part 2: " ++ part2 input

@@ -13,6 +13,7 @@ import qualified Year2025.Day09
 import qualified Year2025.Day10
 import qualified Year2025.Day11
 import qualified Year2025.Day12
+import qualified Year2024.Day24
 import qualified Year2023.Day01
 import qualified Year2023.Day02
 import qualified Year2023.Day03
@@ -133,6 +134,35 @@ solvers2025 =
     , Year2025.Day10.solve
     , Year2025.Day11.solve
     , Year2025.Day12.solve
+    ]
+
+solvers2024 :: [FilePath -> IO ()]
+solvers2024 =
+    [ \_ -> putStrLn "No solution found for Day 01, Year 2024."  -- Day 01 (Rust)
+    , \_ -> putStrLn "No solution found for Day 02, Year 2024."  -- Day 02 (Rust)
+    , \_ -> putStrLn "No solution found for Day 03, Year 2024."  -- Day 03 (Rust)
+    , \_ -> putStrLn "No solution found for Day 04, Year 2024."  -- Day 04 (Rust)
+    , \_ -> putStrLn "No solution found for Day 05, Year 2024."  -- Day 05 (Rust)
+    , \_ -> putStrLn "No solution found for Day 06, Year 2024."  -- Day 06 (Rust)
+    , \_ -> putStrLn "No solution found for Day 07, Year 2024."  -- Day 07 (Rust)
+    , \_ -> putStrLn "No solution found for Day 08, Year 2024."  -- Day 08 (Rust)
+    , \_ -> putStrLn "No solution found for Day 09, Year 2024."  -- Day 09 (Rust)
+    , \_ -> putStrLn "No solution found for Day 10, Year 2024."  -- Day 10 (Rust)
+    , \_ -> putStrLn "No solution found for Day 11, Year 2024."  -- Day 11 (Rust)
+    , \_ -> putStrLn "No solution found for Day 12, Year 2024."  -- Day 12 (Rust)
+    , \_ -> putStrLn "No solution found for Day 13, Year 2024."  -- Day 13 (not implemented)
+    , \_ -> putStrLn "No solution found for Day 14, Year 2024."  -- Day 14 (not implemented)
+    , \_ -> putStrLn "No solution found for Day 15, Year 2024."  -- Day 15 (Rust)
+    , \_ -> putStrLn "No solution found for Day 16, Year 2024."  -- Day 16 (Rust)
+    , \_ -> putStrLn "No solution found for Day 17, Year 2024."  -- Day 17 (Rust)
+    , \_ -> putStrLn "No solution found for Day 18, Year 2024."  -- Day 18 (Rust)
+    , \_ -> putStrLn "No solution found for Day 19, Year 2024."  -- Day 19 (Rust)
+    , \_ -> putStrLn "No solution found for Day 20, Year 2024."  -- Day 20 (Rust)
+    , \_ -> putStrLn "No solution found for Day 21, Year 2024."  -- Day 21 (not implemented)
+    , \_ -> putStrLn "No solution found for Day 22, Year 2024."  -- Day 22 (not implemented)
+    , \_ -> putStrLn "No solution found for Day 23, Year 2024."  -- Day 23 (not implemented)
+    , Year2024.Day24.solve  -- Day 24 (Haskell)
+    , \_ -> putStrLn "No solution found for Day 25, Year 2024."  -- Day 25 (not implemented)
     ]
 
 solvers2023 :: [FilePath -> IO ()]
@@ -256,6 +286,7 @@ solvers2021 =
 solvers :: Map String [FilePath -> IO ()]
 solvers = Map.fromList
     [ ("2025", solvers2025)
+    , ("2024", solvers2024)
     , ("2023", solvers2023)
     , ("2022", solvers2022)
     , ("2019", solvers2019)

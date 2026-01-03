@@ -1,4 +1,4 @@
-use std::{collections::HashSet, io};
+use std::collections::HashSet;
 
 use crate::template::{Day, ANSI_BOLD, ANSI_ITALIC, ANSI_RESET};
 
@@ -49,12 +49,13 @@ pub fn run_multi(days_to_run: &HashSet<Day>, is_release: bool, is_timed: bool) -
 #[derive(Debug)]
 pub enum Error {
     BrokenPipe,
-    IO(io::Error),
+    IO(()),
 }
 
 impl From<std::io::Error> for Error {
     fn from(e: std::io::Error) -> Self {
-        Error::IO(e)
+        let _ = e; // intentionally drop original IO error
+        Error::IO(())
     }
 }
 
