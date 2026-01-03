@@ -3,7 +3,7 @@ module Main (main) where
 import Data.Map (Map)
 import qualified Data.Map as Map
 import System.Environment (getArgs)
-import Text.Printf (printf)
+import Util (getInputPath)
 import qualified Year2019.Day01
 import qualified Year2019.Day02
 import qualified Year2019.Day03
@@ -295,10 +295,6 @@ main = do
   [year, day, sample] <- getArgs
   let yearSolvers = solvers Map.! year
       solver = yearSolvers !! (read day - 1)
-      dayStr :: String
-      dayStr = printf "%02d" (read day :: Int)
-      sampleStr = if sample == "sample" then "sample" else "real"
-      filePath :: String
-      filePath = printf "years/Year%s/input/%s/Day%s.txt" year sampleStr dayStr
+      filePath = getInputPath (read year) (read day) sample
   putStrLn ""
   solver filePath

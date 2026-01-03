@@ -10,6 +10,7 @@ module Util
     mapBoundingBox,
     laggedPairs,
     range,
+    getInputPath,
   )
 where
 
@@ -17,7 +18,9 @@ where
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as Map
 import Debug.Trace (trace)
+import Text.Printf (printf)
 {- ORMOLU_ENABLE -}
+
 
 {-
 This module contains a series of miscellaneous utility functions that I have found helpful in the past.
@@ -101,3 +104,9 @@ range start end =
         then [start, start - 1 .. end]
         else -- start == end
           [start]
+
+getInputPath :: Int -> Int -> String -> FilePath
+getInputPath year day sample = do
+  let dayStr = printf "%02d" day
+      sampleStr = if sample == "sample" then "sample" else "real"
+  printf "years/Year%d/input/%s/Day%s.txt" year sampleStr dayStr
