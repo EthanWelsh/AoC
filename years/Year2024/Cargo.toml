@@ -7,7 +7,7 @@ publish = false
 
 [lib]
 name = "advent_of_code"
-path = "../../rust_utils/lib.rs"
+path = "../../utils/rust_utils/lib.rs"
 doctest = false
 
 [[bin]]

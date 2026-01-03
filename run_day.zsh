@@ -36,7 +36,7 @@ if [ -f "years/Year${YEAR}/Day${DAY_STR}.hs" ]; then
         ghcid --command="stack ghci aoc:exe:aoc" --setup ":set args ${YEAR} ${DAY} ${SAMPLE_OR_REAL}" --run="Main.main" --warnings
     else
         echo "Running Haskell solution for Day ${DAY_STR}, Year ${YEAR} (${SAMPLE_OR_REAL} input)..."
-        stack run aoc "${YEAR}" "${DAY}" "${SAMPLE_OR_REAL}"
+        perl -e 'alarm 10; exec @ARGV' stack run aoc "${YEAR}" "${DAY}" "${SAMPLE_OR_REAL}"
     fi
 elif [ -f "years/Year${YEAR}/Day${DAY_STR}.rs" ]; then
     echo "Running Rust solution for Day ${DAY_STR}, Year ${YEAR} (${SAMPLE_OR_REAL} input)..."
@@ -64,8 +64,8 @@ elif [ -f "years/Year${YEAR}/Day${DAY_STR}.rs" ]; then
         echo "Running Rust solution for Day ${DAY_STR}, Year ${YEAR} (${SAMPLE_OR_REAL} input) in interactive mode..."
         (cd "years/Year${YEAR}" && cargo watch -x "run --bin day${DAY_STR}")
     else
-        # Run Rust solution
-        (cd "years/Year${YEAR}" && cargo run --release --bin "day${DAY_STR}")
+        # Run Rust solution with 10 second timeout
+        (cd "years/Year${YEAR}" && perl -e 'alarm 10; exec @ARGV' cargo run --release --bin "day${DAY_STR}")
     fi
 else
     echo "No solution found for Day ${DAY_STR}, Year ${YEAR}."

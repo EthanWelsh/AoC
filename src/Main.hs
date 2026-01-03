@@ -35,6 +35,7 @@ import qualified Year2023.Day18
 import qualified Year2023.Day19
 import qualified Year2023.Day20
 import qualified Year2023.Day21
+import qualified Year2023.Day22
 import qualified Year2023.Day23
 import qualified Year2023.Day24
 import qualified Year2023.Day25
@@ -188,6 +189,7 @@ solvers2023 =
     , Year2023.Day19.solve
     , Year2023.Day20.solve
     , Year2023.Day21.solve
+    , Year2023.Day22.solve
     , Year2023.Day23.solve
     , Year2023.Day24.solve
     , Year2023.Day25.solve
