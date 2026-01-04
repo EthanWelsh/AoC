@@ -10,6 +10,10 @@ import Text.Megaparsec.Char (char, eol)
 -- >>> import System.IO.Unsafe (unsafePerformIO)
 -- >>> let example = unsafePerformIO $ readFile "years/Year2025/input/sample/Day01.txt"
 -- >>> let Right parsedExample = parse parseInput "" example
+-- >>> length parsedExample
+-- 10
+-- >>> head parsedExample
+-- L 68
 -- >>> part1 parsedExample
 -- Part 1: 3
 -- >>> part2 parsedExample

@@ -178,8 +178,7 @@ test-suite aoc-test
   type:                exitcode-stdio-1.0
   hs-source-dirs:      years/Year2025/test, src, utils, years
   main-is:             Spec.hs
-  other-modules:       Day01Spec
-                     , GraphSpec
+  other-modules:       GraphSpec
                      , Graph
                      , List
                      , Parsers
