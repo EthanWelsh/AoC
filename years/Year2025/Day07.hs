@@ -13,6 +13,10 @@ import Text.Megaparsec.Char (char, eol)
 -- >>> import System.IO.Unsafe (unsafePerformIO)
 -- >>> let example = unsafePerformIO $ readFile "years/Year2025/input/sample/Day07.txt"
 -- >>> let Right parsedExample = parse parseInput "" example
+-- >>> part1 parsedExample
+-- Part 1: 21
+-- >>> part2 parsedExample
+-- Part 2: 40
 
 type Grid = Maze Char
 
@@ -35,9 +39,6 @@ countSplits g = go
         Just '^' -> Set.unions [Set.singleton p, go (east p), go (west p)]
         _ -> error "Unexpected point"
 
--- |
--- >>> part1 parsedExample
--- Part 1: 21
 part1 :: Input -> IO ()
 part1 input = do
   putStr "Part 1: "
@@ -56,9 +57,6 @@ countPaths g = go
         Just '^' -> 1 + go (east p) + go (west p)
         _ -> error "Unexpected point"
 
--- |
--- >>> part2 parsedExample
--- Part 2: 40
 part2 :: Input -> IO ()
 part2 input = do
   putStr "Part 2: "

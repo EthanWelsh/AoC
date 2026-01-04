@@ -10,6 +10,10 @@ import Text.Megaparsec.Char (char)
 -- >>> import System.IO.Unsafe (unsafePerformIO)
 -- >>> let example = unsafePerformIO $ readFile "years/Year2025/input/sample/Day02.txt"
 -- >>> let Right parsedExample = parse parseInput "" example
+-- >>> part1 parsedExample
+-- Part 1: 1227775554
+-- >>> part2 parsedExample
+-- Part 2: 4174379265
 
 type Input = [Range]
 
@@ -40,9 +44,6 @@ isInvalid x =
 allNums :: [Range] -> [Int]
 allNums rs = concatMap numsInRange rs
 
--- |
--- >>> part1 parsedExample
--- Part 1: 1227775554
 part1 :: Input -> IO ()
 part1 input = do
   putStr "Part 1: "
@@ -65,9 +66,6 @@ isInvalid2 x =
       possibleChunkSizes = allEqualSizedChunks n
    in any chunkInvalid possibleChunkSizes
 
--- |
--- >>> part2 parsedExample
--- Part 2: 4174379265
 part2 :: Input -> IO ()
 part2 input = do
   putStr "Part 2: "

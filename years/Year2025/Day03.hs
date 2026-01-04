@@ -34,10 +34,12 @@ highestVoltage bank =
 -- >>> import System.IO.Unsafe (unsafePerformIO)
 -- >>> let example = unsafePerformIO $ readFile "years/Year2025/input/sample/Day03.txt"
 -- >>> let Right parsedExample = parse parseInput "" example
-
--- |
 -- >>> part1 parsedExample
 -- Part 1: 357
+-- >>> part2 parsedExample
+-- Part 2: 3121910778619
+
+-- |
 part1 :: Input -> IO ()
 
 part1 input = do
@@ -67,9 +69,6 @@ highestVoltage2 bank = toNumber $ helper bank 12
             ifExcluded = helper xs n
          in maxBank ifIncluded ifExcluded
 
--- |
--- >>> part2 parsedExample
--- Part 2: 3121910778619
 part2 :: Input -> IO ()
 part2 input = do
   putStr "Part 2: "

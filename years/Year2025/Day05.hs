@@ -12,6 +12,10 @@ import qualified Text.Megaparsec.Char.Lexer as L
 -- >>> import System.IO.Unsafe (unsafePerformIO)
 -- >>> let example = unsafePerformIO $ readFile "years/Year2025/input/sample/Day05.txt"
 -- >>> let Right parsedExample = parse parseInput "" example
+-- >>> part1 parsedExample
+-- Part 1: 3
+-- >>> part2 parsedExample
+-- Part 2: 14
 
 type Food = [Int]
 
@@ -32,17 +36,11 @@ parseInput = do
   eof
   return (rs, nums)
 
--- |
--- >>> part1 parsedExample
--- Part 1: 3
 part1 :: Input -> IO ()
 part1 (rs, ns) = do
   putStr "Part 1: "
   print $ length $ filter (memberOfRanges rs) ns
 
--- |
--- >>> part2 parsedExample
--- Part 2: 14
 part2 :: Input -> IO ()
 part2 (rs, _) = do
   putStr "Part 2: "

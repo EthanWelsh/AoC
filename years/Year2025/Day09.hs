@@ -18,6 +18,10 @@ import qualified "unordered-containers" Data.HashSet as HashSet
 -- >>> import System.IO.Unsafe (unsafePerformIO)
 -- >>> let example = unsafePerformIO $ readFile "years/Year2025/input/sample/Day09.txt"
 -- >>> let Right parsedExample = parse parseInput "" example
+-- >>> part1 parsedExample
+-- Part 1: 50
+-- >>> part2 parsedExample
+-- Part 2: 24
 
 type Point = (Int, Int)
 
@@ -37,9 +41,6 @@ allPairs xs = [(x, y) | (x : ys) <- tails xs, y <- ys]
 area :: Point -> Point -> Int
 area (x1, y1) (x2, y2) = (abs (x1 - x2) + 1) * (abs (y1 - y2) + 1)
 
--- |
--- >>> part1 parsedExample
--- Part 1: 50
 part1 :: Input -> IO ()
 part1 input = do
   putStr "Part 1: "
@@ -111,9 +112,6 @@ isRectangeInPolygon polygon rect@((x1, y1), (x2, y2)) =
 
     noEdgeCrossing = not $ any (edgeCrossesRect rect) (zip (vertices polygon) (tail (cycle (vertices polygon))))
 
--- |
--- >>> part2 parsedExample
--- Part 2: 24
 part2 :: Input -> IO ()
 part2 input = do
   putStr "Part 2: "

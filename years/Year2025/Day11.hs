@@ -17,6 +17,10 @@ import Text.Megaparsec.Char (newline, string)
 -- >>> let Right parsedExample1 = parse parseInput "" example1
 -- >>> let example2 = unsafePerformIO $ readFile "years/Year2025/input/sample/Day11_part2.txt"
 -- >>> let Right parsedExample2 = parse parseInput "" example2
+-- >>> part1 parsedExample1
+-- Part 1: 5
+-- >>> part2 parsedExample2
+-- Part 2: 2
 
 type Input = Graph String
 
@@ -41,9 +45,6 @@ countPathsBetween g start end = go start
         then 1
         else sum [go neighbor | neighbor <- neighbors g n]
 
--- |
--- >>> part1 parsedExample1
--- Part 1: 5
 part1 :: Input -> IO ()
 part1 input = do
   putStr "Part 1: "
@@ -55,9 +56,6 @@ countPathsBetween4 g a b c d =
     * countPathsBetween g b c
     * countPathsBetween g c d
 
--- |
--- >>> part2 parsedExample2
--- Part 2: 2
 part2 :: Input -> IO ()
 part2 input = do
   putStr "Part 2: "

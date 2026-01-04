@@ -10,6 +10,10 @@ import Text.Megaparsec.Char (char, eol)
 -- >>> import System.IO.Unsafe (unsafePerformIO)
 -- >>> let example = unsafePerformIO $ readFile "years/Year2025/input/sample/Day01.txt"
 -- >>> let Right parsedExample = parse parseInput "" example
+-- >>> part1 parsedExample
+-- Part 1: 3
+-- >>> part2 parsedExample
+-- Part 2: 6
 
 data Instruction = L Int | R Int deriving (Show, Eq)
 
@@ -30,16 +34,12 @@ values ins = scanl update 50 ins
     update acc (L n) = (acc - n) `mod` 100
     update acc (R n) = (acc + n) `mod` 100
 
--- |
--- >>> part1 parsedExample
--- Part 1: 3
+
 part1 :: Input -> IO ()
 part1 input = do
   putStr "Part 1: "
   let valList = values input
   print $ count (== 0) (tail valList)
-
--- print (values input)
 
 explode :: [Instruction] -> [Instruction]
 explode [] = []
@@ -47,15 +47,10 @@ explode (x : xs) = case x of
   L n -> replicate n (L 1) ++ explode xs
   R n -> replicate n (R 1) ++ explode xs
 
--- |
--- >>> part2 parsedExample
--- Part 2: 6
 part2 :: Input -> IO ()
 part2 input = do
   putStr "Part 2: "
   print $ count (== 0) (tail (values (explode input)))
-
--- print input
 
 solve :: FilePath -> IO ()
 solve filePath = do

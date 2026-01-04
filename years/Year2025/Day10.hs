@@ -18,6 +18,10 @@ import Text.Megaparsec.Char (char)
 -- >>> import System.IO.Unsafe (unsafePerformIO)
 -- >>> let example = unsafePerformIO $ readFile "years/Year2025/input/sample/Day10.txt"
 -- >>> let Right parsedExample = parse parseInput "" example
+-- >>> part1 parsedExample
+-- Part 1: 7
+-- >>> part2 parsedExample
+-- Part 2: 33
 
 data Light = On | Off deriving (Show, Eq, Ord)
 
@@ -90,9 +94,6 @@ solveLights m = case shortestPath of
     initialState :: [Light]
     initialState = replicate (length (targetLights m)) Off
 
--- |
--- >>> part1 parsedExample
--- Part 1: 7
 part1 :: Input -> IO ()
 part1 input = do
   putStr "Part 1: "
@@ -139,9 +140,6 @@ solveJoltage m = fromMaybe (error "No solution found") (minPresses (let (Joltage
           nextJoltage = map (`div` 2) reduced
        in fmap (\v -> length subset + 2 * v) (minPresses nextJoltage)
 
--- |
--- >>> part2 parsedExample
--- Part 2: 33
 part2 :: Input -> IO ()
 part2 input = do
   putStr "Part 2: "

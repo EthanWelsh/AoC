@@ -8,10 +8,11 @@ import List (splitOn)
 -- $setup
 -- >>> import System.IO.Unsafe (unsafePerformIO)
 -- >>> let example = unsafePerformIO $ readFile "years/Year2025/input/sample/Day06.txt"
-
--- |
 -- >>> part1 example
 -- Part 1: 4277556
+-- >>> part2 example
+-- Part 2: 3263827
+
 calculate :: ([Int], Char) -> Int
 calculate (nums, op) = case op of
   '+' -> sum nums
@@ -66,9 +67,6 @@ parseColumnNumber col =
   let digits = filter (not . isSpace) (init col)
    in if null digits then Nothing else Just (read digits)
 
--- |
--- >>> part2 example
--- Part 2: 3263827
 part2 :: String -> IO ()
 part2 contents = do
   putStr "Part 2: "

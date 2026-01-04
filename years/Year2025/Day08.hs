@@ -15,6 +15,10 @@ import qualified Text.Megaparsec.Char.Lexer as L
 -- >>> import System.IO.Unsafe (unsafePerformIO)
 -- >>> let example = unsafePerformIO $ readFile "years/Year2025/input/sample/Day08.txt"
 -- >>> let Right parsedExample = parse parseInput "" example
+-- >>> part1' 10 parsedExample
+-- Part 1: 40
+-- >>> part2 parsedExample
+-- Part 2: 25272
 
 type Point3D = (Int, Int, Int)
 
@@ -50,9 +54,6 @@ closestPairs pts =
       sortedPs = sortBy (\(a, b) (c, d) -> compare (distanceSquared a b) (distanceSquared c d)) ps
    in sortedPs
 
--- |
--- >>> part1' 10 parsedExample
--- Part 1: 40
 part1' :: Int -> Input -> IO ()
 part1' n input = do
   putStr "Part 1: "
@@ -73,9 +74,6 @@ mergeTillConnected g (x : xs) =
       components = connectedComponents g'
    in if length components == 1 then x else mergeTillConnected g' xs
 
--- |
--- >>> part2 parsedExample
--- Part 2: 25272
 part2 :: Input -> IO ()
 part2 input = do
   putStr "Part 2: "

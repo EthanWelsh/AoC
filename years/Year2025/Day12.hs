@@ -12,6 +12,8 @@ import Text.Megaparsec.Char.Lexer (decimal)
 -- >>> import System.IO.Unsafe (unsafePerformIO)
 -- >>> let example = unsafePerformIO $ readFile "years/Year2025/input/sample/Day12.txt"
 -- >>> let Right parsedExample = parse parseInput "" example
+-- >>> part1 parsedExample
+-- Part 1: *** Exception: Input has complicated cases not handled
 
 type Grid = Maze Char
 
@@ -69,9 +71,6 @@ treesWillFit gifts tree = case (isFitImpossible gifts tree, isFitInevitable tree
   (_, True) -> True
   (False, False) -> errorWithoutStackTrace "Input has complicated cases not handled"
 
--- |
--- >>> part1 parsedExample
--- Part 1: *** Exception: Input has complicated cases not handled
 part1 :: Input -> IO ()
 part1 (gifts, trees) = do
   putStr "Part 1: "
