@@ -1,4 +1,4 @@
-{-# OPTIONS_GHC -Wno-unused-top-binds #-}
+{-# OPTIONS_GHC -Wno-unused-top-binds -Wno-missing-signatures #-}
 
 module Graph
   ( Graph,
@@ -27,7 +27,8 @@ where
 import Data.List ((\\))
 import Data.List.Extra (groupSort)
 import Data.Map as M
-  ( Map,
+  (
+    Map,
     adjust,
     findWithDefault,
     fromList,
@@ -36,7 +37,8 @@ import Data.Map as M
     toList,
   )
 import Data.Set
-  ( Set,
+  (
+    Set,
     empty,
     insert,
     member,
@@ -44,8 +46,24 @@ import Data.Set
   )
 import Data.Tuple (swap)
 
+-- $setup
+-- >>> import qualified Data.Map as M
+-- >>> import qualified Data.Set as S
+-- >>> import Data.List (sort)
+-- >>> let g = graphFromNodes [1, 2, 3]
+-- >>> let edgesToAdd = [(1, 2), (2, 3)]
+-- >>> let g' = addEdges g edgesToAdd
+-- >>> let m = graphAsMap g'
+-- >>> let gBi = makeBidirectional g'
+-- >>> let mBi = graphAsMap gBi
+
 newtype Graph a = Graph (Map a [a]) deriving (Show)
 
+-- |
+-- >>> sort <$> M.lookup 1 mBi
+-- Just [2]
+-- >>> sort <$> M.lookup 2 mBi
+-- Just [1,3]
 makeBidirectional :: (Ord a) => Graph a -> Graph a
 makeBidirectional g =
   let allEdges = edges g ++ map swap (edges g)
@@ -90,6 +108,13 @@ addEdge :: (Ord a) => Graph a -> a -> a -> Graph a
 addEdge g src dst = apply (M.insertWith (++) src [dst]) g
 
 -- | Add multiple directed edges to the graph.
+--
+-- >>> M.lookup 1 m
+-- Just [2]
+-- >>> M.lookup 2 m
+-- Just [3]
+-- >>> M.lookup 3 m
+-- Just []
 addEdges :: (Ord a) => Graph a -> [(a, a)] -> Graph a
 addEdges = foldr (\(src, dst) g -> addEdge g src dst)
 
@@ -124,6 +149,13 @@ nodes :: Graph a -> [a]
 nodes (Graph g) = keys g
 
 -- | Compute the set of nodes reachable from a start node (including it).
+--
+-- >>> reachable g' 1
+-- fromList [1,2,3]
+-- >>> reachable g' 2
+-- fromList [2,3]
+-- >>> reachable g' 3
+-- fromList [3]
 reachable :: (Ord a) => Graph a -> a -> Set a
 reachable g = helper g empty
   where
