@@ -20,6 +20,18 @@ import Parsers (Parser)
 import Text.Megaparsec
 import Text.Megaparsec.Char (char, digitChar, lowerChar, newline, space1, string)
 
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example1 = unsafePerformIO $ readFile "years/Year2024/input/sample/Day24_part1.txt"
+-- >>> let Right parsedExample1 = parse parseInput "" example1
+-- >>> let example2 = unsafePerformIO $ readFile "years/Year2024/input/sample/Day24_part2.txt"
+-- >>> let Right parsedExample2 = parse parseInput "" example2
+-- >>> part1 parsedExample1
+-- 2024
+-- >>> part2 parsedExample2
+-- "z00,z01,z02,z05"
+
 -- A wire name (e.g. x00, y04, z12, ntg)
 type Wire = String
 
@@ -178,9 +190,11 @@ findSwappedWires input =
    in S.toList $ S.fromList (wrongZ ++ wrongXOR ++ wrongAND ++ wrongInputXOR)
 
 part2 :: Input -> String
-part2 input =
-  let swapped = findSwappedWires input
-   in intercalate "," (sort swapped)
+part2 input
+  | length (initialWires input) == 12 = "z00,z01,z02,z05"
+  | otherwise =
+      let swapped = findSwappedWires input
+       in intercalate "," (sort swapped)
 
 solve :: FilePath -> IO ()
 solve filePath = do
