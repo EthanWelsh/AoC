@@ -7,6 +7,16 @@ import Parsers (Parser, integer)
 import Text.Megaparsec
 import Text.Megaparsec.Char (char)
 
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example1 = unsafePerformIO $ readFile "years/Year2019/input/sample/Day03_1.txt"
+-- >>> let Right parsedExample1 = parse parseInput "" example1
+-- >>> let example2 = unsafePerformIO $ readFile "years/Year2019/input/sample/Day03_2.txt"
+-- >>> let Right parsedExample2 = parse parseInput "" example2
+-- >>> let example3 = unsafePerformIO $ readFile "years/Year2019/input/sample/Day03_3.txt"
+-- >>> let Right parsedExample3 = parse parseInput "" example3
+
 type Step = (Direction, Int)
 
 type Line = [Step]
@@ -51,6 +61,13 @@ pointsInLine current (s : ss) =
 getCrossingPoints :: [Point] -> [Point] -> [Point]
 getCrossingPoints a b = S.toList $ S.intersection (S.fromList a) (S.fromList b)
 
+-- |
+-- >>> part1 parsedExample1
+-- "6"
+-- >>> part1 parsedExample2
+-- "159"
+-- >>> part1 parsedExample3
+-- "135"
 part1 :: Input -> String
 part1 (a, b) = do
   let origin = (0, 0)
@@ -64,6 +81,13 @@ distanceToPoint :: [Point] -> Int -> M.Map Point Int
 distanceToPoint [] _ = M.empty
 distanceToPoint (p : ps) d = M.union (M.singleton p d) (distanceToPoint ps (d + 1))
 
+-- |
+-- >>> part2 parsedExample1
+-- "30"
+-- >>> part2 parsedExample2
+-- "610"
+-- >>> part2 parsedExample3
+-- "410"
 part2 :: Input -> String
 part2 (a, b) = do
   let origin = (0, 0)

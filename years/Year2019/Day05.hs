@@ -1,3 +1,16 @@
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2019/input/sample/Day05.txt"
+-- >>> let Right parsedExample = parse parseInput "" example
+-- >>> let runWithInput i = getOutput $ runProgram (parsedExample {getInput = [i]})
+-- >>> runWithInput 7
+-- [999]
+-- >>> runWithInput 8
+-- [1000]
+-- >>> runWithInput 9
+-- [1001]
+
 module Year2019.Day05 (solve) where
 
 import Intcode

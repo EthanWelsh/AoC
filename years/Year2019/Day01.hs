@@ -1,17 +1,30 @@
 module Year2019.Day01 (solve) where
 
-import Parsers (Parser, integer)
 import Text.Megaparsec
 import Text.Megaparsec.Char (eol)
+import qualified Text.Megaparsec.Char.Lexer as L
+import Data.Void (Void)
 
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example1 = unsafePerformIO $ readFile "years/Year2019/input/sample/Day01.txt"
+-- >>> let Right parsedExample1 = parse parseInput "" example1
+-- >>> let example2 = unsafePerformIO $ readFile "years/Year2019/input/sample/Day01_part2.txt"
+-- >>> let Right parsedExample2 = parse parseInput "" example2
+
+type Parser = Parsec Void String
 type Input = [Int]
 
 parseInput :: Parser Input
-parseInput = integer `sepEndBy` eol
+parseInput = L.decimal `sepEndBy` eol <* eof
 
 fuelRequired :: Int -> Int
 fuelRequired m = div m 3 - 2
 
+-- |
+-- >>> part1 parsedExample1
+-- "34241"
 part1 :: Input -> String
 part1 input = show $ sum $ map fuelRequired input
 
@@ -22,6 +35,9 @@ fuelRequiredPt2 m
   where
     n = fuelRequired m
 
+-- |
+-- >>> part2 parsedExample2
+-- "51314"
 part2 :: Input -> String
 part2 input = show $ sum $ map fuelRequiredPt2 input
 

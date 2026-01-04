@@ -13,12 +13,35 @@ pairs [] = []
 pairs [_] = []
 pairs (x : y : ys) = (x, y) : pairs (y : ys)
 
+-- |
+-- >>> isSixDigits 111111
+-- True
+-- >>> isSixDigits 223450
+-- True
+-- >>> isSixDigits 123789
+-- True
+-- >>> isSixDigits 12345
+-- False
 isSixDigits :: Int -> Bool
 isSixDigits n = 6 == length (show n)
 
+-- |
+-- >>> hasTwoSameAdjacentDigits 111111
+-- True
+-- >>> hasTwoSameAdjacentDigits 223450
+-- True
+-- >>> hasTwoSameAdjacentDigits 123789
+-- False
 hasTwoSameAdjacentDigits :: Int -> Bool
 hasTwoSameAdjacentDigits n = any (uncurry (==)) ((pairs . show) n)
 
+-- |
+-- >>> digitsNeverDecrease 111111
+-- True
+-- >>> digitsNeverDecrease 223450
+-- False
+-- >>> digitsNeverDecrease 123789
+-- True
 digitsNeverDecrease :: Int -> Bool
 digitsNeverDecrease n = not $ any (uncurry (>)) ((pairs . show) n)
 
@@ -39,6 +62,13 @@ part1 (a, b) = do
   let filtered = filter (allp predicates) possibles
   show $ length filtered
 
+-- |
+-- >>> noLargeGroups 112233
+-- True
+-- >>> noLargeGroups 123444
+-- False
+-- >>> noLargeGroups 111122
+-- True
 noLargeGroups :: Int -> Bool
 noLargeGroups n = any ((== 2) . length) (group (show n))
 
