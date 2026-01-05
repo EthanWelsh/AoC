@@ -14,6 +14,17 @@ import Text.Megaparsec (Parsec, count, errorBundlePretty, many, optional, parse,
 import Text.Megaparsec.Char (char, eol, hspace)
 import qualified Text.Megaparsec.Char.Lexer as L
 
+-- $setup
+-- >>> import qualified Data.Text.IO as TIO
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ TIO.readFile "years/Year2021/input/sample/Day04.txt"
+-- >>> let Right parsedExample = parse inputParser "" example
+-- >>> partA parsedExample
+-- "4512"
+-- >>> partB parsedExample
+-- "1924"
+
 type Parser = Parsec Void T.Text
 
 type Board = [[Int]]
@@ -27,22 +38,16 @@ data Bingo = Bingo
 
 type Input = Bingo
 
-localLexeme :: Parser a -> Parser a
-localLexeme = L.lexeme hspace
-
 localInteger :: Parser Int
-localInteger = do
-  sign_ <- maybe 1 (const (-1)) <$> optional (char '-')
-  abs_ <- localLexeme L.decimal
-  return (sign_ * abs_)
+localInteger = L.signed (return ()) L.decimal -- No space consumption
 
 parseDraws :: Parser [Int]
-parseDraws = localInteger `sepBy1` (localLexeme (char ','))
+parseDraws = localInteger `sepBy1` char ','
 
 parseLine :: Parser [Int]
 parseLine = do
-  void $ many hspace -- Use hspace for horizontal space
-  line <- localInteger `sepBy1` (some hspace) -- Numbers separated by hspace
+  void $ many (char ' ') -- leading spaces
+  line <- localInteger `sepBy1` (some (char ' '))
   return line
 
 parseBoard :: Parser [[Int]]

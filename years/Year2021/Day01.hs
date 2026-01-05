@@ -1,13 +1,27 @@
 module Year2021.Day01 (solve) where
 
-import Parsers (Parser, integer)
+import Parsers (Parser)
 import Text.Megaparsec
 import Text.Megaparsec.Char (eol)
+import qualified Text.Megaparsec.Char.Lexer as L
+
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2021/input/sample/Day01.txt"
+-- >>> let Right parsedExample = parse inputParser "" example
+-- >>> partA parsedExample
+-- "7"
+-- >>> partB parsedExample
+-- "5"
 
 type Input = [Int]
 
+integer' :: Parser Int
+integer' = L.decimal
+
 inputParser :: Parser Input
-inputParser = integer `sepEndBy` eol
+inputParser = integer' `sepEndBy` eol
 
 pairs :: [Int] -> [(Int, Int)]
 pairs [] = []

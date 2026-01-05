@@ -16,6 +16,17 @@ import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 {- ORMOLU_ENABLE -}
 
+-- $setup
+-- >>> import qualified Data.Text.IO as TIO
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ TIO.readFile "years/Year2021/input/sample/Day05.txt"
+-- >>> let Right parsedExample = parse inputParser "" example
+-- >>> partA parsedExample
+-- 5
+-- >>> partB parsedExample
+-- 12
+
 type Parser = Parsec Void T.Text
 
 ------------ PARSER ------------
@@ -35,7 +46,7 @@ arrowParser = do
   return (Arrow a b)
 
 inputParser :: Parser Input
-inputParser = arrowParser `sepBy` eol
+inputParser = arrowParser `sepEndBy` eol
 
 ------------ TYPES ------------
 type Point = (Int, Int)
@@ -57,7 +68,10 @@ range start end
   | start == end = [start]
 
 getPoints :: Arrow -> [Point]
-getPoints (Arrow (x1, y1) (x2, y2)) = zip (range x1 x2) (range y1 y2)
+getPoints (Arrow (x1, y1) (x2, y2))
+  | x1 == x2 = [(x1, y) | y <- range y1 y2]
+  | y1 == y2 = [(x, y1) | x <- range x1 x2]
+  | otherwise = zip (range x1 x2) (range y1 y2) -- For diagonal
 
 getDupesPerPoint :: [Point] -> Map Point Int
 getDupesPerPoint ps = foldl (\acc point -> Map.insertWith (+) point 1 acc) Map.empty ps

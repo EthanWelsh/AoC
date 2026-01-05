@@ -5,6 +5,16 @@ import Parsers (Parser)
 import Text.Megaparsec
 import Text.Megaparsec.Char (char, eol)
 
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2021/input/sample/Day03.txt"
+-- >>> let Right parsedExample = parse inputParser "" example
+-- >>> partA parsedExample
+-- "198"
+-- >>> partB parsedExample
+-- "230"
+
 type Bit = Char
 
 type Byte = String
