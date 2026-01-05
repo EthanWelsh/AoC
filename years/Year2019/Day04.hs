@@ -1,3 +1,10 @@
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2019/input/sample/Day04.txt"
+-- >>> case parse parseInput "" example of Right _ -> True; Left _ -> False
+-- True
+
 module Year2019.Day04 (solve) where
 
 import Control.Monad (void)

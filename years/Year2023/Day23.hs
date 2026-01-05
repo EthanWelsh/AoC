@@ -23,10 +23,10 @@ parseLine :: Parser String
 parseLine =
   many
     ( choice
-        [ char '#',
+          [ char '#',
           char '.',
           char '^',
-          char '>'
+          char '>',
           char 'v',
           char '<'
         ]

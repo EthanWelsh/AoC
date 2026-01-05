@@ -5,6 +5,14 @@ import Parsers (Parser, integer)
 import Text.Megaparsec
 import Text.Megaparsec.Char (char)
 
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2019/input/sample/Day02.txt"
+-- >>> let Right parsedExample = parse parseInput "" example
+-- >>> runProgramWithInputs parsedExample (9,10)
+-- 3500
+
 type Input = Machine
 
 parseInput :: Parser Input
