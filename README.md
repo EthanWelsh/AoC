@@ -2,6 +2,33 @@
 
 This repository contains my solutions for the Advent of Code puzzles, organized by year.
 
+## Reading Guide for Solution Status
+
+This table provides a concise overview of the completion status for each Advent of Code puzzle.
+
+-   **H**: Haskell solution exists, and both Part 1 and Part 2 are complete.
+-   **H1**: Haskell solution exists, Part 1 is complete, but Part 2 is incomplete.
+-   **R**: Rust solution exists, and both Part 1 and Part 2 are complete.
+-   **R1**: Rust solution exists, Part 1 is complete, but Part 2 is incomplete.
+-   **S**: A solution exists, but it was skipped due to complex logic issues that could not be resolved in this environment.
+-   **-**: The solution for this day does not exist in the repository, or it is a placeholder (not implemented).
+
+## Solution Status
+
+| Year | 01 | 02 | 03 | 04 | 05 | 06 | 07 | 08 | 09 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 |
+|------|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
+| 2015 | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| 2016 | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| 2017 | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| 2018 | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| 2019 | [H](./years/Year2019/Day01.hs) | [H](./years/Year2019/Day02.hs) | [H](./years/Year2019/Day03.hs) | [H](./years/Year2019/Day04.hs) | [H](./years/Year2019/Day05.hs) | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| 2020 | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| 2021 | [H](./years/Year2021/Day01.hs) | - | [H](./years/Year2021/Day03.hs) | [H](./years/Year2021/Day04.hs) | [H](./years/Year2021/Day05.hs) | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| 2022 | [H](./years/Year2022/Day01.hs) | [H](./years/Year2022/Day02.hs) | [H](./years/Year2022/Day03.hs) | [H](./years/Year2022/Day04.hs) | [H](./years/Year2022/Day05.hs) | [H](./years/Year2022/Day06.hs) | [H](./years/Year2022/Day07.hs) | [H](./years/Year2022/Day08.hs) | [H](./years/Year2022/Day09.hs) | [H](./years/Year2022/Day10.hs) | - | [H](./years/Year2022/Day12.hs) | [H](./years/Year2022/Day13.hs) | [H](./years/Year2022/Day14.hs) | [H](./years/Year2022/Day15.hs) | - | - | [H](./years/Year2022/Day18.hs) | - | - | - | - | - | - | - |
+| 2023 | [H](./years/Year2023/Day01.hs) | [H](./years/Year2023/Day02.hs) | [H](./years/Year2023/Day03.hs) | [H](./years/Year2023/Day04.hs) | [H](./years/Year2023/Day05.hs) | [H](./years/Year2023/Day06.hs) | [H](./years/Year2023/Day07.hs) | [H](./years/Year2023/Day08.hs) | - | [S](./years/Year2023/Day10.hs) | - | [S](./years/Year2023/Day12.hs) | - | - | [H](./years/Year2023/Day15.hs) | - | [S](./years/Year2023/Day17.hs) | - | - | - | [H1](./years/Year2023/Day21.hs) | - | [S](./years/Year2023/Day23.hs) | - | [S](./years/Year2023/Day25.hs) |
+| 2024 | [R](./years/Year2024/Day01.rs) | [R](./years/Year2024/Day02.rs) | [R](./years/Year2024/Day03.rs) | [R](./years/Year2024/Day04.rs) | [R](./years/Year2024/Day05.rs) | [R](./years/Year2024/Day06.rs) | [R](./years/Year2024/Day07.rs) | [R](./years/Year2024/Day08.rs) | [R](./years/Year2024/Day09.rs) | [R](./years/Year2024/Day10.rs) | [R](./years/Year2024/Day11.rs) | [R](./years/Year2024/Day12.rs) | - | - | [R](./years/Year2024/Day15.rs) | [R](./years/Year2024/Day16.rs) | - | [R](./years/Year2024/Day18.rs) | [R](./years/Year2024/Day19.rs) | [R](./years/Year2024/Day20.rs) | - | - | - | - | - |
+| 2025 | [H](./years/Year2025/Day01.hs) | [H](./years/Year2025/Day02.hs) | [H](./years/Year2025/Day03.hs) | [H](./years/Year2025/Day04.hs) | [H](./years/Year2025/Day05.hs) | [H](./years/Year2025/Day06.hs) | [H](./years/Year2025/Day07.hs) | [H](./years/Year2025/Day08.hs) | [H](./years/Year2025/Day09.hs) | [H](./years/Year2025/Day10.hs) | [H](./years/Year2025/Day11.hs) | [H](./years/Year2025/Day12.hs) |   |   |   |   |   |   |   |   |   |   |   |   |   |
+
 ## Directory Structure
 
 The repository is organized as a mono-repo with the following structure:
