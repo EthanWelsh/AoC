@@ -184,5 +184,7 @@ test-suite doctests
                      , doctest
                      , directory
                      , filepath
+                     , hspec
+                     , QuickCheck
   default-language:    Haskell2010
   ghc-options:         -Wall -threaded -rtsopts -with-rtsopts=-N
