@@ -7,6 +7,14 @@ import Parsers (Parser)
 import Text.Megaparsec
 import Text.Megaparsec.Char (char, newline)
 
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2023/input/sample/Day21.txt"
+-- >>> let Right parsedExample = parse parseInput "" example
+-- >>> partA 6 parsedExample
+-- 16
+
 type Grid = Maze Char
 
 type Input = Grid
@@ -15,7 +23,7 @@ type Points = Set.Set Point
 
 parseInput :: Parser Input
 parseInput = do
-  ls <- many (char '.' <|> char '#' <|> char 'S') `sepBy` newline
+  ls <- many (char '.' <|> char '#' <|> char 'S') `sepEndBy` newline
   return $ mazeFromList ls
 
 startPoint :: Grid -> Point
@@ -29,13 +37,11 @@ stepPoint maze point = memoize (stepHelper maze) point
 step :: Grid -> Points -> Points
 step m ps = Set.unions $ Set.map (stepPoint m) ps
 
-part1 :: Input -> IO ()
-part1 grid = do
-  putStr "Part 1: "
-  putStrLn ""
+partA :: Int -> Input -> Int
+partA steps grid =
   let start = startPoint grid
-  let possibilities = iterate (step grid) (Set.singleton start)
-  print $ length $ possibilities !! 64
+      possibilities = iterate (step grid) (Set.singleton start)
+   in length $ possibilities !! steps
 
 part2 :: Input -> IO ()
 part2 grid = do
@@ -50,5 +56,6 @@ solve filePath = do
   case parse parseInput filePath contents of
     Left eb -> putStr (errorBundlePretty eb)
     Right input -> do
-      part1 input
+      putStr "Part 1: "
+      print $ partA 64 input
       part2 input

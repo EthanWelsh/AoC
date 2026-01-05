@@ -1,16 +1,32 @@
 module Year2023.Day08 (solve) where
 
 import Control.Monad (void)
-import qualified Data.HashMap as HM
+import qualified Data.HashMap.Strict as HM
 import Parsers (Parser, charInRange)
 import Text.Megaparsec
 import Text.Megaparsec.Char (char, newline, string)
+
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example1_1 = unsafePerformIO $ readFile "years/Year2023/input/sample/Day08_part1_1.txt"
+-- >>> let Right parsedExample1_1 = parse parseInput "" example1_1
+-- >>> let example1_2 = unsafePerformIO $ readFile "years/Year2023/input/sample/Day08_part1_2.txt"
+-- >>> let Right parsedExample1_2 = parse parseInput "" example1_2
+-- >>> let example2 = unsafePerformIO $ readFile "years/Year2023/input/sample/Day08_part2.txt"
+-- >>> let Right parsedExample2 = parse parseInput "" example2
+-- >>> partA parsedExample1_1
+-- 2
+-- >>> partA parsedExample1_2
+-- 6
+-- >>> partB parsedExample2
+-- 6
 
 data Direction = L | R deriving (Show, Eq)
 
 type Room = String
 
-type Maze = HM.Map Room (Room, Room)
+type Maze = HM.HashMap Room (Room, Room)
 
 data Input = Input {dirs :: [Direction], maze :: Maze} deriving (Show)
 
@@ -34,7 +50,7 @@ parseInput :: Parser Input
 parseInput = do
   dirs <- manyTill directionParser newline
   void $ newline
-  ls <- lineParser `sepBy` newline
+  ls <- lineParser `sepEndBy` newline
   let m = HM.fromList ls
   return (Input dirs m)
 
@@ -48,25 +64,23 @@ stepsToEnd m isEnd (d : ds) r = if isEnd r then 0 else 1 + remainingSteps
   where
     remainingSteps = stepsToEnd m isEnd ds (step m d r)
 
-part1 :: Input -> IO ()
-part1 input = do
-  putStr "Part 1: "
+partA :: Input -> Int
+partA input =
   let ds = (concat . repeat) $ dirs input :: [Direction]
-  let m = maze input
-  print $ stepsToEnd m (== "ZZZ") ds "AAA"
+      m = maze input
+   in stepsToEnd m (== "ZZZ") ds "AAA"
 
 stepsToEndPt2 :: Maze -> [Room] -> [Direction] -> Int
 stepsToEndPt2 m rs ds = foldl1 lcm $ map (stepsToEnd m isEnd ds) rs
   where
     isEnd room = 'Z' == last room
 
-part2 :: Input -> IO ()
-part2 input = do
-  putStr "Part 2: "
+partB :: Input -> Int
+partB input =
   let ds = (concat . repeat) $ dirs input :: [Direction]
-  let m = maze input
-  let starts = filter ((== 'A') . last) (HM.keys m)
-  print $ stepsToEndPt2 m starts ds
+      m = maze input
+      starts = filter ((== 'A') . last) (HM.keys m)
+   in stepsToEndPt2 m starts ds
 
 solve :: FilePath -> IO ()
 solve filePath = do
@@ -74,5 +88,5 @@ solve filePath = do
   case parse parseInput filePath contents of
     Left eb -> putStr (errorBundlePretty eb)
     Right input -> do
-      part1 input
-      part2 input
+      putStrLn $ "Part 1: " ++ show (partA input)
+      putStrLn $ "Part 2: " ++ show (partB input)

@@ -12,8 +12,19 @@ import Parsers (Parser, integer)
 import Text.Megaparsec
 import Text.Megaparsec.Char (string)
 
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2023/input/sample/Day05.txt"
+-- >>> let Right parsedExample = parse parseInput "" example
+-- >>> partA parsedExample
+-- 35
+-- >>> partB parsedExample
+-- 46
+
 data Range = Range
-  { destination :: Int,
+  {
+    destination :: Int,
     source :: Int,
     len :: Int
   }
@@ -57,9 +68,11 @@ parseInput = do
   void $ string "humidity-to-location map:\n"
   humidityLocation <- parseResourceMap
   return
-    ( Almanac
+    (
+      Almanac
         seeds
-        [ seedSoil,
+        [
+          seedSoil,
           soilFertilizer,
           fertilizerWater,
           waterLight,
@@ -89,8 +102,6 @@ mapFromResourceMap rs t = fromMaybe t mpd
 mapFromResourceMaps :: [ResourceMap] -> Int -> Int
 mapFromResourceMaps maps t = foldl (flip mapFromResourceMap) t maps
 
--- moved pairs to Utils.List as pairsByTwo
-
 createInterval :: (Int, Int) -> Interval Int
 createInterval (s, l) = start <=..< end
   where
@@ -115,20 +126,19 @@ reverseResourceMap ranges =
 reverseResourceMaps :: [ResourceMap] -> [ResourceMap]
 reverseResourceMaps maps = reverse $ map reverseResourceMap maps
 
-part1 :: Almanac -> IO ()
-part1 (Almanac seeds maps) = do
+partA :: Almanac -> Int
+partA (Almanac seeds maps) =
   let seedLocations = map (mapFromResourceMaps maps) seeds
-  let minLocation = minimum seedLocations
-  putStrLn ("Part 1: " ++ show minLocation)
+   in minimum seedLocations
 
-part2 :: Almanac -> IO ()
-part2 (Almanac seeds maps) = do
+partB :: Almanac -> Int
+partB (Almanac seeds maps) =
   let revd = reverseResourceMaps maps
-  let seedRanges = seedsAsRanges seeds
-  let ascending = [0 ..] :: [Int]
-  let locationToSeeds = zip ascending $ map (mapFromResourceMaps revd) ascending
-  let lowest = find (\(_, s) -> IntervalSet.member s seedRanges) locationToSeeds
-  putStrLn $ "Part 2: " ++ show ((fst . fromJust) lowest)
+      seedRanges = seedsAsRanges seeds
+      ascending = [0 ..] :: [Int]
+      locationToSeeds = zip ascending $ map (mapFromResourceMaps revd) ascending
+      lowest = find (\(_, s) -> IntervalSet.member s seedRanges) locationToSeeds
+   in (fst . fromJust) lowest
 
 solve :: FilePath -> IO ()
 solve filePath = do
@@ -136,5 +146,5 @@ solve filePath = do
   case parse parseInput filePath contents of
     Left eb -> putStr (errorBundlePretty eb)
     Right almanac -> do
-      part1 almanac
-      part2 almanac
+      putStrLn $ "Part 1: " ++ show (partA almanac)
+      putStrLn $ "Part 2: " ++ show (partB almanac)

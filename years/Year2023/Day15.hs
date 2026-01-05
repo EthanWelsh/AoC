@@ -8,6 +8,17 @@ import Parsers (Parser, integer)
 import Text.Megaparsec hiding (label)
 import Text.Megaparsec.Char (alphaNumChar, char)
 
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2023/input/sample/Day15.txt"
+-- >>> let Right parsedExample1 = parse parseInputPt1 "" example
+-- >>> let Right parsedExample2 = parse parseInputPt2 "" example
+-- >>> partA parsedExample1
+-- 1320
+-- >>> partB parsedExample2
+-- 145
+
 data Instruction = Add String Int | Remove String deriving (Show)
 
 type Box = [(String, Int)]
@@ -36,13 +47,11 @@ parseRemove = do
   void $ char '-'
   return (Remove label)
 
-part1 :: [String] -> IO ()
-part1 input = do
-  putStr "Part 1: "
-  print $ sum $ map hash input
+partA :: [String] -> Int
+partA = sum . map hash
 
 emptyBoxMap :: BoxMap
-emptyBoxMap = [[] | _ <- [0 .. 256] :: [Int]]
+emptyBoxMap = [[] | _ <- [0 .. 255] :: [Int]]
 
 setBox :: BoxMap -> Int -> Box -> BoxMap
 setBox bs i b = (element i .~ b) bs
@@ -78,12 +87,11 @@ getFocusPower b idx =
       lensNums = zipWith (\i (_, v) -> i * v) [1 ..] b
    in if null b then 0 else boxNum * sum lensNums
 
-part2 :: [Instruction] -> IO ()
-part2 input = do
-  putStr "Part 2: "
+partB :: [Instruction] -> Int
+partB input =
   let bm = followInstructions input
-  let boxPowers = zipWith getFocusPower bm [0 ..]
-  print $ sum boxPowers
+      boxPowers = zipWith getFocusPower bm [0 ..]
+   in sum boxPowers
 
 hash :: String -> Int
 hash = foldl helper 0
@@ -96,8 +104,8 @@ solve filePath = do
   case parse parseInputPt1 filePath contents of
     Left eb -> putStr (errorBundlePretty eb)
     Right input -> do
-      part1 input
+      putStrLn $ "Part 1: " ++ show (partA input)
   case parse parseInputPt2 filePath contents of
     Left eb -> putStr (errorBundlePretty eb)
     Right input -> do
-      part2 input
+      putStrLn $ "Part 2: " ++ show (partB input)

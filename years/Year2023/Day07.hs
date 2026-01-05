@@ -8,6 +8,16 @@ import Parsers (Parser, integer)
 import Text.Megaparsec
 import Text.Megaparsec.Char
 
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2023/input/sample/Day07.txt"
+-- >>> let Right parsedExample = parse parseInput "" example
+-- >>> partA parsedExample
+-- 6440
+-- >>> partB parsedExample
+-- 5905
+
 type Card = Int
 
 data Hand = Hand [Card] deriving (Eq)
@@ -121,10 +131,8 @@ comparePt1 a@(Hand aa) b@(Hand bb) =
       topRankWithoutInt = eraseInt . topRank
    in (topRankWithoutInt a, aa) `compare` (topRankWithoutInt b, bb)
 
-part1 :: Input -> IO ()
-part1 input = do
-  putStr "Part 1: "
-  print $ calculateScore input comparePt1
+partA :: Input -> Int
+partA input = calculateScore input comparePt1
 
 upgradeRank :: Int -> Rank -> Rank
 upgradeRank 0 r = r
@@ -156,18 +164,14 @@ handRankWithJacks h =
       ranksWithJacks = map (upgradeRank (jacksCount h)) ranksWithoutJacks
    in maximum ranksWithJacks
 
--- replace moved to Utils.List
-
 comparePt2 :: Hand -> Hand -> Ordering
 comparePt2 a@(Hand aa) b@(Hand bb) =
   let hrank = eraseInt . handRankWithJacks
       withLowJacks = replace 11 0
    in (hrank a, withLowJacks aa) `compare` (hrank b, withLowJacks bb)
 
-part2 :: Input -> IO ()
-part2 input = do
-  putStr "Part 2: "
-  print $ calculateScore input comparePt2
+partB :: Input -> Int
+partB input = calculateScore input comparePt2
 
 solve :: FilePath -> IO ()
 solve filePath = do
@@ -175,5 +179,7 @@ solve filePath = do
   case parse parseInput filePath contents of
     Left eb -> putStr (errorBundlePretty eb)
     Right input -> do
-      part1 input
-      part2 input
+      putStr "Part 1: "
+      print $ partA input
+      putStr "Part 2: "
+      print $ partB input

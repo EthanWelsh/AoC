@@ -2,6 +2,17 @@ module Year2023.Day01 (solve) where
 
 import Data.List (findIndex, isPrefixOf)
 
+-- $setup
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example1 = lines $ unsafePerformIO $ readFile "years/Year2023/input/sample/Day01_part1.txt"
+-- >>> let example2 = lines $ unsafePerformIO $ readFile "years/Year2023/input/sample/Day01_part2.txt"
+-- >>> partA example1
+-- 142
+-- >>> partB example2
+-- 281
+
+type Input = [String]
+
 calibrationValue :: [String] -> (String -> Int) -> String -> Int
 calibrationValue ns toNum s =
   let left = toNum $ getFirst s ns
@@ -38,8 +49,15 @@ digits = map show ([1 .. 9] :: [Int])
 digitsAndWords :: [String]
 digitsAndWords = digits ++ ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
 
+partA :: Input -> Int
+partA = sum . map (calibrationValue digits read)
+
+partB :: Input -> Int
+partB = sum . map (calibrationValue digitsAndWords toNumber)
+
 solve :: FilePath -> IO ()
 solve filePath = do
   contents <- readFile filePath
-  putStrLn $ "Part 1: " ++ show (sum $ map (calibrationValue digits read) $ lines contents)
-  putStrLn $ "Part 2: " ++ show (sum $ map (calibrationValue digitsAndWords toNumber) $ lines contents)
+  let input = lines contents
+  putStrLn $ "Part 1: " ++ show (partA input)
+  putStrLn $ "Part 2: " ++ show (partB input)

@@ -5,6 +5,16 @@ import Parsers (Parser, integer, skipSpaces)
 import Text.Megaparsec
 import Text.Megaparsec.Char (string)
 
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2023/input/sample/Day06.txt"
+-- >>> let Right parsedExample = parse parseInput "" example
+-- >>> partA parsedExample
+-- 288
+-- >>> partB parsedExample
+-- 71503
+
 type Input = [Race]
 
 data Race = Race
@@ -45,10 +55,8 @@ waysToBeat race =
       highScore = distance race
    in length $ filter (> highScore) scores
 
-part1 :: Input -> IO ()
-part1 input = do
-  putStr "Part 1: "
-  print $ product $ map waysToBeat input
+partA :: Input -> Int
+partA input = product $ map waysToBeat input
 
 combineDigits :: [Int] -> Int
 combineDigits xs = read $ concatMap show xs
@@ -59,11 +67,10 @@ oneRace rs =
       ds = map distance rs
    in Race (combineDigits ts) (combineDigits ds)
 
-part2 :: Input -> IO ()
-part2 input = do
+partB :: Input -> Int
+partB input =
   let race = oneRace input
-  putStr "Part 2: "
-  print $ waysToBeat race
+   in waysToBeat race
 
 solve :: FilePath -> IO ()
 solve filePath = do
@@ -71,5 +78,7 @@ solve filePath = do
   case parse parseInput filePath contents of
     Left eb -> putStr (errorBundlePretty eb)
     Right input -> do
-      part1 input
-      part2 input
+      putStr "Part 1: "
+      print $ partA input
+      putStr "Part 2: "
+      print $ partB input

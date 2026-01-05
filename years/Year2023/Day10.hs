@@ -1,12 +1,24 @@
 module Year2023.Day10 (solve) where
 
 import Algorithm.Search
-import Data.List (elemIndex, nub, sort, (\\))
+import qualified Data.List as List
 import Data.Maybe (fromJust, isJust)
 import Maze
 import Parsers (Parser)
 import Text.Megaparsec
 import Text.Megaparsec.Char (char, newline)
+
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example1_1 = unsafePerformIO $ readFile "years/Year2023/input/sample/Day10_part1_1.txt"
+-- >>> let Right parsedExample1_1 = parse parseInput "" example1_1
+-- >>> let example1_2 = unsafePerformIO $ readFile "years/Year2023/input/sample/Day10_part1_2.txt"
+-- >>> let Right parsedExample1_2 = parse parseInput "" example1_2
+-- >>> partA parsedExample1_1
+-- 4
+-- >>> partA parsedExample1_2
+-- 8
 
 data Tile = Start | Vertical | Horizontal | Ground | NE | NW | SW | SE deriving (Eq)
 
@@ -42,7 +54,7 @@ parseLine = many parseTile
 
 parseInput :: Parser Input
 parseInput = do
-  ls <- parseLine `sepBy` newline
+  ls <- parseLine `sepEndBy` newline
   return $ mazeFromList ls
 
 goesToDirs :: Tile -> [Direction]
@@ -83,7 +95,7 @@ identifyStartTile b p
   where
     onlyAllows dirs = doesAllow dirs && doesNotAllowOther dirs
     doesAllow = all (\d -> inBounds b (movePoint p d) && d `elem` acceptsFromDirs (getPoint b (movePoint p d)))
-    otherDirs dirs = [North, South, East, West] \\ dirs
+    otherDirs dirs = [North, South, East, West] List.\\ dirs
     doesNotAllowOther dirs = not $ doesAllow (otherDirs dirs)
 
 step :: Board -> Point -> [Point]
@@ -105,17 +117,15 @@ furthestPointInLoop b p =
   let paths = longPaths b [] p
       path1 = (tail . reverse) $ paths !! 0
       path2 = (tail . reverse) $ paths !! 1
-      matchIndex = fromJust $ elemIndex True $ zipWith (==) path1 path2
+      matchIndex = fromJust $ List.elemIndex True $ zipWith (==) path1 path2
    in 1 + matchIndex
 
-part1 :: Input -> IO ()
-part1 board = do
-  putStr "Part 1: "
+partA :: Input -> Int
+partA board =
   let startPoint = head $ findPoints board (== Start)
-  let startTile = identifyStartTile board startPoint
-  let m = setPoint board startPoint startTile
-  let d = furthestPointInLoop m startPoint
-  print d
+      startTile = identifyStartTile board startPoint
+      m = setPoint board startPoint startTile
+   in furthestPointInLoop m startPoint
 
 markObviousNotGroundPoints :: Maze Char -> Maze Char
 markObviousNotGroundPoints m =
@@ -124,37 +134,44 @@ markObviousNotGroundPoints m =
 
 bigger :: Tile -> [[Char]]
 bigger Vertical =
-  [ " # ",
+  [
+    " # ",
     " # ",
     " # "
   ]
 bigger Horizontal =
-  [ "   ",
+  [
+    "   ",
     "###",
     "   "
   ]
 bigger Ground =
-  [ "GGG",
+  [
+    "GGG",
     "GGG",
     "GGG"
   ]
 bigger NE =
-  [ " # ",
+  [
+    " # ",
     " ##",
     "   "
   ]
 bigger NW =
-  [ " # ",
+  [
+    " # ",
     "## ",
     "   "
   ]
 bigger SW =
-  [ "   ",
+  [
+    "   ",
     "## ",
     " # "
   ]
 bigger SE =
-  [ "   ",
+  [
+    "   ",
     " ##",
     " # "
   ]
@@ -189,10 +206,6 @@ isEnd m p = not (all (inBounds m . movePoint p) [North, East, South, West])
 hasPathToOutside :: Maze Char -> Point -> Bool
 hasPathToOutside m p = isJust $ aStar (neighbors m) (\_ _ -> 1) (distanceFromEdge m) (isEnd m) p
 
--- This is a somewhat lazy optimization to remove the large number of ground
--- tiles that reside totally outside of the loop. This function performs a
--- scan from all side of the grid, removing all ground points until we reach the
--- first wall.
 notGroundPoints :: Maze Char -> [Point]
 notGroundPoints m =
   let pointsInRow mm r = [(r, c) | c <- [0 .. width mm - 1]]
@@ -206,10 +219,6 @@ notGroundPoints m =
       verticalScan = concatMap (takeWhileOuter (testPoint m (== 'G'))) colPoints :: [Point]
    in horizontalScan ++ verticalScan
 
--- Expand the maze such that each tile is actually a 3x3 square. This exposes
--- that there gaps between certain tile configurations. We then perform an aStar
--- search from every ground tile in the shape to try to find a way out. If there
--- doesn't exist any path to the outside then the ground is inside the loop.
 countGroundPointsInLoop :: Maze Tile -> Int
 countGroundPointsInLoop m =
   let biggerM = biggerMaze m
@@ -217,16 +226,15 @@ countGroundPointsInLoop m =
       pointsWithoutPath = filter (not . hasPathToOutside biggerM) groundPoints
    in div (length pointsWithoutPath) 9
 
-part2 :: Input -> IO ()
-part2 board = do
-  putStr "Part 2: "
+partB :: Input -> Int
+partB board =
   let startPoint = head $ findPoints board (== Start)
-  let startTile = identifyStartTile board startPoint
-  let m = setPoint board startPoint startTile
-  let perimeterPoints = (sort . nub . concat) $ longPaths m [] startPoint
-  let otherPoints = allPoints board \\ perimeterPoints
-  let mm = setPoints m otherPoints Ground
-  print $ countGroundPointsInLoop mm
+      startTile = identifyStartTile board startPoint
+      m = setPoint board startPoint startTile
+      perimeterPoints = (List.sort . List.nub . concat) $ longPaths m [] startPoint
+      otherPoints = allPoints board List.\\ perimeterPoints
+      mm = setPoints m otherPoints Ground
+   in countGroundPointsInLoop mm
 
 solve :: FilePath -> IO ()
 solve filePath = do
@@ -234,5 +242,5 @@ solve filePath = do
   case parse parseInput filePath contents of
     Left eb -> putStr (errorBundlePretty eb)
     Right input -> do
-      part1 input
-      part2 input
+      putStrLn $ "Part 1: " ++ show (partA input)
+      putStrLn $ "Part 2: " ++ show (partB input)

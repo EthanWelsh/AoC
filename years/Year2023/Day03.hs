@@ -4,6 +4,15 @@ import Data.Char (isDigit)
 import Data.List (nub)
 import Maze
 
+-- $setup
+-- >>> import Maze (mazeFromList)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = mazeFromList . lines $ unsafePerformIO $ readFile "years/Year2023/input/sample/Day03.txt"
+-- >>> partA example
+-- 4361
+-- >>> partB example
+-- 467835
+
 type Board = Maze Char
 
 isSymbol :: Char -> Bool
@@ -46,23 +55,23 @@ gearRatio board point = case getNumbersAroundPoint board point of
   [a, b] -> a * b
   _ -> 0
 
+partA :: Board -> Int
+partA board =
+  let digitPoints = allDigitPoints board
+      nextToSymbols = filter (hasAdjacentSymbol board) digitPoints
+      origins = nub $ map (findLeftStart board) nextToSymbols
+      nums = map (getNumberFromOrigin board) origins
+   in sum nums
+
+partB :: Board -> Int
+partB board =
+  let gearPoints = filter (testPoint board (== '*')) (allPoints board)
+      gearRatios = map (gearRatio board) gearPoints
+   in sum gearRatios
+
 solve :: FilePath -> IO ()
 solve filePath = do
   contents <- readFile filePath
   let board = mazeFromList $ lines contents
-  part1 board
-  part2 board
-
-part1 :: Board -> IO ()
-part1 board = do
-  let digitPoints = allDigitPoints board
-  let nextToSymbols = filter (hasAdjacentSymbol board) digitPoints
-  let origins = nub $ map (findLeftStart board) nextToSymbols
-  let nums = map (getNumberFromOrigin board) origins
-  putStrLn $ "Part 1:" ++ show (sum nums)
-
-part2 :: Board -> IO ()
-part2 board = do
-  let gearPoints = filter (testPoint board (== '*')) (allPoints board)
-  let gearRatios = map (gearRatio board) gearPoints
-  putStrLn $ "Part 2:" ++ show (sum gearRatios)
+  putStrLn $ "Part 1:" ++ show (partA board)
+  putStrLn $ "Part 2:" ++ show (partB board)

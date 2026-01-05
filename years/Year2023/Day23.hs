@@ -26,7 +26,7 @@ parseLine =
         [ char '#',
           char '.',
           char '^',
-          char '>',
+          char '>'
           char 'v',
           char '<'
         ]

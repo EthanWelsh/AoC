@@ -1,23 +1,31 @@
 module Year2023.Day02 (solve) where
 
-import Parsers (Parser, integer)
+import Parsers (Parser)
 import Text.Megaparsec
 import Text.Megaparsec.Char (newline, string)
+import qualified Text.Megaparsec.Char.Lexer as L
 
--- Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2023/input/sample/Day02.txt"
+-- >>> let Right parsedExample = parse inputParser "" example
+-- >>> partA parsedExample
+-- 8
+-- >>> partB parsedExample
+-- 2286
 
 type RGB = (Int, Int, Int)
 
 data Game = G Int [RGB] deriving (Show)
 
 number :: Parser Int
-number = do
-  n <- integer
-  return n
+number = L.decimal
 
 rgbParser :: Parser RGB
 rgbParser = do
   n <- number
+  _ <- string " "
   color <- string "red" <|> string "green" <|> string "blue"
   case color of
     "red" -> return (n, 0, 0)
@@ -42,10 +50,7 @@ gameParser = do
   return (G n rounds)
 
 inputParser :: Parser [Game]
-inputParser = do
-  games <- endBy gameParser newline
-  eof
-  return games
+inputParser = gameParser `sepEndBy` newline
 
 addRounds :: [RGB] -> RGB
 addRounds = foldl addRound (0, 0, 0)
@@ -72,15 +77,15 @@ gamePower (G _ rounds) =
   let (r, g, b) = maxRounds rounds
    in r * g * b
 
-part1 :: [Game] -> IO ()
-part1 games = do
+partA :: [Game] -> Int
+partA games =
   let possibleGames = filter gameIsPossible games
-  print $ sumOfGameIds possibleGames
+   in sumOfGameIds possibleGames
 
-part2 :: [Game] -> IO ()
-part2 games = do
+partB :: [Game] -> Int
+partB games =
   let powerValues = map gamePower games
-  print $ sum powerValues
+   in sum powerValues
 
 solve :: FilePath -> IO ()
 solve filePath = do
@@ -88,5 +93,5 @@ solve filePath = do
   case parse inputParser filePath contents of
     Left eb -> putStr (errorBundlePretty eb)
     Right records -> do
-      part1 records
-      part2 records
+      print $ partA records
+      print $ partB records

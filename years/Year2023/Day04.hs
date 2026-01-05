@@ -6,11 +6,20 @@ import Parsers (Parser, colon, integer, lexeme, pipe)
 import Text.Megaparsec
 import Text.Megaparsec.Char (string)
 
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2023/input/sample/Day04.txt"
+-- >>> let Right parsedExample = parse inputParser "" example
+-- >>> partA parsedExample
+-- 13
+-- >>> partB parsedExample
+-- 30
+
 data Card = C Int [Int] [Int] deriving (Show)
 
 inputParser :: Parser [Card]
-inputParser = do
-  many cardParser
+inputParser = many cardParser
 
 parseCardId :: Parser Int
 parseCardId =
@@ -55,19 +64,17 @@ countCopies cards card =
       copyCount = sum $ map (countCopies cards) winningCards
    in 1 + copyCount
 
+partA :: [Card] -> Int
+partA = sum . map cardScore
+
+partB :: [Card] -> Int
+partB cards = sum $ map (countCopies cards) cards
+
 solve :: FilePath -> IO ()
 solve filePath = do
   contents <- readFile filePath
   case parse inputParser filePath contents of
     Left eb -> putStr (errorBundlePretty eb)
     Right cards -> do
-      part1 cards
-      part2 cards
-
-part1 :: [Card] -> IO ()
-part1 cards = do
-  putStrLn $ "Part 1: " ++ show (sum $ map cardScore cards)
-
-part2 :: [Card] -> IO ()
-part2 cards = do
-  putStrLn $ "Part 2: " ++ show (sum $ map (countCopies cards) cards)
+      putStrLn $ "Part 1: " ++ show (partA cards)
+      putStrLn $ "Part 2: " ++ show (partB cards)
