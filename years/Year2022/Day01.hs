@@ -1,16 +1,26 @@
 module Year2022.Day01 (solve) where
 
 import Data.List (filter, map, maximum, sum)
-import qualified Data.List as L
+import qualified Data.List as List
 import Parsers (Parser)
 import Text.Megaparsec
 import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
 
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2022/input/sample/Day01.txt"
+-- >>> let Right parsedExample = parse inputParser "" example
+-- >>> partA parsedExample
+-- 24000
+-- >>> partB parsedExample
+-- 45000
+
 type Input = [[Int]]
 
 inputParser :: Parser Input
-inputParser = (L.decimal `sepEndBy` eol) `sepEndBy` (eol >> eol)
+inputParser = some (L.decimal <* eol) `sepBy` eol
 
 partA :: Input -> Int
 partA input = maximum $ map sum input
@@ -26,7 +36,7 @@ qs (x : xs) =
 partB :: Input -> Int
 partB input =
   let sortedTotals = qs (map sum input)
-   in sum $ L.take 3 sortedTotals
+   in sum $ List.take 3 sortedTotals
 
 solve :: FilePath -> IO ()
 solve filePath = do

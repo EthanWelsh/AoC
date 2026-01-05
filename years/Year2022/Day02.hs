@@ -6,6 +6,16 @@ import Parsers (Parser)
 import Text.Megaparsec
 import Text.Megaparsec.Char
 
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2022/input/sample/Day02.txt"
+-- >>> let Right parsedExample = parse inputParser "" example
+-- >>> partA parsedExample
+-- 15
+-- >>> partB parsedExample
+-- 12
+
 data Shape = Rock | Paper | Scissor
   deriving (Eq, Show)
 

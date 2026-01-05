@@ -6,6 +6,16 @@ import Text.Megaparsec
 import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
 
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2022/input/sample/Day04.txt"
+-- >>> let Right parsedExample = parse inputParser "" example
+-- >>> partA parsedExample
+-- 2
+-- >>> partB parsedExample
+-- 4
+
 type Range = (Int, Int)
 
 type Pair = (Range, Range)

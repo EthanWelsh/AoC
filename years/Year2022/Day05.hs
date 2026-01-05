@@ -1,95 +1,126 @@
-{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
-
 module Year2022.Day05 (solve) where
 
-{- ORMOLU_DISABLE -}
-import Data.List (foldl, filter, concatMap, zip, length)
-import Data.Map.Strict (Map)
-import qualified Data.Map.Strict as Map
+import Control.Applicative ((<|>))
 import Control.Monad (void)
-import Data.Void (Void)
+import Data.List (foldl', head, transpose)
+import Data.Maybe (catMaybes)
+import Data.Vector (Vector)
+import qualified Data.Vector as Vec
+import Parsers (Parser)
 import Text.Megaparsec
 import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
-import qualified Data.Text as T
-import Data.Text (Text, pack)
-import Text.Megaparsec.Error (errorBundlePretty)
 
-type Parser = Parsec Void T.Text
-{- ORMOLU_ENABLE -}
-
-solve :: FilePath -> IO ()
-solve filePath = do
-  fileContents <- readFile filePath
-  case parse inputParser "" (pack fileContents) of
-    Left e -> putStrLn $ errorBundlePretty e
-    Right input -> do
-      putStrLn "Part A:"
-      print (partA input)
-      putStrLn "Part B:"
-      print (partB input)
-
------------- PARSER ------------
-
-pointParser :: Parser Point
-pointParser = do
-  x <- L.decimal
-  void $ char ','
-  b <- L.decimal
-  return (x, b)
-
-arrowParser :: Parser Arrow
-arrowParser = do
-  a <- pointParser
-  void $ string (T.pack " -> ")
-  b <- pointParser
-  return (Arrow a b)
-
-inputParser :: Parser Input
-inputParser = arrowParser `sepBy` eol
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2022/input/sample/Day05.txt"
+-- >>> let Right parsedExample = parse inputParser "" example
+-- >>> partA parsedExample
+-- "CMZ"
+-- >>> partB parsedExample
+-- "MCD"
 
 ------------ TYPES ------------
-type Point = (Int, Int)
+type Stack = [Char]
 
-data Arrow = Arrow Point Point deriving (Eq, Show)
+type Instruction = (Int, Int, Int)
 
-type Input = [Arrow]
+type Input = (Vector Stack, [Instruction])
 
-type OutputA = Int
+------------ PARSER ------------
+instructionParser :: Parser Instruction
+instructionParser = do
+  void $ string "move "
+  quantity <- L.decimal
+  void $ string " from "
+  from <- L.decimal
+  void $ string " to "
+  to <- L.decimal
+  return (quantity, from - 1, to - 1)
 
-type OutputB = Int
+crateParser :: Parser (Maybe Char)
+crateParser =
+  (string "   " >> return Nothing)
+    <|> (char '[' *> (Just <$> letterChar) <* char ']')
+
+rowParser :: Parser [Maybe Char]
+rowParser = crateParser `sepBy` char ' '
+
+stacksParser :: Parser (Vector Stack)
+stacksParser = do
+  rows <- manyTill (rowParser <* eol) (try (void $ hspace >> digitChar))
+  void $ takeWhileP Nothing (/= '\n') >> eol
+  void eol
+  return $ Vec.fromList . map catMaybes . transpose $ rows
+
+inputParser :: Parser Input
+inputParser = do
+  stacks <- stacksParser
+  instructions <- instructionParser `sepEndBy` eol
+  return (stacks, instructions)
 
 ------------ PART A ------------
+push :: a -> [a] -> [a]
+push = (:)
 
-range :: Int -> Int -> [Int]
-range start end
-  | start < end = [start .. end]
-  | start > end = [start, start - 1 .. end]
-  | start == end = [start]
+pop :: [a] -> (a, [a])
+pop (x : xs) = (x, xs)
+pop _ = error "Cannot pop from empty list"
 
-getPoints :: Arrow -> [Point]
-getPoints (Arrow (x1, y1) (x2, y2)) = zip (range x1 x2) (range y1 y2)
+popThenPush :: Int -> Int -> Vector Stack -> Vector Stack
+popThenPush fromIndex toIndex stacks =
+  let from = stacks Vec.! fromIndex
+      to = stacks Vec.! toIndex
+      (x, popped) = pop from
+      pushed = push x to
+   in stacks Vec.// [(fromIndex, popped), (toIndex, pushed)]
 
-getDupesPerPoint :: [Point] -> Map Point Int
-getDupesPerPoint ps = foldl (\acc point -> Map.insertWith (+) point 1 acc) Map.empty ps
+getNormalizedInstructions :: [Instruction] -> [(Int, Int)]
+getNormalizedInstructions ins =
+  let norm (quantity, from, to) = replicate quantity (from, to)
+   in concatMap norm ins
 
-numberOfDupes :: [Point] -> Int
-numberOfDupes ps =
-  let dupesPerPoint = getDupesPerPoint ps :: Map Point Int
-      dupesAsList = Map.toList dupesPerPoint :: [(Point, Int)]
-   in length $ filter ((> 1) . snd) dupesAsList
+run :: [(Int, Int)] -> Vector Stack -> Vector Stack
+run ins stacks = foldl' (\st (from, to) -> popThenPush from to st) stacks ins
 
-notDiagonal :: Arrow -> Bool
-notDiagonal (Arrow (x1, y1) (x2, y2)) = if x1 == x2 || y1 == y2 then True else False
-
-partA :: Input -> OutputA
-partA input =
-  let noDiagonals = filter (notDiagonal) input :: [Arrow]
-      allPoints = concatMap getPoints noDiagonals :: [Point]
-   in numberOfDupes allPoints
+partA :: Input -> String
+partA (stacks, ins) =
+  let normalized = getNormalizedInstructions ins
+      result = run normalized stacks
+   in Vec.toList $ Vec.map head result
 
 ------------ PART B ------------
-partB :: Input -> OutputB
-partB input =
-  let allPoints = concatMap getPoints input :: [Point]
-   in numberOfDupes allPoints
+pushMultiple :: [Char] -> [Char] -> [Char]
+pushMultiple pushes stack = pushes ++ stack
+
+popMultiple :: Int -> [Char] -> ([Char], [Char])
+popMultiple count stack = (take count stack, drop count stack)
+
+popThenPushB :: Int -> Int -> Int -> Vector Stack -> Vector Stack
+popThenPushB quantity fromIndex toIndex stacks =
+  let from = stacks Vec.! fromIndex
+      to = stacks Vec.! toIndex
+      (xs, popped) = popMultiple quantity from
+      pushed = pushMultiple xs to
+   in stacks Vec.// [(fromIndex, popped), (toIndex, pushed)]
+
+runB :: [Instruction] -> Vector Stack -> Vector Stack
+runB ins stacks = foldl' (\st (q, f, t) -> popThenPushB q f t st) stacks ins
+
+partB :: Input -> String
+partB (stacks, ins) =
+  let result = runB ins stacks
+   in Vec.toList $ Vec.map head result
+
+------------ SOLVE ------------
+solve :: FilePath -> IO ()
+solve filePath = do
+  contents <- readFile filePath
+  case parse inputParser filePath contents of
+    Left eb -> putStr (errorBundlePretty eb)
+    Right input -> do
+      putStr "Part 1: "
+      putStrLn $ partA input
+      putStr "Part 2: "
+      putStrLn $ partB input

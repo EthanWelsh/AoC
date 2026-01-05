@@ -7,6 +7,16 @@ import Parsers (Parser)
 import Text.Megaparsec
 import Text.Megaparsec.Char
 
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2022/input/sample/Day03.txt"
+-- >>> let Right parsedExample = parse inputParser "" example
+-- >>> partA parsedExample
+-- 157
+-- >>> partB parsedExample
+-- 70
+
 type Input = [String]
 
 inputParser :: Parser Input
