@@ -19,6 +19,16 @@ import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 {- ORMOLU_ENABLE -}
 
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ readFile "years/Year2022/input/sample/Day12.txt"
+-- >>> let Right parsedExample = parse inputParser "" example
+-- >>> partA parsedExample
+-- 31
+-- >>> partB parsedExample
+-- 29
+
 type Parser = Parsec Void String
 
 ------------ PARSER ------------
@@ -50,9 +60,9 @@ partA input = fromJust $ bfs (getValidNeighbors (canMoveUp input)) (isEnd input)
 
 canMoveUp :: Map Point Int -> Point -> Point -> Bool
 canMoveUp m from to =
-  let fromVal = fromJust $ Map.lookup from m
-      toVal = fromJust $ Map.lookup to m
-   in toVal <= (fromVal + 1)
+  case (Map.lookup from m, Map.lookup to m) of
+    (Just fromVal, Just toVal) -> toVal <= (fromVal + 1)
+    _ -> False
 
 isEnd :: Map Point Int -> Point -> Bool
 isEnd m p = (fromJust $ Map.lookup p m) == 27
@@ -68,9 +78,9 @@ partB input = fromJust $ bfs (getValidNeighbors (canMoveDown input)) (isStart in
 
 canMoveDown :: Map Point Int -> Point -> Point -> Bool
 canMoveDown m from to =
-  let fromVal = fromJust $ Map.lookup from m
-      toVal = fromJust $ Map.lookup to m
-   in fromVal <= (toVal + 1)
+  case (Map.lookup from m, Map.lookup to m) of
+    (Just fromVal, Just toVal) -> fromVal <= (toVal + 1)
+    _ -> False
 
 isStart :: Map Point Int -> Point -> Bool
 isStart m p = (fromJust $ Map.lookup p m) == 1

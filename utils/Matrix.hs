@@ -58,7 +58,5 @@ movePoint (r, c) East = (r, c + 1)
 movePoint (r, c) West = (r, c - 1)
 
 getPath :: Point -> [CardinalDirection] -> [Point]
-getPath _ [] = []
-getPath p (d : ds) =
-  let newP = movePoint p d
-   in newP : getPath newP ds
+getPath p [] = [p]
+getPath p (d : ds) = p : getPath (movePoint p d) ds

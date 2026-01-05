@@ -14,6 +14,27 @@ import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 {- ORMOLU_ENABLE -}
 
+-- $setup
+-- >>> import qualified Data.Text.IO as TIO
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ TIO.readFile "years/Year2022/input/sample/Day10.txt"
+-- >>> let Right parsedExample = parse inputParser "" example
+-- >>> partA parsedExample
+-- 13140
+-- >>> :{
+-- let expectedB = unlines [
+--       "##..##..##..##..##..##..##..##..##..##..",
+--       "###...###...###...###...###...###...###.",
+--       "####....####....####....####....####....",
+--       "#####.....#####.....#####.....#####.....",
+--       "######......######......######......####",
+--       "#######.......#######.......#######....."
+--       ]
+-- in partB parsedExample == expectedB
+-- :}
+-- True
+
 type Parser = Parsec Void T.Text
 
 ------------ PARSER ------------
@@ -26,7 +47,7 @@ addxParser = do
   Addx <$> L.signed (pure ()) L.decimal
 
 inputParser :: Parser Input
-inputParser = (noopParser <|> addxParser) `sepBy` eol
+inputParser = (noopParser <|> addxParser) `sepEndBy` eol
 
 ------------ TYPES ------------
 data Op = Noop | Addx Int deriving (Show, Eq)
@@ -57,7 +78,7 @@ partA input =
 ------------ PART B ------------
 partB :: Input -> OutputB
 partB input =
-  let history = getHistory input
+  let history = take 240 $ getHistory input
       screen = map (\(p, s) -> if abs (p - s) <= 1 then '#' else '.') (zip (cycle [0 .. 39]) history)
    in unlines $ chunks 40 screen
 

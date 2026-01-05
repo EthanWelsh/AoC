@@ -19,6 +19,17 @@ import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 {- ORMOLU_ENABLE -}
 
+-- $setup
+-- >>> import qualified Data.Text.IO as TIO
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ TIO.readFile "years/Year2022/input/sample/Day14.txt"
+-- >>> let Right parsedExample = parse inputParser "" example
+-- >>> partA parsedExample
+-- 24
+-- >>> partB parsedExample
+-- 93
+
 type Parser = Parsec Void T.Text
 
 ------------ PARSER ------------
@@ -33,7 +44,7 @@ arrowParser :: Parser Arrow
 arrowParser = pointParser `sepBy` string " -> "
 
 inputParser :: Parser Input
-inputParser = arrowParser `sepBy` eol
+inputParser = arrowParser `sepEndBy` eol
 
 ------------ TYPES ------------
 type Point = (Int, Int)
@@ -94,7 +105,11 @@ arrowToSegment :: Arrow -> [(Point, Point)]
 arrowToSegment arrow = U.laggedPairs arrow
 
 segmentBlocks :: (Point, Point) -> Blocks
-segmentBlocks ((a, b), (c, d)) = HashSet.fromList $ zip (U.range a c) (U.range b d)
+segmentBlocks ((x1, y1), (x2, y2)) =
+  HashSet.fromList $
+    if x1 == x2
+      then [(x1, y) | y <- U.range y1 y2]
+      else [(x, y1) | x <- U.range x1 x2]
 
 unionAll :: [Blocks] -> Blocks
 unionAll blocks = HashSet.unions blocks

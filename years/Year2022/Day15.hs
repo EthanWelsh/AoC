@@ -25,6 +25,17 @@ import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 {- ORMOLU_ENABLE -}
 
+-- $setup
+-- >>> import qualified Data.Text.IO as TIO
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ TIO.readFile "years/Year2022/input/sample/Day15.txt"
+-- >>> let Right parsedExample = parse inputParser "" example
+-- >>> partA 10 parsedExample
+-- 26
+-- >>> partB (0, 20) parsedExample
+-- 56000011
+
 type Parser = Parsec Void T.Text
 
 ------------ PARSER ------------
@@ -47,7 +58,7 @@ lineParser = do
   return (sensor, beacon)
 
 inputParser :: Parser Input
-inputParser = lineParser `sepBy` eol
+inputParser = lineParser `sepEndBy` eol
 
 ------------ TYPES ------------
 type Points = HashSet.HashSet Point
@@ -85,18 +96,20 @@ rangeSize (SpanRange (Bound a Inclusive) (Bound b Inclusive)) = abs (a - b) + 1
 rangeSize (SpanRange (Bound a Exclusive) (Bound b Exclusive)) = abs (a - b) - 2
 rangeSize (SpanRange (Bound a Inclusive) (Bound b Exclusive)) = abs (a - b)
 rangeSize (SpanRange (Bound a Exclusive) (Bound b Inclusive)) = abs (a - b)
+rangeSize (SingletonRange _) = 1
 
 shrinkInBothDirectionsBy :: Range Int -> Int -> Maybe (Range Int)
 shrinkInBothDirectionsBy (SpanRange (Bound aval Inclusive) (Bound bval Inclusive)) x =
   let newA = aval + x
       newB = bval - x
-   in if newA >= newB then Nothing else Just (SpanRange (Bound (aval + x) Inclusive) (Bound (bval - x) Inclusive))
+   in if newA > newB then Nothing else Just (SpanRange (Bound newA Inclusive) (Bound newB Inclusive))
+shrinkInBothDirectionsBy _ _ = Nothing
 
 coversTargetRow :: Int -> (Point, Point) -> Bool
 coversTargetRow target (a, b) = inRange (coversRows a b) target
 
 projectOutwards :: Int -> (Point, Point) -> Maybe (Range Int)
-projectOutwards target (s@(r1, c1), b@(r2, c2)) =
+projectOutwards target (s@(r1, c1), b) =
   let distance = manhattanDistance s b
       verticalDistance = abs (r1 - target)
       coveredAtOrigin = (c1 - distance) +=+ (c1 + distance)
@@ -112,10 +125,9 @@ impossibleBeaconLocationsOnRow input targetRow =
       rowsWithNoBeacons = difference joined beaconColsOnTargetRow :: [Range Int]
    in rowsWithNoBeacons
 
-partA :: Input -> Int
-partA input =
-  let targetRow = 2000000
-      rowsWithNoBeacons = impossibleBeaconLocationsOnRow input targetRow
+partA :: Int -> Input -> Int
+partA targetRow input =
+  let rowsWithNoBeacons = impossibleBeaconLocationsOnRow input targetRow
    in sum $ map rangeSize rowsWithNoBeacons
 
 ------------ PART B ------------
@@ -126,6 +138,7 @@ rangeToList (SpanRange (Bound a Inclusive) (Bound b Inclusive)) = [a .. b]
 rangeToList (SpanRange (Bound a Inclusive) (Bound b Exclusive)) = [a .. (b - 1)]
 rangeToList (SpanRange (Bound a Exclusive) (Bound b Inclusive)) = [(a + 1) .. (b)]
 rangeToList (SpanRange (Bound a Exclusive) (Bound b Exclusive)) = [(a + 1) .. (b - 1)]
+rangeToList _ = []
 
 possibleBeaconLocationsOnRow :: [(Point, Point)] -> Range Int -> Int -> [Point]
 possibleBeaconLocationsOnRow input inBounds targetRow =
@@ -134,15 +147,15 @@ possibleBeaconLocationsOnRow input inBounds targetRow =
       possibleCols = concatMap rangeToList possibleRanges
    in map (targetRow,) possibleCols
 
-possibleLocations :: [(Point, Point)] -> Int -> Int -> [Point]
-possibleLocations input lower upper =
+possibleLocations :: [(Point, Point)] -> (Int, Int) -> [Point]
+possibleLocations input (lower, upper) =
   let inBounds = lower +=+ upper
-      allCols = [lower .. upper]
-   in concatMap (possibleBeaconLocationsOnRow input inBounds) allCols
+      allRows = [lower .. upper]
+   in concatMap (possibleBeaconLocationsOnRow input inBounds) allRows
 
-partB :: Input -> Int
-partB input =
-  let locations = HashSet.fromList $ possibleLocations input 0 4000000
+partB :: (Int, Int) -> Input -> Int
+partB (lower, upper) input =
+  let locations = HashSet.fromList $ possibleLocations input (lower, upper)
       beacons = HashSet.fromList $ map getBeacon input
       beaconLocation = head $ HashSet.toList $ HashSet.difference locations beacons
       (r, c) = beaconLocation
@@ -155,6 +168,6 @@ solve filePath = do
     Left eb -> putStr (errorBundlePretty eb)
     Right input -> do
       putStr "Part 1: "
-      print $ partA input
+      print $ partA 2000000 input
       putStr "Part 2: "
-      print $ partB input
+      print $ partB (0, 4000000) input

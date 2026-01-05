@@ -15,6 +15,21 @@ import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 {- ORMOLU_ENABLE -}
 
+-- $setup
+-- >>> import qualified Data.Text.IO as TIO
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example1 = unsafePerformIO $ TIO.readFile "years/Year2022/input/sample/Day09_1.txt"
+-- >>> let Right parsedExample1 = parse inputParser "" example1
+-- >>> let example2 = unsafePerformIO $ TIO.readFile "years/Year2022/input/sample/Day09_2.txt"
+-- >>> let Right parsedExample2 = parse inputParser "" example2
+-- >>> partA parsedExample1
+-- "13"
+-- >>> partB parsedExample1
+-- "1"
+-- >>> partB parsedExample2
+-- "36"
+
 type Parser = Parsec Void T.Text
 
 ------------ PARSER ------------
@@ -30,7 +45,7 @@ dirsParser = (dirParser 'U' North) <|> (dirParser 'D' South) <|> (dirParser 'L' 
 
 inputParser :: Parser Input
 inputParser = do
-  dirs <- dirsParser `sepBy` eol
+  dirs <- dirsParser `sepEndBy` eol
   return $ concat dirs
 
 ------------ TYPES ------------

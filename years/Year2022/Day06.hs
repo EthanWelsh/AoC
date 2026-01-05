@@ -9,6 +9,29 @@ import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 {- ORMOLU_ENABLE -}
 
+-- $setup
+-- >>> import qualified Data.Text as T
+-- >>> partA (T.pack "mjqjpqmgbljsphdztnvjfqwrcgsmlb")
+-- 7
+-- >>> partA (T.pack "bvwbjplbgvbhsrlpgdmjqwftvncz")
+-- 5
+-- >>> partA (T.pack "nppdvjthqldpwncqszvftbrmjlhg")
+-- 6
+-- >>> partA (T.pack "nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg")
+-- 10
+-- >>> partA (T.pack "zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw")
+-- 11
+-- >>> partB (T.pack "mjqjpqmgbljsphdztnvjfqwrcgsmlb")
+-- 19
+-- >>> partB (T.pack "bvwbjplbgvbhsrlpgdmjqwftvncz")
+-- 23
+-- >>> partB (T.pack "nppdvjthqldpwncqszvftbrmjlhg")
+-- 23
+-- >>> partB (T.pack "nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg")
+-- 29
+-- >>> partB (T.pack "zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw")
+-- 26
+
 type Parser = Parsec Void T.Text
 
 ------------ PARSER ------------

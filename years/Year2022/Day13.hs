@@ -22,6 +22,17 @@ import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 {- ORMOLU_ENABLE -}
 
+-- $setup
+-- >>> import qualified Data.Text.IO as TIO
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ TIO.readFile "years/Year2022/input/sample/Day13.txt"
+-- >>> let Right parsedExample = parse inputParser "" example
+-- >>> partA parsedExample
+-- "13"
+-- >>> partB parsedExample
+-- "140"
+
 type Parser = Parsec Void T.Text
 
 ------------ PARSER ------------

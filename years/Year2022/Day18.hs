@@ -21,6 +21,17 @@ import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 {- ORMOLU_ENABLE -}
 
+-- $setup
+-- >>> import qualified Data.Text.IO as TIO
+-- >>> import Text.Megaparsec (parse)
+-- >>> import System.IO.Unsafe (unsafePerformIO)
+-- >>> let example = unsafePerformIO $ TIO.readFile "years/Year2022/input/sample/Day18.txt"
+-- >>> let Right parsedExample = parse inputParser "" example
+-- >>> partA parsedExample
+-- 64
+-- >>> partB parsedExample
+-- 58
+
 type Parser = Parsec Void T.Text
 
 ------------ PARSER ------------
@@ -35,7 +46,7 @@ pointParser = do
 
 inputParser :: Parser Input
 inputParser = do
-  points <- pointParser `sepBy` eol
+  points <- pointParser `sepEndBy` eol
   return points
 
 ------------ TYPES ------------
