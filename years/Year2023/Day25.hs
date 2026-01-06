@@ -1,3 +1,8 @@
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> parseInput `seq` True
+-- True
+
 module Year2023.Day25 (solve) where
 
 import Control.Monad (void)

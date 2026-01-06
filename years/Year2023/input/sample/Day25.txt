@@ -1,0 +1,4 @@
+SYSTEM OVERLOAD!
+
+Connected components would require
+power equal to at least <em class="star">100 stars</em>!

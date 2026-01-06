@@ -1,3 +1,8 @@
+-- $setup
+-- >>> import Text.Megaparsec (parse)
+-- >>> parseInput `seq` True
+-- True
+
 module Year2023.Day23 (solve) where
 
 import Data.List ((\\))
